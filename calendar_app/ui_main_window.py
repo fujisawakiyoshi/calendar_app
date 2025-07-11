@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime
 from calendar_renderer import generate_calendar_matrix
 from holiday_service import load_holiday_cache
+from event_manager import load_events
 
 class MainWindow:
     def __init__(self):
@@ -9,6 +10,7 @@ class MainWindow:
         self.root.title("カレンダーアプリ")
         self.root.geometry("400x400")
         self.holidays = load_holiday_cache()
+        self.events = load_events()
 
         # 現在月
         today = datetime.today()
@@ -62,6 +64,8 @@ class MainWindow:
 
                 date_key = f"{self.current_year}-{self.current_month:02d}-{day:02d}"
                 is_holiday = day != 0 and date_key in self.holidays
+                has_event = day != 0 and date_key in self.events
+
 
                 # デフォルト背景
                 bg_color = "white"
@@ -78,6 +82,10 @@ class MainWindow:
                 # 祝日は赤に
                 if is_holiday:
                     bg_color = "pink"
+                
+                # 予定
+                if has_event:
+                    bg_color = "yellow"
 
                 label = tk.Label(
                     self.calendar_frame,
