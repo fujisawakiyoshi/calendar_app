@@ -26,3 +26,4 @@ def delete_event(events, date_str, index):
         if not events[date_str]:
             del events[date_str]
         save_events(events)
+

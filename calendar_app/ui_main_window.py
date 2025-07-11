@@ -3,6 +3,10 @@ from datetime import datetime
 from calendar_renderer import generate_calendar_matrix
 from holiday_service import load_holiday_cache
 from event_manager import load_events
+from tkinter import simpledialog, messagebox
+from event_manager import save_events
+import tkinter.simpledialog as simpledialog
+import tkinter.messagebox as messagebox
 
 class MainWindow:
     def __init__(self):
@@ -96,6 +100,9 @@ class MainWindow:
                     height=2,
                     bg=bg_color
                 )
+                # ⭐ クリックイベントをバインド
+                if day != 0:
+                    label.bind("<Button-1>", lambda e, d=date_key: self.open_event_dialog(d))
                 label.grid(row=row_idx, column=col_idx)
 
         # ヘッダー年月を更新
@@ -117,5 +124,56 @@ class MainWindow:
             self.current_month += 1
         self.show_calendar()
 
+    def open_event_dialog(self, date_key):
+        window = tk.Toplevel(self.root)         #新しい小ウィンドウを開く       
+        window.title(f"{date_key} の予定")
+
+        # 既存予定
+        events_list = self.events.get(date_key, [])
+
+        tk.Label(window, text=f"{date_key} の予定一覧").pack(pady=5)
+
+        listbox = tk.Listbox(window, width=40)  #Listboxで予定を一覧表示
+        listbox.pack()
+
+        for item in events_list:
+            listbox.insert(tk.END, item)
+
+        # 予定追加
+        def add_event_action():
+            new_event = simpledialog.askstring("予定追加", "新しい予定を入力してください") #追加ボタン
+            if new_event:
+                if date_key not in self.events:
+                    self.events[date_key] = []
+                self.events[date_key].append(new_event)
+                save_events(self.events)
+                listbox.insert(tk.END, new_event)
+                self.show_calendar()
+
+        add_button = tk.Button(window, text="予定を追加", command=add_event_action)
+        add_button.pack(pady=5)
+
+        # 予定削除
+        def delete_event_action():
+            selected = listbox.curselection()
+            if not selected:
+                messagebox.showwarning("警告", "削除する予定を選択してください")
+                return
+
+            index = selected[0]
+            del self.events[date_key][index]
+            if not self.events[date_key]:
+                del self.events[date_key]
+            save_events(self.events)
+            listbox.delete(index)
+            self.show_calendar()
+
+        delete_button = tk.Button(window, text="選択した予定を削除", command=delete_event_action) #削除ボタン
+        delete_button.pack(pady=5)
+
+        window.transient(self.root)
+        window.grab_set()
+        window.wait_window()
+    
     def run(self):
         self.root.mainloop()
