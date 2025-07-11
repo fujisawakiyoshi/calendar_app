@@ -37,11 +37,18 @@ class MainWindow:
         next_button = tk.Button(header_frame, text="次月 ＞", command=self.go_next_month)
         next_button.pack(side="left")
 
+        # ⭐ 時刻ラベルを追加
+        self.clock_label = tk.Label(self.root, font=("Arial", 12))
+        self.clock_label.pack()
+
         # カレンダーフレーム
         self.calendar_frame = tk.Frame(self.root)
         self.calendar_frame.pack()
 
         self.show_calendar()
+
+        # 時刻更新を開始
+        self.update_clock()
 
     def show_calendar(self):
         # カレンダークリア
@@ -174,6 +181,11 @@ class MainWindow:
         window.transient(self.root)
         window.grab_set()
         window.wait_window()
+        
+    def update_clock(self):
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.clock_label.config(text=f"現在時刻: {now}")
+        self.root.after(1000, self.update_clock)
     
     def run(self):
         self.root.mainloop()
