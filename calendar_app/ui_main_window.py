@@ -60,6 +60,9 @@ class MainWindow:
             for col_idx, day in enumerate(week):
                 text = "" if day == 0 else str(day)
 
+                date_key = f"{self.current_year}-{self.current_month:02d}-{day:02d}"
+                is_holiday = day != 0 and date_key in self.holidays
+
                 # デフォルト背景
                 bg_color = "white"
 
@@ -71,6 +74,10 @@ class MainWindow:
                     and day == today_day
                 ):
                     bg_color = "lightblue"
+
+                # 祝日は赤に
+                if is_holiday:
+                    bg_color = "pink"
 
                 label = tk.Label(
                     self.calendar_frame,
@@ -85,7 +92,6 @@ class MainWindow:
 
         # ヘッダー年月を更新
         self.header_label.config(text=f"{self.current_year}年 {self.current_month}月")
-
 
     def go_prev_month(self):
         if self.current_month == 1:

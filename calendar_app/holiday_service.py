@@ -16,6 +16,13 @@ def fetch_holidays_from_api(year):
         print("API取得失敗:", e)
         return {}
 
+def load_holiday_cache():
+    """キャッシュファイル読み込み"""
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
 def save_holiday_cache(data):
     """キャッシュファイル保存"""
     os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
