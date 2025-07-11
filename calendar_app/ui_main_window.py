@@ -11,7 +11,7 @@ import tkinter.messagebox as messagebox
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("カレンダーアプリ")
+        self.root.title("Desktop Calendar")
         self.root.geometry("400x400")
         self.holidays = load_holiday_cache()
         self.events = load_events()
