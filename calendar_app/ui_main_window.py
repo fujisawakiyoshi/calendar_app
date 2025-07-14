@@ -8,6 +8,8 @@ from event_manager import save_events
 import tkinter.simpledialog as simpledialog
 import tkinter.messagebox as messagebox
 
+from clock_widget import ClockWidget
+
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
@@ -36,19 +38,15 @@ class MainWindow:
 
         next_button = tk.Button(header_frame, text="次月 ＞", command=self.go_next_month)
         next_button.pack(side="left")
-
-        # ⭐ 時刻ラベルを追加
-        self.clock_label = tk.Label(self.root, font=("Arial", 12))
-        self.clock_label.pack()
-
-        # カレンダーフレーム
+        
+        # カレンダー表示フレーム
         self.calendar_frame = tk.Frame(self.root)
         self.calendar_frame.pack()
 
+        # 初回表示
         self.show_calendar()
-
-        # 時刻更新を開始
-        self.update_clock()
+        
+        self.clock = ClockWidget(self.root)
 
     def show_calendar(self):
         # カレンダークリア
@@ -76,7 +74,6 @@ class MainWindow:
                 date_key = f"{self.current_year}-{self.current_month:02d}-{day:02d}"
                 is_holiday = day != 0 and date_key in self.holidays
                 has_event = day != 0 and date_key in self.events
-
 
                 # デフォルト背景
                 bg_color = "white"
@@ -181,11 +178,6 @@ class MainWindow:
         window.transient(self.root)
         window.grab_set()
         window.wait_window()
-        
-    def update_clock(self):
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.clock_label.config(text=f"現在時刻: {now}")
-        self.root.after(1000, self.update_clock)
     
     def run(self):
         self.root.mainloop()
