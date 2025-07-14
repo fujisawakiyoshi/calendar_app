@@ -26,16 +26,21 @@ class MainWindow:
     def setup_ui(self):
         # ヘッダー：前月・次月ボタン
         header_frame = tk.Frame(self.root)
-        header_frame.pack(pady=10)
+        header_frame.pack(pady=10, anchor="center")
 
         prev_button = tk.Button(header_frame, text="＜ 前月", command=self.go_prev_month)
-        prev_button.pack(side="left")
+        prev_button.grid(row=0, column=0, padx=10)
 
-        self.header_label = tk.Label(header_frame, text=f"{self.current_year}年 {self.current_month}月")
-        self.header_label.pack(side="left", padx=10)
+        self.header_label = tk.Label(
+            header_frame,
+            text=f"{self.current_year}年 {self.current_month}月",
+            font=("Helvetica", 16, "bold")
+        )
+        self.header_label.grid(row=0, column=1, padx=20)
 
         next_button = tk.Button(header_frame, text="次月 ＞", command=self.go_next_month)
-        next_button.pack(side="left")
+        next_button.grid(row=0, column=2, padx=10)
+
         
         # カレンダー表示フレーム
         self.calendar_frame = tk.Frame(self.root)

@@ -32,6 +32,9 @@ class EventDialog:
 
         delete_button = tk.Button(self.window, text="選択した予定を削除", command=self.delete_event)
         delete_button.pack(pady=5)
+        
+        edit_button = tk.Button(self.window, text="選択した予定を編集", command=self.edit_event)
+        edit_button.pack(pady=5)
 
     def add_event(self):
         new_event = simpledialog.askstring("予定追加", "新しい予定を入力してください")
@@ -56,3 +59,25 @@ class EventDialog:
         save_events(self.events)
         self.listbox.delete(index)
         self.on_update_callback()
+
+    def edit_event(self):
+        selected = self.listbox.curselection()
+        if not selected:
+            messagebox.showwarning("警告", "編集する予定を選択してください")
+            return
+
+        index = selected[0]
+        current_text = self.listbox.get(index)
+
+        new_event = simpledialog.askstring(
+            "予定を編集",
+            "新しい予定を入力してください",
+            initialvalue=current_text
+        )
+
+        if new_event:
+            self.events[self.date_key][index] = new_event
+            save_events(self.events)
+            self.listbox.delete(index)
+            self.listbox.insert(index, new_event)
+            self.on_update_callback()
