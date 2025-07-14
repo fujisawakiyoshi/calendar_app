@@ -3,10 +3,6 @@ from datetime import datetime
 from calendar_renderer import generate_calendar_matrix
 from holiday_service import load_holiday_cache
 from event_manager import load_events
-from tkinter import simpledialog, messagebox
-from event_manager import save_events
-import tkinter.simpledialog as simpledialog
-import tkinter.messagebox as messagebox
 
 from clock_widget import ClockWidget
 from event_dialog import EventDialog
