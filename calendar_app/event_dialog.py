@@ -25,7 +25,8 @@ class EventDialog:
         self.listbox = tk.Listbox(self.window, width=40)
         self.listbox.pack()
         for item in events_list:
-            self.listbox.insert(tk.END, item)
+            display_text = f"{item['title']} ({item['time']})"
+            self.listbox.insert(tk.END, display_text)
 
         add_button = tk.Button(self.window, text="予定を追加", command=self.add_event)
         add_button.pack(pady=5)
@@ -37,14 +38,31 @@ class EventDialog:
         edit_button.pack(pady=5)
 
     def add_event(self):
-        new_event = simpledialog.askstring("予定追加", "新しい予定を入力してください")
-        if new_event:
-            if self.date_key not in self.events:
-                self.events[self.date_key] = []
-            self.events[self.date_key].append(new_event)
-            save_events(self.events)
-            self.listbox.insert(tk.END, new_event)
-            self.on_update_callback()
+        title = simpledialog.askstring("予定のタイトル", "タイトルを入力してください")
+        if not title:
+            return
+
+        time = simpledialog.askstring("予定の時間", "時間を入力してください（例: 14:00）")
+        if time is None:
+            time = ""
+
+        memo = simpledialog.askstring("メモ", "メモを入力してください")
+        if memo is None:
+            memo = ""
+
+        new_event = {
+            "title": title,
+            "time": time,
+            "memo": memo
+        }
+
+        if self.date_key not in self.events:
+            self.events[self.date_key] = []
+
+        self.events[self.date_key].append(new_event)
+        save_events(self.events)
+        self.listbox.insert(tk.END, f"{title} ({time})")
+        self.on_update_callback()
 
     def delete_event(self):
         selected = self.listbox.curselection()

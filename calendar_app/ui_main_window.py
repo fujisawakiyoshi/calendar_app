@@ -133,7 +133,6 @@ class MainWindow:
         self.holidays = get_holidays_for_year(self.current_year)
         self.show_calendar()
         
-
     def go_next_month(self):
         if self.current_month == 12:
             self.current_month = 1

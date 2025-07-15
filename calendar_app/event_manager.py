@@ -14,10 +14,15 @@ def save_events(data):
     with open(EVENTS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-def add_event(events, date_str, text):
+def add_event(events, date_str, title, time="", memo=""):
     if date_str not in events:
         events[date_str] = []
-    events[date_str].append(text)
+    new_event = {
+        "title": title,
+        "time": time,
+        "memo": memo
+    }
+    events[date_str].append(new_event)
     save_events(events)
 
 def delete_event(events, date_str, index):

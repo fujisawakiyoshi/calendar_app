@@ -49,7 +49,7 @@ def get_holidays_for_year(year):
         save_holiday_cache(holidays_cache)
     return data
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     """API取得するための確認"""
     target_year = 2025
     holidays = fetch_holidays_from_api(target_year)
