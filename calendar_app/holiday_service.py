@@ -13,7 +13,7 @@ def fetch_holidays_from_api(year):
         data = res.json()
         return data
     except Exception as e:
-        print("API取得失敗:", e)
+        print(f"API取得失敗({year}):", e)
         return {}
 
 def load_holiday_cache():
@@ -29,7 +29,28 @@ def save_holiday_cache(data):
     with open(CACHE_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+def get_holidays_for_year(year):
+    """
+    この関数をMainWindowで使うイメージ
+    - キャッシュを読み込む
+    - 欲しい年がなければAPIから取得
+    - キャッシュに保存
+    - その年のデータを返す
+    """
+    holidays_cache = load_holiday_cache()
+    
+    if str(year) in holidays_cache:
+        return holidays_cache[str(year)]
+    
+    print(f"キャッシュに{year}年がないのでAPIから取得します")
+    data = fetch_holidays_from_api(year)
+    if data:
+        holidays_cache[str(year)] = data
+        save_holiday_cache(holidays_cache)
+    return data
+
 if __name__ == "__main__":
+    """API取得するための確認"""
     target_year = 2025
     holidays = fetch_holidays_from_api(target_year)
     if holidays:
