@@ -8,7 +8,6 @@ from event_manager import load_events
 from clock_widget import ClockWidget
 from event_dialog import EventDialog
 
-# 上品なペールカラー
 COLOR_DEFAULT = "#FFFFFF"
 COLOR_SUNDAY = "#FADCD9"
 COLOR_SATURDAY = "#DCEEF9"
@@ -26,7 +25,7 @@ class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Desktop Calendar")
-        self.root.geometry("600x600")  # コンパクトめで上品に
+        self.root.geometry("600x600") 
 
         # 現在年月日
         today = datetime.today()
@@ -44,42 +43,6 @@ class MainWindow:
         # メイン全体レイアウト用フレーム
         main_frame = tk.Frame(self.root, bg="#F7F7F7")
         main_frame.pack(fill="both", expand=True)
-
-        # -------------------- ヘッダー --------------------
-        header_frame = tk.Frame(main_frame, bg=COLOR_HEADER_BG)
-        header_frame.pack(fill="x", pady=5)
-
-        prev_button = tk.Button(
-            header_frame,
-            text="＜ 前月",
-            command=self.go_prev_month,
-            bg=BUTTON_BG_COLOR,
-            fg=BUTTON_FG_COLOR,
-            relief="flat",
-            font=("Arial", 11)
-        )
-        prev_button.pack(side="left", padx=10, pady=5)
-
-        self.header_label = tk.Label(
-            header_frame,
-            text=f"{self.current_year}年 {self.current_month}月",
-            font=("Arial", 16, "bold"),
-            fg=BUTTON_FG_COLOR,
-            bg=COLOR_HEADER_BG,
-            pady=5
-        )
-        self.header_label.pack(side="left", padx=20)
-
-        next_button = tk.Button(
-            header_frame,
-            text="次月 ＞",
-            command=self.go_next_month,
-            bg=BUTTON_BG_COLOR,
-            fg=BUTTON_FG_COLOR,
-            relief="flat",
-            font=("Arial", 11)
-        )
-        next_button.pack(side="left", padx=10, pady=5)
 
         # -------------------- カレンダー本体 --------------------
         self.calendar_frame = tk.Frame(main_frame, bg="#F7F7F7")
@@ -101,6 +64,39 @@ class MainWindow:
         today_month = today.month
         today_day = today.day
 
+        # -------------------- カレンダーヘッダー行（前月/年月/次月） --------------------
+        prev_button = tk.Button(
+            self.calendar_frame,
+            text="＜",
+            command=self.go_prev_month,
+            bg=BUTTON_BG_COLOR,
+            fg=BUTTON_FG_COLOR,
+            relief="flat",
+            font=("Arial", 12)
+        )
+        prev_button.grid(row=0, column=0, sticky="e", padx=5, pady=5)
+
+        self.header_label = tk.Label(
+            self.calendar_frame,
+            text=f"{self.current_year}年 {self.current_month}月",
+            font=("Arial", 14, "bold"),
+            bg="#FFFFFF",
+            fg=BUTTON_FG_COLOR,
+            pady=5
+        )
+        self.header_label.grid(row=0, column=1, columnspan=5, padx=5, pady=5)
+
+        next_button = tk.Button(
+            self.calendar_frame,
+            text="＞",
+            command=self.go_next_month,
+            bg=BUTTON_BG_COLOR,
+            fg=BUTTON_FG_COLOR,
+            relief="flat",
+            font=("Arial", 12)
+        )
+        next_button.grid(row=0, column=6, sticky="w", padx=5, pady=5)
+
         # -------------- 曜日ヘッダ --------------
         days = ["日", "月", "火", "水", "木", "金", "土"]
         for idx, day in enumerate(days):
@@ -115,11 +111,12 @@ class MainWindow:
                 bg=COLOR_WEEKDAY_HEADER_BG,
                 fg="#444444"
             )
-            label.grid(row=0, column=idx, padx=1, pady=1)
+            label.grid(row=1, column=idx, padx=1, pady=1)
+
 
         # -------------- カレンダーマス目 --------------
         matrix = generate_calendar_matrix(self.current_year, self.current_month)
-        for row_idx, week in enumerate(matrix, start=1):
+        for row_idx, week in enumerate(matrix, start=2):
             for col_idx, day in enumerate(week):
                 text = "" if day == 0 else str(day)
                 date_key = f"{self.current_year}-{self.current_month:02d}-{day:02d}"
