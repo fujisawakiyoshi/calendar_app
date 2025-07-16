@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
-from event_manager import save_events
-from event_edit_dialog import EditDialog
+from services.event_manager import save_events
+from ui.event_edit_dialog import EditDialog
 
 # 色コード
 DIALOG_BG_COLOR = "#FFFFFF"
