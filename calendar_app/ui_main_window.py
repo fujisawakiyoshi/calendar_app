@@ -1,7 +1,6 @@
 import tkinter as tk
 from datetime import datetime
 
-from calendar_renderer import generate_calendar_matrix
 from holiday_service import get_holidays_for_year
 from event_manager import load_events
 

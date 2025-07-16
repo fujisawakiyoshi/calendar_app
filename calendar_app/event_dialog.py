@@ -141,21 +141,31 @@ class EventDialog:
         index = selected[0]
         current_text = self.events[self.date_key][index]
 
-        # タイトル（時間）をパース
+        # --- タイトル（時間）をパース ---
         if "（" in current_text and "）" in current_text:
             title = current_text.split("（")[0]
-            time = current_text.split("（")[1].replace("）", "")
+            time_part = current_text.split("（")[1].replace("）", "")
         else:
             title = current_text
-            time = ""
+            time_part = ""
 
+        # --- 時間帯を「開始 - 終了」に分割 ---
+        if " - " in time_part:
+            start_time, end_time = time_part.split(" - ")
+        else:
+            start_time = time_part
+            end_time = ""
+
+        # --- ダイアログ呼び出し ---
         dialog = EditDialog(
             self.window,
             "予定の編集",
             default_title=title,
-            default_time=time,
+            default_start_time=start_time,
+            default_end_time=end_time,
             default_content=""
         )
+
         if dialog.result:
             new_title, new_time, new_content = dialog.result
             new_text = f"{new_title}（{new_time}）" if new_time else new_title
