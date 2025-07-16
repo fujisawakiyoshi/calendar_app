@@ -8,116 +8,164 @@ from event_manager import load_events
 from clock_widget import ClockWidget
 from event_dialog import EventDialog
 
+# 上品なペールカラー
+COLOR_DEFAULT = "#FFFFFF"
+COLOR_SUNDAY = "#FADCD9"
+COLOR_SATURDAY = "#DCEEF9"
+COLOR_HOLIDAY = "#F6CACA"
+COLOR_TODAY = "#C8E4F7"
+COLOR_EVENT = "#FFF4CC"
+
+COLOR_HEADER_BG = "#CFE9D6"
+COLOR_WEEKDAY_HEADER_BG = "#EAF6ED"
+
+BUTTON_BG_COLOR = "#FFFFFF"
+BUTTON_FG_COLOR = "#444444"
 
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Desktop Calendar")
-        self.root.geometry("400x400")
-        
+        self.root.geometry("600x600")  # コンパクトめで上品に
+
         # 現在年月日
         today = datetime.today()
         self.current_year = today.year
         self.current_month = today.month
-        
-        # 祝日データを読み込む"
+
+        # データ読み込み
         self.holidays = get_holidays_for_year(self.current_year)
-        # 予定データをファイルから読み込む"
         self.events = load_events()
-        # 画面をレイアウトする処理へ
+
+        # UIセットアップ
         self.setup_ui()
 
     def setup_ui(self):
-        # ヘッダー：前月・次月ボタン
-        header_frame = tk.Frame(self.root)
-        header_frame.pack(pady=10, anchor="center")
-        
-        # 前月ボタン → クリックで go_prev_month
-        prev_button = tk.Button(header_frame, text="＜ 前月", command=self.go_prev_month)
-        prev_button.grid(row=0, column=0, padx=10)
-        
-        # 今表示中の「年月」を大きく表示
+        # メイン全体レイアウト用フレーム
+        main_frame = tk.Frame(self.root, bg="#F7F7F7")
+        main_frame.pack(fill="both", expand=True)
+
+        # -------------------- ヘッダー --------------------
+        header_frame = tk.Frame(main_frame, bg=COLOR_HEADER_BG)
+        header_frame.pack(fill="x", pady=5)
+
+        prev_button = tk.Button(
+            header_frame,
+            text="＜ 前月",
+            command=self.go_prev_month,
+            bg=BUTTON_BG_COLOR,
+            fg=BUTTON_FG_COLOR,
+            relief="flat",
+            font=("Arial", 11)
+        )
+        prev_button.pack(side="left", padx=10, pady=5)
+
         self.header_label = tk.Label(
             header_frame,
             text=f"{self.current_year}年 {self.current_month}月",
-            font=("Helvetica", 16, "bold")
+            font=("Arial", 16, "bold"),
+            fg=BUTTON_FG_COLOR,
+            bg=COLOR_HEADER_BG,
+            pady=5
         )
-        self.header_label.grid(row=0, column=1, padx=20)
-        
-        #次月ボタン → クリックで go_next_month
-        next_button = tk.Button(header_frame, text="次月 ＞", command=self.go_next_month)
-        next_button.grid(row=0, column=2, padx=10)
-        
-        # カレンダーのマス目を入れるフレーム
-        self.calendar_frame = tk.Frame(self.root)
-        self.calendar_frame.pack()
+        self.header_label.pack(side="left", padx=20)
 
-        # カレンダーを最初に描画
+        next_button = tk.Button(
+            header_frame,
+            text="次月 ＞",
+            command=self.go_next_month,
+            bg=BUTTON_BG_COLOR,
+            fg=BUTTON_FG_COLOR,
+            relief="flat",
+            font=("Arial", 11)
+        )
+        next_button.pack(side="left", padx=10, pady=5)
+
+        # -------------------- カレンダー本体 --------------------
+        self.calendar_frame = tk.Frame(main_frame, bg="#F7F7F7")
+        self.calendar_frame.pack(pady=10)
+
         self.show_calendar()
-        #時計を取り込む
-        self.clock = ClockWidget(self.root)
+
+        # -------------------- 時計を右下に --------------------
+        clock_frame = tk.Frame(main_frame, bg="#F7F7F7")
+        clock_frame.pack(fill="both", expand=True)
+        self.clock = ClockWidget(clock_frame)
 
     def show_calendar(self):
-        # カレンダークリア
         for widget in self.calendar_frame.winfo_children():
             widget.destroy()
 
-        # 今日の日付情報
         today = datetime.today()
         today_year = today.year
         today_month = today.month
         today_day = today.day
 
-        # 曜日ヘッダ
+        # -------------- 曜日ヘッダ --------------
         days = ["日", "月", "火", "水", "木", "金", "土"]
         for idx, day in enumerate(days):
-            label = tk.Label(self.calendar_frame, text=day, borderwidth=1, relief="solid", width=5)
-            label.grid(row=0, column=idx)
+            label = tk.Label(
+                self.calendar_frame,
+                text=day,
+                borderwidth=1,
+                relief="ridge",
+                width=8,
+                height=2,
+                font=("Arial", 12, "bold"),
+                bg=COLOR_WEEKDAY_HEADER_BG,
+                fg="#444444"
+            )
+            label.grid(row=0, column=idx, padx=1, pady=1)
 
-        # カレンダーの行列を生成
+        # -------------- カレンダーマス目 --------------
         matrix = generate_calendar_matrix(self.current_year, self.current_month)
-        # 描画ループ
         for row_idx, week in enumerate(matrix, start=1):
             for col_idx, day in enumerate(week):
                 text = "" if day == 0 else str(day)
-
                 date_key = f"{self.current_year}-{self.current_month:02d}-{day:02d}"
+
                 is_holiday = day != 0 and date_key in self.holidays
                 has_event = day != 0 and date_key in self.events
 
-                # デフォルト背景
-                bg_color = "white"
+                is_sunday = (col_idx == 0)
+                is_saturday = (col_idx == 6)
 
-                # 今日の日付をハイライト
-                if (
+                # 背景色優先順位
+                if has_event:
+                    bg_color = COLOR_EVENT
+                elif (
                     day != 0
                     and self.current_year == today_year
                     and self.current_month == today_month
                     and day == today_day
                 ):
-                    bg_color = "lightblue"
+                    bg_color = COLOR_TODAY
+                elif is_holiday:
+                    bg_color = COLOR_HOLIDAY
+                elif is_sunday:
+                    bg_color = COLOR_SUNDAY
+                elif is_saturday:
+                    bg_color = COLOR_SATURDAY
+                else:
+                    bg_color = COLOR_DEFAULT
 
-                # 祝日は赤に
-                if is_holiday:
-                    bg_color = "pink"
-                
-                # 予定
-                if has_event:
-                    bg_color = "yellow"
-
+                # セル作成
                 label = tk.Label(
                     self.calendar_frame,
                     text=text,
                     borderwidth=1,
-                    relief="solid",
-                    width=5,
-                    height=2,
-                    bg=bg_color
+                    relief="ridge",
+                    width=8,
+                    height=3,
+                    font=("Arial", 12),
+                    bg=bg_color,
+                    fg="#333333"
                 )
-                # ⭐ 日付をクリックで予定ダイアログを開く
+
                 if day != 0:
                     label.bind("<Button-1>", lambda e, d=date_key: self.open_event_dialog(d))
-                label.grid(row=row_idx, column=col_idx)
+
+                label.grid(row=row_idx, column=col_idx, padx=1, pady=1)
 
         # ヘッダー年月を更新
         self.header_label.config(text=f"{self.current_year}年 {self.current_month}月")
@@ -128,24 +176,20 @@ class MainWindow:
             self.current_year -= 1
         else:
             self.current_month -= 1
-        self.show_calendar()
-        # 年が変わったら祝日データも取る
         self.holidays = get_holidays_for_year(self.current_year)
         self.show_calendar()
-        
+
     def go_next_month(self):
         if self.current_month == 12:
             self.current_month = 1
             self.current_year += 1
         else:
             self.current_month += 1
-        self.show_calendar()
-        # 年が変わったら祝日データも取る
         self.holidays = get_holidays_for_year(self.current_year)
         self.show_calendar()
 
     def open_event_dialog(self, date_key):
         EventDialog(self.root, date_key, self.events, self.show_calendar)
-    
+
     def run(self):
         self.root.mainloop()
