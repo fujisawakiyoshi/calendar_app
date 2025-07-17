@@ -30,6 +30,7 @@ class EventDialog:
         self.window.resizable(False, False)
 
         self.create_widgets()
+
         self.window.transient(self.parent)
         self.window.grab_set()
         self.window.wait_window()

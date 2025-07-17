@@ -1,56 +1,49 @@
 
-# -----calendar_view用-----
-# 一般背景
-COLOR_DEFAULT = "#FFFFFF"
-COLOR_HEADER_BG = "#F7F7F7"
-COLOR_WEEKDAY_HEADER_BG = "#EAF6ED"
+# 色（Color Palette）
+COLORS = {
+    "default_bg": "#FFFFFF",
+    "header_bg": "#F7F7F7",
+    "weekday_header_bg": "#EAF6ED",
+    "text": "#333333",
+    "sunday": "#FADCD9",
+    "saturday": "#DCEEF9",
+    "holiday": "#F6CACA",
+    "today": "#C8E4F7",
+    "event": "#FFF4CC",
+    "button_bg": "#FFFFFF",
+    "button_fg": "#444444",
+    "dialog_bg": "#FFFFFF",
+    "dialog_section_bg": "#EAF6ED",
+}
 
-# 日付セルの色
-COLOR_SUNDAY = "#FADCD9"
-COLOR_SATURDAY = "#DCEEF9"
-COLOR_HOLIDAY = "#F6CACA"
-COLOR_TODAY = "#C8E4F7"
-COLOR_EVENT = "#FFF4CC"
+# 個別の定数
+DIALOG_BG_COLOR = COLORS["dialog_bg"]
+BUTTON_BG_COLOR = COLORS["button_bg"]
+BUTTON_FG_COLOR = COLORS["button_fg"]
 
-# ボタン
-BUTTON_BG_COLOR = "#FFFFFF"
-BUTTON_FG_COLOR = "#444444"
+# フォント（Font Styles）
+FONTS = {
+    "base": ("Arial", 11),
+    "bold": ("Arial", 11, "bold"),
+    "header": ("Arial", 14, "bold"),
+    "dialog_title": ("Arial", 13, "bold"),
+    "button": ("Arial", 12),
+}
 
-# ダイアログ背景
-DIALOG_BG_COLOR = "#FFFFFF"
-DIALOG_SECTION_BG = "#EAF6ED"
 
-
-# -----event_edoy_dialog用-----
+# 定数リスト（選択肢）
 TITLE_CHOICES = [
-    "会議/打合せ",
-    "来客",
-    "外出",
-    "出張",
-    "休暇",
-    "私用",
-    "その他"
+    "会議/打合せ", "来客", "外出", "出張", "休暇", "私用", "その他"
 ]
 
 TIME_CHOICES = [
-    "07:00", "07:30",
-    "08:00", "08:30",
-    "09:00", "09:30",
-    "10:00", "10:30",
-    "11:00", "11:30",
-    "12:00", "12:30",
-    "13:00", "13:30",
-    "14:00", "14:30",
-    "15:00", "15:30",
-    "16:00", "16:30",
-    "17:00", "17:30",
-    "18:00", "18:30",
-    "19:00", "19:30",
-    "20:00", "20:30",
-    "21:00", "21:30",
+    f"{h:02d}:{m:02d}"
+    for h in range(7, 22)
+    for m in (0, 30)
 ]
 
-# 色コード定義（上品ペールカラー統一テーマ）
+
+# event_edit_dialog用の色コード定義
 DIALOG_BG_COLOR = "#FFFFFF"
 BUTTON_BG_COLOR = "#FFFFFF"
 BUTTON_FG_COLOR = "#444444"

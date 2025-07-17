@@ -35,7 +35,7 @@ class EditDialog:
 
         # ウィジェットを生成
         self.create_widgets(default_title, default_content)
-
+  
         self.window.transient(parent)
         self.window.grab_set()
         self.window.wait_window()

@@ -2,11 +2,7 @@ import tkinter as tk
 from datetime import datetime
 
 from calendar_renderer import generate_calendar_matrix
-from ui.theme import (
-    COLOR_DEFAULT, COLOR_SUNDAY, COLOR_SATURDAY, COLOR_HOLIDAY, COLOR_TODAY, COLOR_EVENT,
-    COLOR_HEADER_BG, COLOR_WEEKDAY_HEADER_BG,
-    BUTTON_BG_COLOR, BUTTON_FG_COLOR
-)
+from ui.theme import COLORS, FONTS
 from ui.tooltip import ToolTip
 
 class CalendarView:
@@ -33,7 +29,7 @@ class CalendarView:
         self.on_next = on_next
 
         # カレンダー表示用フレーム
-        self.frame = tk.Frame(self.parent, bg=COLOR_HEADER_BG)
+        self.frame = tk.Frame(self.parent, bg=COLORS["header_bg"])
         self.frame.pack(pady=10)
 
         # 最初に描画
@@ -60,25 +56,27 @@ class CalendarView:
         """月移動用のナビゲーション（＜ 年月 ＞）を描画する"""
         prev_button = tk.Button(
             self.frame, text="＜", command=self.on_prev,
-            bg=BUTTON_BG_COLOR, fg=BUTTON_FG_COLOR,
-            relief="flat", font=("Arial", 12)
+            bg = COLORS["header_bg"], 
+            fg = COLORS["button_fg"],
+            relief="flat", font=FONTS["button"]
         )
         prev_button.grid(row=0, column=0, sticky="e", padx=5, pady=5)
 
         self.header_label = tk.Label(
             self.frame,
             text=f"{self.year}年 {self.month}月",
-            font=("Arial", 14, "bold"),
-            bg=COLOR_HEADER_BG,
-            fg=BUTTON_FG_COLOR,
+            font=FONTS["header"],
+            bg = COLORS["header_bg"],
+            fg = COLORS["button_fg"],
             padx=20, pady=8
         )
         self.header_label.grid(row=0, column=1, columnspan=5, padx=5, pady=5, sticky="nsew")
 
         next_button = tk.Button(
-            self.frame, text="＞", command=self.on_next,
-            bg=BUTTON_BG_COLOR, fg=BUTTON_FG_COLOR,
-            relief="flat", font=("Arial", 12)
+            self.frame, text="＞", command = self.on_next,
+            bg = COLORS["header_bg"],
+            fg = COLORS["button_fg"],
+            relief = "flat", font = FONTS["button"]
         )
         next_button.grid(row=0, column=6, sticky="w", padx=5, pady=5)
 
@@ -92,15 +90,16 @@ class CalendarView:
                 borderwidth=0,
                 relief="flat",
                 width=6, height=2,
-                font=("Arial", 11, "bold"),
-                bg=COLOR_WEEKDAY_HEADER_BG,
-                fg="#333333",
+                font=FONTS["bold"],
+                bg=COLORS["weekday_header_bg"],
+                fg=COLORS["text"],
                 padx=3, pady=3
             )
             day_label.grid(row=1, column=idx, padx=1, pady=1)
 
     def draw_days(self):
-        """実際の日付セル（1〜31）を描画する
+        """
+        実際の日付セル（1〜31）を描画する。
 
         - 日付セルクリックでイベントダイアログを開く
         - ツールチップで予定を表示（存在する場合）
@@ -123,7 +122,7 @@ class CalendarView:
                     relief="ridge",
                     width=6,
                     height=2,
-                    font=("Arial", 11),
+                    font=FONTS["base"],
                     bg=bg_color,
                     fg="#333333",
                     padx=3,
@@ -147,18 +146,27 @@ class CalendarView:
                 label.grid(row=row_idx, column=col_idx, padx=1, pady=1)
              
     def get_day_cell_color(self, day, col_idx, date_key, today):
-        """日付セルの背景色を条件に応じて決定する"""
+        """日付セルの背景色を条件に応じて決定する。"""
+        # 最優先: イベントあり ---
         if day == 0:
-            return COLOR_DEFAULT
+            return COLORS["default_bg"]
+        # 今日
         if date_key in self.events:
-            return COLOR_EVENT
+            return COLORS["event"]
+        # 祝日
         if (self.year == today.year and self.month == today.month and day == today.day):
-            return COLOR_TODAY
+            return COLORS["today"]
+        # 土日
         if date_key in self.holidays:
-            return COLOR_HOLIDAY
+            return COLORS["holiday"]
         if col_idx == 0:
-            return COLOR_SUNDAY
+            return COLORS["sunday"]
         if col_idx == 6:
-            return COLOR_SATURDAY
-        return COLOR_DEFAULT
+            return COLORS["saturday"]
+        # 通常
+        return COLORS["default_bg"]
+
+
+
+
 
