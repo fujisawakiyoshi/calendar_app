@@ -1,11 +1,28 @@
 import tkinter as tk
 from tkinter import ttk
-from ui.constants import (
+from ui.theme import (
     TITLE_CHOICES, TIME_CHOICES, DIALOG_BG_COLOR, BUTTON_BG_COLOR, BUTTON_FG_COLOR
 )
 
 class EditDialog:
-    def __init__(self, parent, title, default_title="", default_start_time="", default_end_time="", default_content=""):
+    """イベントのタイトル・時間・内容を編集するためのダイアログ"""
+    def __init__(
+        self, 
+        parent, 
+        title, 
+        default_title="", 
+        default_start_time="", 
+        default_end_time="", 
+        default_content=""
+        ):
+        """
+        parent (tk.Widget): 親ウィンドウ。
+        title (str): ダイアログのタイトル。
+        default_title (str, optional): 初期タイトル値。
+        default_start_time (str, optional): 初期開始時間。
+        default_end_time (str, optional): 初期終了時間。
+        default_content (str, optional): 初期内容。
+        """
         self.result = None
 
         self.start_time_var = tk.StringVar(value=default_start_time)
@@ -24,11 +41,12 @@ class EditDialog:
         self.window.wait_window()
 
     def create_widgets(self, default_title, default_content):
-        # -------------------- フォームフレーム --------------------
+        """入力フィールド（タイトル、時間、内容）と操作ボタンを作成する。"""
+        # --- 入力フォームの外枠 ---
         form_frame = tk.Frame(self.window, bg=DIALOG_BG_COLOR)
         form_frame.pack(padx=20, pady=15, fill="x")
 
-        # --- タイトルラベル+入力 ---
+        # --- タイトル選択欄（コンボボックス） ---
         tk.Label(
             form_frame, text="タイトル（選択または入力）：", 
             bg=DIALOG_BG_COLOR,
@@ -45,7 +63,7 @@ class EditDialog:
         )
         self.title_entry.pack(fill="x", pady=(0,8))
 
-        # --- 開始時間 ---
+        # --- 開始時間選択欄 ---
         tk.Label(
             form_frame, text="開始時間（選択または入力）：",
             bg=DIALOG_BG_COLOR,
@@ -61,7 +79,7 @@ class EditDialog:
         )
         self.start_time_entry.pack(fill="x", pady=(0,8))
 
-        # --- 終了時間 ---
+        # --- 終了時間選択欄 ---
         tk.Label(
             form_frame, text="終了時間（選択または入力）：",
             bg=DIALOG_BG_COLOR,
@@ -77,7 +95,7 @@ class EditDialog:
         )
         self.end_time_entry.pack(fill="x", pady=(0,8))
 
-        # --- 内容 ---
+        # --- 内容入力欄 ---
         tk.Label(
             form_frame, text="内容：", bg=DIALOG_BG_COLOR,
             anchor="w", font=("Arial", 11)
@@ -90,7 +108,7 @@ class EditDialog:
         self.content_entry.insert(0, default_content)
         self.content_entry.pack(fill="x", pady=(0,8))
 
-        # -------------------- ボタン --------------------
+        # --- OK / Cancel ボタン ---
         button_frame = tk.Frame(self.window, bg=DIALOG_BG_COLOR)
         button_frame.pack(pady=10)
 
@@ -119,6 +137,7 @@ class EditDialog:
         cancel_button.pack(side="left", padx=10)
 
     def on_ok(self):
+        """ユーザーが入力したデータを result に格納し、ダイアログを閉じる。"""
         title = self.title_var.get()
         start_time = self.start_time_var.get()
         end_time = self.end_time_var.get()
