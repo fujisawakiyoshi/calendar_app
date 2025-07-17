@@ -149,10 +149,10 @@ class EditDialog:
         cancel_button.pack(side="left", padx=10)
 
     def on_ok(self):
-        self.result = (
-            self.title_entry.get(),
-            f"{self.start_time_var.get()} - {self.end_time_var.get()}",
-            self.content_entry.get()
-        )
+        title = self.title_var.get()
+        start_time = self.start_time_var.get()
+        end_time = self.end_time_var.get()
+        content = self.content_entry.get()
 
+        self.result = (title, start_time, end_time, content)
         self.window.destroy()
