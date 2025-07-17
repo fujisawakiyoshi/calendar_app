@@ -1,6 +1,7 @@
 from ui.main_window import MainWindow
 
 def main():
+    """アプリケーションを起動します。"""
     app = MainWindow()
     app.run()
 

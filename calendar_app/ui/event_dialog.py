@@ -2,12 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 from services.event_manager import save_events
 from ui.event_edit_dialog import EditDialog
+from ui.theme import COLORS
 
 # 色コード
-DIALOG_BG_COLOR = "#FFFFFF"
-DIALOG_SECTION_BG = "#EAF6ED"
-BUTTON_BG_COLOR = "#FFFFFF"
-BUTTON_FG_COLOR = "#444444"
 
 class EventDialog:
     """指定された日付のイベント一覧を表示・編集するダイアログ"""
@@ -26,7 +23,7 @@ class EventDialog:
 
         self.window = tk.Toplevel(self.parent)
         self.window.title(self.date_key)
-        self.window.configure(bg=DIALOG_BG_COLOR)
+        self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
 
         self.create_widgets()
@@ -43,8 +40,8 @@ class EventDialog:
             self.window,
             text=f"予定一覧（{self.date_key}）",
             font=("Arial", 13, "bold"),
-            bg=DIALOG_SECTION_BG,
-            fg=BUTTON_FG_COLOR,
+            bg=COLORS["dialog_section_bg"],
+            fg=COLORS["button_fg"],
             pady=8
         )
         section_label.pack(fill="x", pady=(5, 0))
@@ -56,7 +53,7 @@ class EventDialog:
             height=10,
             font=("Arial", 11),
             bg="#FFFFFF",
-            fg="#333333",
+           fg=COLORS["text"],
             relief="ridge",
             borderwidth=2
         )
@@ -65,15 +62,15 @@ class EventDialog:
         self.refresh_list()
 
         # --- 操作ボタン群（追加・削除・編集）---
-        button_frame = tk.Frame(self.window, bg=DIALOG_BG_COLOR)
+        button_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
         button_frame.pack(pady=10, padx=10)
 
         add_button = tk.Button(
             button_frame,
             text="予定追加 ⊕",
             command=self.add_event,
-            bg=BUTTON_BG_COLOR,
-            fg=BUTTON_FG_COLOR,
+            bg=COLORS["button_bg"],
+            fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 12),
             width=20,
@@ -85,8 +82,8 @@ class EventDialog:
             button_frame,
             text="削除",
             command=self.delete_event,
-            bg=BUTTON_BG_COLOR,
-            fg=BUTTON_FG_COLOR,
+            bg=COLORS["button_bg"],
+            fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 11),
             width=15,
@@ -98,8 +95,8 @@ class EventDialog:
             button_frame,
             text="編集",
             command=self.edit_event,
-            bg=BUTTON_BG_COLOR,
-            fg=BUTTON_FG_COLOR,
+            bg=COLORS["button_bg"],
+            fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 11),
             width=15,

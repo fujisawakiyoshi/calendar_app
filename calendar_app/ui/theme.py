@@ -1,5 +1,5 @@
 
-# 色（Color Palette）
+# 色
 COLORS = {
     "default_bg": "#FFFFFF",
     "header_bg": "#F7F7F7",
@@ -30,7 +30,6 @@ FONTS = {
     "button": ("Arial", 12),
 }
 
-
 # 定数リスト（選択肢）
 TITLE_CHOICES = [
     "会議/打合せ", "来客", "外出", "出張", "休暇", "私用", "その他"
@@ -41,9 +40,3 @@ TIME_CHOICES = [
     for h in range(7, 22)
     for m in (0, 30)
 ]
-
-
-# event_edit_dialog用の色コード定義
-DIALOG_BG_COLOR = "#FFFFFF"
-BUTTON_BG_COLOR = "#FFFFFF"
-BUTTON_FG_COLOR = "#444444"

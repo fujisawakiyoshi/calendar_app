@@ -1,7 +1,7 @@
 import tkinter as tk
 from datetime import datetime
 
-from calendar_renderer import generate_calendar_matrix
+from utils.calendar_utils import generate_calendar_matrix
 from ui.theme import COLORS, FONTS
 from ui.tooltip import ToolTip
 
@@ -124,7 +124,7 @@ class CalendarView:
                     height=2,
                     font=FONTS["base"],
                     bg=bg_color,
-                    fg="#333333",
+                   fg=COLORS["text"],
                     padx=3,
                     pady=3
                 )
@@ -165,8 +165,6 @@ class CalendarView:
             return COLORS["saturday"]
         # 通常
         return COLORS["default_bg"]
-
-
 
 
 
