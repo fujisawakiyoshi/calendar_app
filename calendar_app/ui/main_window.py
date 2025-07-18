@@ -1,3 +1,5 @@
+# ui/main_window.py
+
 import tkinter as tk
 from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
@@ -10,8 +12,9 @@ class MainWindow:
         # Tkルートウィンドウの初期設定
         self.root = tk.Tk()
         self.root.title("Desktop Calendar")
-        self.root.geometry("480x520+650+120")
+        self.root.geometry("550x550")                 # 少し大きめにして余白を確保
         self.root.configure(bg=COLORS["header_bg"])
+        self.root.resizable(True, True)
 
         # カレンダーの状態管理用 Controller を生成
         self.controller = CalendarController()
@@ -24,9 +27,10 @@ class MainWindow:
         main_frame = tk.Frame(self.root, bg=COLORS["header_bg"])
         main_frame.pack(fill="both", expand=True)
 
-        # カレンダー表示領域
+        # カレンダー表示領域を中央に
         self.calendar_container = tk.Frame(main_frame, bg=COLORS["header_bg"])
-        self.calendar_container.pack(pady=10)
+        self.calendar_container.pack(pady=20, fill="both", expand=True)
+
         self.show_calendar()
 
         # 時計ウィジェット
@@ -35,28 +39,26 @@ class MainWindow:
         ClockWidget(clock_frame)
 
     def show_calendar(self):
-        """Controller から最新データを取得し、CalendarView を描画"""
+        """Controller から最新データを取得し、CalendarView を中央に描画"""
         # 既存のカレンダーウィジェットをクリア
         for w in self.calendar_container.winfo_children():
             w.destroy()
 
-        year    = self.controller.current_year
-        month   = self.controller.current_month
-        holidays = self.controller.holidays
-        events   = self.controller.events
+        # カレンダーを中央揃えするためのラップフレーム
+        wrapper = tk.Frame(self.calendar_container, bg=COLORS["header_bg"])
+        wrapper.pack(expand=True)
 
         # カレンダー表示用コンポーネントに状態を渡す
         CalendarView(
-            parent=self.calendar_container,
-            year=year,
-            month=month,
-            holidays=holidays,
-            events=events,
+            parent=wrapper,
+            year=self.controller.current_year,
+            month=self.controller.current_month,
+            holidays=self.controller.holidays,
+            events=self.controller.events,
             on_date_click=self.open_event_dialog,
             on_prev=self.on_prev_click,
             on_next=self.on_next_click
         )
-
     def on_prev_click(self):
         """＜ボタン押下時：Controller で前月に移動し再描画"""
         self.controller.prev_month()
@@ -74,6 +76,9 @@ class MainWindow:
 
     def run(self):
         """アプリ起動"""
+        # ←→キーでも月移動できるようにバインド
+        self.root.bind("<Left>", lambda e: self.on_prev_click())
+        self.root.bind("<Right>", lambda e: self.on_next_click())
         self.root.mainloop()
 
 

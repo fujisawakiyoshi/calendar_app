@@ -1,155 +1,128 @@
+
+# ui/event_edit_dialog.py
+
 import tkinter as tk
 from tkinter import ttk
-from ui.theme import COLORS, TITLE_CHOICES, TIME_CHOICES
+from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
 
 class EditDialog:
     """イベントのタイトル・時間・内容を編集するためのダイアログ"""
-    def __init__(
-        self, 
-        parent, 
-        title, 
-        default_title="", 
-        default_start_time="", 
-        default_end_time="", 
-        default_content=""
-        ):
-        """
-        parent (tk.Widget): 親ウィンドウ。
-        title (str): ダイアログのタイトル。
-        default_title (str, optional): 初期タイトル値。
-        default_start_time (str, optional): 初期開始時間。
-        default_end_time (str, optional): 初期終了時間。
-        default_content (str, optional): 初期内容。
-        """
+    def __init__(self, parent, title,
+                 default_title="", default_start_time="",
+                 default_end_time="", default_content=""):  
         self.result = None
-
-        self.start_time_var = tk.StringVar(value=default_start_time)
-        self.end_time_var = tk.StringVar(value=default_end_time)
-
         self.window = tk.Toplevel(parent)
         self.window.title(title)
         self.window.configure(bg=COLORS["dialog_bg"])
-        self.window.resizable(True, True)
-        
-        # ウィンドウ中央に配置
-        w, h = 360, 300
-        screen_w = self.window.winfo_screenwidth()
-        screen_h = self.window.winfo_screenheight()
-        x = (screen_w - w) // 2
-        y = (screen_h - h) // 2
+        self.window.resizable(False, False)
+
+        # サイズ調整 & 中央表示
+        w, h = 280, 260
+        sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
+        x, y = (sw - w)//2, (sh - h)//2
         self.window.geometry(f"{w}x{h}+{x}+{y}")
-        
-        # ウィジェットを生成
-        self.create_widgets(default_title, default_content)
-  
+
+        # 変数
+        self.title_var = tk.StringVar(value=default_title)
+        self.start_var = tk.StringVar(value=default_start_time)
+        self.end_var   = tk.StringVar(value=default_end_time)
+        self.content_var = tk.StringVar(value=default_content)
+
+        self.create_widgets()
+        # 初期フォーカス
+        self.ent_title.focus_set()
         self.window.transient(parent)
         self.window.grab_set()
         self.window.wait_window()
 
-    def create_widgets(self, default_title, default_content):
-        """入力フィールド（タイトル、時間、内容）と操作ボタンを作成する。"""
-        # --- 入力フォームの外枠 ---
-        form_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        form_frame.pack(padx=20, pady=15, fill="x")
+    def _add_placeholder(self, widget, placeholder):
+        def on_focus_in(event):
+            if widget.get() == placeholder:
+                widget.delete(0, tk.END)
+                widget.config(fg=COLORS["text"])
+        def on_focus_out(event):
+            if not widget.get():
+                widget.insert(0, placeholder)
+                widget.config(fg="#888888")
+        widget.insert(0, placeholder)
+        widget.config(fg="#888888")
+        widget.bind('<FocusIn>', on_focus_in)
+        widget.bind('<FocusOut>', on_focus_out)
 
-        # --- タイトル選択欄（コンボボックス） ---
+    def create_widgets(self):
+        pad = 6
+        frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        frame.pack(fill="both", expand=True, padx=pad, pady=pad)
+
+        # タイトル
         tk.Label(
-            form_frame, text="タイトル（選択または入力）：", 
-            bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
-
-        self.title_var = tk.StringVar(value=default_title)
-        self.title_entry = ttk.Combobox(
-            form_frame,
-            textvariable=self.title_var,
+            frame, text="タイトル：", font=FONTS["small"],
+            bg=COLORS["dialog_bg"], fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0,2))
+        self.ent_title = ttk.Combobox(
+            frame, textvariable=self.title_var,
             values=TITLE_CHOICES,
-            state="normal",
-            font=("Arial", 11)
+            font=FONTS["small"], state="normal", takefocus=True
         )
-        self.title_entry.pack(fill="x", pady=(0,8))
+        self.ent_title.pack(fill="x", pady=(0,6))
 
-        # --- 開始時間選択欄 ---
+        # 開始時間
         tk.Label(
-            form_frame, text="開始時間（選択または入力）：",
-            bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
-
-        self.start_time_entry = ttk.Combobox(
-            form_frame,
-            textvariable=self.start_time_var,
+            frame, text="開始時間：", font=FONTS["small"],
+            bg=COLORS["dialog_bg"], fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0,2))
+        self.ent_start = ttk.Combobox(
+            frame, textvariable=self.start_var,
             values=TIME_CHOICES,
-            state="normal",
-            font=("Arial", 11)
+            font=FONTS["small"], state="normal", takefocus=True
         )
-        self.start_time_entry.pack(fill="x", pady=(0,8))
+        self.ent_start.pack(fill="x", pady=(0,6))
 
-        # --- 終了時間選択欄 ---
+        # 終了時間
         tk.Label(
-            form_frame, text="終了時間（選択または入力）：",
-            bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
-
-        self.end_time_entry = ttk.Combobox(
-            form_frame,
-            textvariable=self.end_time_var,
+            frame, text="終了時間：", font=FONTS["small"],
+            bg=COLORS["dialog_bg"], fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0,2))
+        self.ent_end = ttk.Combobox(
+            frame, textvariable=self.end_var,
             values=TIME_CHOICES,
-            state="normal",
-            font=("Arial", 11)
+            font=FONTS["small"], state="normal", takefocus=True
         )
-        self.end_time_entry.pack(fill="x", pady=(0,8))
+        self.ent_end.pack(fill="x", pady=(0,6))
 
-        # --- 内容入力欄 ---
+        # 内容
         tk.Label(
-            form_frame, text="内容：", bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
-
-        self.content_entry = tk.Entry(
-            form_frame, font=("Arial", 11),
-            relief="ridge", bd=1
+            frame, text="内容：", font=FONTS["small"],
+            bg=COLORS["dialog_bg"], fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0,2))
+        self.ent_content = tk.Entry(
+            frame, textvariable=self.content_var,
+            font=FONTS["small"], relief="flat", takefocus=True,
+            bg=COLORS["dialog_bg"], fg=COLORS["text"]
         )
-        self.content_entry.insert(0, default_content)
-        self.content_entry.pack(fill="x", pady=(0,8))
+        self.ent_content.pack(fill="x", pady=(0,6))
+        # コンテンツのみプレースホルダー設定
+        self._add_placeholder(self.ent_content, "メモを入力")
 
-        # --- OK / Cancel ボタン ---
-        button_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        button_frame.pack(pady=(3, 10))
-
-        ok_button = tk.Button(
-            button_frame,
-            text="OK",
-            command=self.on_ok,
-            bg=COLORS["button_bg"],
-            fg=COLORS["button_fg"],
-            relief="flat",
-            font=("Arial", 11),
-            width=10
-        )
-        ok_button.pack(side="left", padx=10)
-
-        cancel_button = tk.Button(
-            button_frame,
-            text="Cancel",
-            command=self.window.destroy,
-            bg=COLORS["button_bg"],
-            fg=COLORS["button_fg"],
-            relief="flat",
-            font=("Arial", 11),
-            width=10
-        )
-        cancel_button.pack(side="left", padx=10)
+        # ボタン
+        btn_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        btn_frame.pack(fill="x", padx=pad, pady=(0,pad))
+        tk.Button(
+            btn_frame, text="OK", command=self.on_ok,
+            font=FONTS["base"], bg=COLORS["dialog_bg"], fg=COLORS["text"],
+            relief="flat", borderwidth=0, padx=10, pady=4, takefocus=True
+        ).pack(side="left", expand=True, padx=4)
+        tk.Button(
+            btn_frame, text="キャンセル", command=self.window.destroy,
+            font=FONTS["base"], bg=COLORS["dialog_bg"], fg=COLORS["text"],
+            relief="flat", borderwidth=0, padx=10, pady=4, takefocus=True
+        ).pack(side="right", expand=True, padx=4)
 
     def on_ok(self):
-        """ユーザーが入力したデータを result に格納し、ダイアログを閉じる。"""
-        title = self.title_var.get()
-        start_time = self.start_time_var.get()
-        end_time = self.end_time_var.get()
-        content = self.content_entry.get()
-
-        self.result = (title, start_time, end_time, content)
+        self.result = (
+            self.title_var.get(),
+            self.start_var.get(),
+            self.end_var.get(),
+            self.content_var.get()
+        )
         self.window.destroy()
-
-

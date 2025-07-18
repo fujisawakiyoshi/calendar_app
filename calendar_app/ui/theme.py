@@ -17,6 +17,7 @@ COLORS = {
     "highlight": "#FFF4CC",
     "accent": "#C8E4F7",
     "bg": "#FFFFFF",
+    
 }
 
 # 個別の定数
@@ -31,6 +32,9 @@ FONTS = {
     "header": ("Arial", 14, "bold"),
     "dialog_title": ("Arial", 13, "bold"),
     "button": ("Arial", 12),
+    "header": ("游ゴシック", 14, "bold"),
+    "base":   ("游ゴシック", 12),
+    "small":  ("游ゴシック", 10),
 }
 
 # 定数リスト（選択肢）
