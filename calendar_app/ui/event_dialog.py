@@ -20,12 +20,15 @@ class EventDialog:
         self.date_key = date_key
         self.events = events
         self.on_update_callback = on_update_callback
-
+        
         self.window = tk.Toplevel(self.parent)
         self.window.title(self.date_key)
+        self.window.title(f"予定一覧{self.date_key}")
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
-
+        self.window.geometry("420x300+680+180")
+        self.window.resizable(True, True)
+        
         self.create_widgets()
 
         self.window.transient(self.parent)
@@ -34,7 +37,6 @@ class EventDialog:
 
     def create_widgets(self):
         """ダイアログ内のウィジェット（リスト・ボタン類）を作成する"""
-        
         # --- 上部タイトルラベル ---
         section_label = tk.Label(
             self.window,
@@ -49,21 +51,21 @@ class EventDialog:
         # --- イベント一覧（Listbox） ---
         self.listbox = tk.Listbox(
             self.window,
-            width=45,
-            height=10,
+            width=42,
+            height=6,
             font=("Arial", 11),
             bg="#FFFFFF",
            fg=COLORS["text"],
             relief="ridge",
             borderwidth=2
         )
-        self.listbox.pack(padx=15, pady=10)
+        self.listbox.pack(padx=15, pady=10, fill="both", expand=True)
 
         self.refresh_list()
 
         # --- 操作ボタン群（追加・削除・編集）---
         button_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        button_frame.pack(pady=10, padx=10)
+        button_frame.pack(pady=10, padx=10, fill="x")
 
         add_button = tk.Button(
             button_frame,
@@ -73,8 +75,8 @@ class EventDialog:
             fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 12),
-            width=20,
-            height=3
+            width=18,
+            height=2
         )
         add_button.grid(row=0, column=0, rowspan=2, padx=5, pady=5, sticky="nsew")
 
@@ -86,7 +88,7 @@ class EventDialog:
             fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 11),
-            width=15,
+            width=17,
             height=2
         )
         delete_button.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
@@ -99,7 +101,7 @@ class EventDialog:
             fg=COLORS["button_fg"],
             relief="flat",
             font=("Arial", 11),
-            width=15,
+            width=17,
             height=2
         )
         edit_button.grid(row=1, column=1, padx=5, pady=5, sticky="nsew")

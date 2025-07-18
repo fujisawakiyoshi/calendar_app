@@ -10,7 +10,7 @@ class MainWindow:
         # Tkルートウィンドウの初期設定
         self.root = tk.Tk()
         self.root.title("Desktop Calendar")
-        self.root.geometry("480x520")
+        self.root.geometry("480x520+650+120")
         self.root.configure(bg=COLORS["header_bg"])
 
         # カレンダーの状態管理用 Controller を生成

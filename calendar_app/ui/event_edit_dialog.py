@@ -30,7 +30,9 @@ class EditDialog:
         self.window.title(title)
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
-
+        self.window.geometry("360x260+700+210")
+        self.window.resizable(True, True)
+        
         # ウィジェットを生成
         self.create_widgets(default_title, default_content)
   
