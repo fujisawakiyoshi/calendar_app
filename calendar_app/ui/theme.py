@@ -14,6 +14,9 @@ COLORS = {
     "button_fg": "#444444",
     "dialog_bg": "#FFFFFF",
     "dialog_section_bg": "#EAF6ED",
+    "highlight": "#FFF4CC",
+    "accent": "#C8E4F7",
+    "bg": "#FFFFFF",
 }
 
 # 個別の定数
