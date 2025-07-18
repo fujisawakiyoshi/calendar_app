@@ -29,9 +29,15 @@ class EditDialog:
         self.window = tk.Toplevel(parent)
         self.window.title(title)
         self.window.configure(bg=COLORS["dialog_bg"])
-        self.window.resizable(False, False)
-        self.window.geometry("360x260+700+210")
         self.window.resizable(True, True)
+        
+        # ウィンドウ中央に配置
+        w, h = 360, 300
+        screen_w = self.window.winfo_screenwidth()
+        screen_h = self.window.winfo_screenheight()
+        x = (screen_w - w) // 2
+        y = (screen_h - h) // 2
+        self.window.geometry(f"{w}x{h}+{x}+{y}")
         
         # ウィジェットを生成
         self.create_widgets(default_title, default_content)
@@ -110,7 +116,7 @@ class EditDialog:
 
         # --- OK / Cancel ボタン ---
         button_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        button_frame.pack(pady=10)
+        button_frame.pack(pady=(3, 10))
 
         ok_button = tk.Button(
             button_frame,
