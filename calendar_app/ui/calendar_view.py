@@ -78,41 +78,48 @@ class CalendarView:
             lbl.grid(row=1, column=i, padx=4, pady=4)
 
     def draw_days(self):
-            today = datetime.today()
-            matrix = generate_calendar_matrix(self.year, self.month)
+        matrix = generate_calendar_matrix(self.year, self.month)
 
-            for r, week in enumerate(matrix, start=2):
-                for c, day in enumerate(week):
-                    txt = str(day) if day else ""
-                    key = f"{self.year}-{self.month:02d}-{day:02d}" if day else None
+        for r, week in enumerate(matrix, start=2):
+            for c, day in enumerate(week):
+                txt = str(day) if day else ""
+                key = f"{self.year}-{self.month:02d}-{day:02d}" if day else None
+                bgc = self.get_day_background(day, c, key)
 
-                    # 背景色決定
-                    if not day:
-                        bgc = COLORS["bg"]
-                    elif key in self.events:
-                        bgc = COLORS["highlight"]
-                    elif key in self.holidays:
-                        bgc = COLORS["accent"]
-                    elif (
-                        day == today.day and self.month == today.month and self.year == today.year
-                    ):
-                        bgc = COLORS["today"]
-                    elif c == 0:
-                        bgc = "#FADCD9"  # 日曜薄赤
-                    elif c == 6:
-                        bgc = "#DCEEF9"  # 土曜薄青
-                    else:
-                        bgc = COLORS["bg"]
+                lbl = tk.Label(
+                    self.frame, text=txt, font=FONTS["base"],
+                    bg=bgc, fg=COLORS["text"],
+                    width=6, height=2, bd=1, relief="ridge"
+                )
 
-                    lbl = tk.Label(
-                        self.frame, text=txt, font=FONTS["base"],
-                        bg=bgc, fg=COLORS["text"],
-                        width=6, height=2, bd=1, relief="ridge"
-                    )
-                    if day:
-                        lbl.bind("<Button-1>", lambda e, d=key: self.on_date_click(d))
-                        if key in self.events:
-                            ToolTip(lbl, "".join(
-                                [f"{ev['title']} {ev['start_time']}-{ev['end_time']}" for ev in self.events[key]]
-                            ))
-                    lbl.grid(row=r, column=c, padx=4, pady=4)
+                if day:
+                    lbl.bind("<Button-1>", lambda e, d=key: self.on_date_click(d))
+                    if key in self.events:
+                        ToolTip(lbl, "".join(
+                            [f"{ev['title']} {ev['start_time']}-{ev['end_time']}" for ev in self.events[key]]
+                        ))
+                lbl.grid(row=r, column=c, padx=4, pady=4)
+
+    def get_day_background(self, day, col_index, key):
+        """日付セルの背景色を優先順位に従って決定する"""
+        if not day:
+            return COLORS["bg"]
+        if key in self.events:
+            return COLORS["highlight"]
+        if key in self.holidays:
+            return COLORS["accent"]
+        if self.is_today(day):
+            return COLORS["today"]
+        if col_index == 0:
+            return COLORS["sunday"]
+        if col_index == 6:
+            return COLORS["saturday"]
+        return COLORS["bg"]
+
+    def is_today(self, day):
+        today = datetime.today()
+        return (
+            day == today.day and
+            self.month == today.month and
+            self.year == today.year
+        )

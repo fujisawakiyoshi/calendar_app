@@ -1,24 +1,27 @@
 
 # 色
 COLORS = {
-    "default_bg": "#FFFFFF",
+    # 背景
+    "bg": "#FFFFFF",
+    "dialog_bg": "#FFFFFF",
     "header_bg": "#F7F7F7",
-    "weekday_header_bg": "#EAF6ED",
+
+    # テキスト
     "text": "#333333",
+
+    # 特殊背景
     "sunday": "#FADCD9",
     "saturday": "#DCEEF9",
     "holiday": "#F6CACA",
     "today": "#C8E4F7",
-    "event": "#FFF4CC",
+    "highlight": "#FFF4CC",
+    "accent": "#FFC0CB",  # 祝日
+
+    # ボタン
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
-    "dialog_bg": "#FFFFFF",
-    "dialog_section_bg": "#EAF6ED",
-    "highlight": "#FFF4CC",
-    "accent": "#FFC0CB", #祝日
-    "bg": "#FFFFFF",
-    
 }
+
 
 # 個別の定数
 DIALOG_BG_COLOR = COLORS["dialog_bg"]
@@ -27,15 +30,14 @@ BUTTON_FG_COLOR = COLORS["button_fg"]
 
 # フォント（Font Styles）
 FONTS = {
-    "base": ("Arial", 11),
-    "bold": ("Arial", 11, "bold"),
-    "header": ("Arial", 14, "bold"),
-    "dialog_title": ("Arial", 13, "bold"),
-    "button": ("Arial", 12),
+    "base": ("游ゴシック", 12),
+    "bold": ("游ゴシック", 12, "bold"),
+    "small": ("游ゴシック", 10),
     "header": ("游ゴシック", 14, "bold"),
-    "base":   ("游ゴシック", 12),
-    "small":  ("游ゴシック", 10),
+    "dialog_title": ("游ゴシック", 13, "bold"),
+    "button": ("游ゴシック", 12)
 }
+
 
 # 定数リスト（選択肢）
 TITLE_CHOICES = [
