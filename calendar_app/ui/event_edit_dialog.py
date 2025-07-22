@@ -125,9 +125,9 @@ class EditDialog:
         btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
 
         # OK ボタン（today カラーをアクセントに）
-        tk.Button(
+        ok_btn = tk.Button(
             btn_frame,
-            text="   OK   ",
+            text="    OK    ",
             command=self.on_ok,
             font=FONTS["base"],
             bg=COLORS["today"],
@@ -139,10 +139,12 @@ class EditDialog:
             pady=5,
             takefocus=True,
             cursor="hand2"
-        ).pack(side="left", anchor="w")
+        )
+        ok_btn.pack(side="left", anchor="w")
+        self.add_button_hover(ok_btn, original_bg=COLORS["today"])
 
         # キャンセルボタン（赤系で識別しやすく）
-        tk.Button(
+        cancel_btn = tk.Button(
             btn_frame,
             text="キャンセル",
             command=self.window.destroy,
@@ -156,7 +158,9 @@ class EditDialog:
             pady=5,
             takefocus=True,
             cursor="hand2"
-        ).pack(side="right", anchor="e")
+        )
+        cancel_btn.pack(side="right", anchor="e")
+        self.add_button_hover(cancel_btn, original_bg="#F7C6C7")
 
     def _add_placeholder(self, widget, placeholder):
         """Entryにプレースホルダー機能を追加"""
@@ -187,3 +191,17 @@ class EditDialog:
             self.content_var.get()
         )
         self.window.destroy()
+        
+    def add_button_hover(self, button, original_bg, hover_bg=None):
+        """ボタンにホバー時の色変化効果を追加する"""
+        if hover_bg is None:
+            hover_bg = COLORS["button_hover"]
+
+        def on_enter(event):
+            button.config(bg=hover_bg)
+
+        def on_leave(event):
+            button.config(bg=original_bg)
+
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)

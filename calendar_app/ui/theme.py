@@ -20,6 +20,7 @@ COLORS = {
     # ボタン
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
+    "button_hover": "#F0F0F0"
 }
 
 # フォント（Font Styles）

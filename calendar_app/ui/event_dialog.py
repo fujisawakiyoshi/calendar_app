@@ -58,7 +58,7 @@ class EventDialog:
     def create_listbox_area(self):
         """イベント一覧用の Listbox とスクロールバー"""
         frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        frame.pack(fill="both", expand=True, padx=14, pady=8)
+        frame.pack(fill="both", expand=True, padx=12, pady=6)
 
         self.listbox = tk.Listbox(
             frame,
@@ -100,11 +100,12 @@ class EventDialog:
             bg=COLORS["today"],
             fg=COLORS["text"],
             relief="flat",
-            padx=8,
-            pady=4,
+            padx=6,
+            pady=2,
             cursor="hand2"  # 手の形カーソル
         )
         add_btn.pack(side="left")
+        self.add_button_hover(add_btn, original_bg=COLORS["today"])
 
         # 編集・削除ボタン用フレーム
         right_frame = tk.Frame(frame, bg=COLORS["dialog_bg"])
@@ -122,11 +123,12 @@ class EventDialog:
             bg="#FFE7C1",
             fg=COLORS["text"],
             relief="flat",
-            padx=8,
-            pady=4,
+            padx=6,
+            pady=2,
             cursor="hand2"
         )
         edit_btn.pack(side="left", padx=4)
+        self.add_button_hover(edit_btn, original_bg="#FFE7C1")
 
         # 削除ボタン
         self.delete_icon = tk.PhotoImage(file="delete-trash_icon3.png").subsample(3, 3)
@@ -141,11 +143,12 @@ class EventDialog:
             activebackground="#F4B6B7",
             fg=COLORS["text"],
             relief="flat",
-            padx=8,
-            pady=4,
+            padx=6,
+            pady=2,
             cursor="hand2"
         )
         del_btn.pack(side="left", padx=4)
+        self.add_button_hover(del_btn, original_bg="#F7C6C7")
 
     def bind_shortcuts(self):
         """キーボードショートカット（Enter: 編集, Delete: 削除, Esc: 閉じる）"""
@@ -215,3 +218,17 @@ class EventDialog:
         save_events(self.events)
         self.refresh_list()
         self.on_update_callback()
+        
+    def add_button_hover(self, button, original_bg, hover_bg=None):
+        """ボタンにホバー時の色変化効果を追加する"""
+        if hover_bg is None:
+            hover_bg = COLORS["button_hover"]
+
+        def on_enter(event):
+            button.config(bg=hover_bg)
+
+        def on_leave(event):
+            button.config(bg=original_bg)
+
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)
