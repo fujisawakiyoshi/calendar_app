@@ -18,6 +18,8 @@ class MainWindow:
         self.root.iconbitmap("event_icon.ico")
         
         # スクリーンサイズ取得
+        maxsize_test=self.root.maxsize()
+        print(maxsize_test)
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
 
@@ -29,7 +31,6 @@ class MainWindow:
         y = (screen_height - window_height) // 2 - 80
 
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
-        
         
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)

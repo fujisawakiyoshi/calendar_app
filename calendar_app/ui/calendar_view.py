@@ -100,13 +100,16 @@ class CalendarView:
                     width=6, height=2, bd=1, relief="ridge"
                 )
 
+                lbl.grid(row=r, column=c, padx=1, pady=1)
+                
                 if day:
                     lbl.bind("<Button-1>", lambda e, d=key: self.on_date_click(d))
+                    self.add_hover_effect(lbl, bgc)
+
+                    # ✅ 予定がある日だけツールチップを追加
                     if key in self.events:
-                        ToolTip(lbl, "".join(
-                            [f"{ev['title']} {ev['start_time']}-{ev['end_time']}" for ev in self.events[key]]
-                        ))
-                lbl.grid(row=r, column=c, padx=4, pady=4)
+                        tip_text = self.generate_event_summary(self.events[key])
+                        ToolTip(lbl, tip_text)
 
     def get_day_background(self, day, col_index, key):
         if not day:
@@ -130,3 +133,26 @@ class CalendarView:
             self.month == today.month and
             self.year == today.year
         )
+
+    def add_hover_effect(self, widget, original_bg):
+        hover_color = "#D0EBFF"  # 優しい青系
+
+        def on_enter(event):
+            widget.config(bg=hover_color)
+
+        def on_leave(event):
+            widget.config(bg=original_bg)
+
+        widget.bind("<Enter>", on_enter)
+        widget.bind("<Leave>", on_leave)
+        
+    def generate_event_summary(self, event_list):
+        """予定リストから簡単なテキストを作成"""
+        lines = []
+        for ev in event_list:
+            time_range = f"{ev['start_time']}〜{ev['end_time']}"
+            line = f"{time_range} {ev['title']}"
+            if ev.get("memo"):
+                line += f" - {ev['memo']}"
+            lines.append(line)
+        return "\n".join(lines)
