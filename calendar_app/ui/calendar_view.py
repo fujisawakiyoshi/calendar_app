@@ -1,19 +1,22 @@
 import tkinter as tk
 from datetime import datetime
-
 from utils.calendar_utils import generate_calendar_matrix
 from ui.theme import COLORS, FONTS
 from ui.tooltip import ToolTip
 
-
 class CalendarView:
-    """カレンダー表示用のUIコンポーネント。"""
+    """カレンダー表示用の UI コンポーネント"""
+
     def __init__(
-        self, parent,
-        year, month,            # 表示対象の年と月
-        holidays, events,       # 祝日データとイベントデータ
-        on_date_click,          # 日付クリック時のコールバック
-        on_prev, on_next        # 前月／次月ボタンのコールバック
+        self,
+        parent,
+        year: int,
+        month: int,
+        holidays: dict,
+        events: dict,
+        on_date_click,  # 日付クリック時コールバック
+        on_prev,        # 前月ボタンコールバック
+        on_next         # 次月ボタンコールバック
     ):
         self.parent = parent
         self.year = year
@@ -24,7 +27,7 @@ class CalendarView:
         self.on_prev = on_prev
         self.on_next = on_next
 
-        # カレンダー全体を表示するフレームを作成
+        # カレンダー全体を入れるフレームを作成
         self.frame = tk.Frame(self.parent, bg=COLORS['bg'])
         self.frame.pack(pady=10)
 
@@ -32,7 +35,10 @@ class CalendarView:
         self.render()
 
     def update(self, year, month, holidays, events):
-        """外部からの更新要求に応じてカレンダー内容を再描画"""
+        """
+        外部から年月・祝日・イベントを更新したいときに呼ぶ。
+        再描画を行う。
+        """
         self.year = year
         self.month = month
         self.holidays = holidays
@@ -40,107 +46,132 @@ class CalendarView:
         self.render()
 
     def render(self):
-        """ヘッダー・曜日ラベル・日付セルを再構築"""
-        self.clear()
-        self.draw_header()
-        self.draw_weekday_labels()
-        self.draw_days()
+        """ヘッダー／曜日ラベル／日付セルを再構築"""
+        self._clear()
+        self._draw_header()
+        self._draw_weekday_labels()
+        self._draw_days()
 
-    def clear(self):
-        """フレーム内の全ウィジェットを削除"""
+    def _clear(self):
+        """前回描画したウィジェットをすべて破棄"""
         for widget in self.frame.winfo_children():
             widget.destroy()
 
-    def draw_header(self):
-        """年・月表示と前後移動ボタンを配置するヘッダー"""
+    def _draw_header(self):
+        """年・月と前後移動ボタンを表示するヘッダーを作成"""
         header = tk.Frame(self.frame, bg=COLORS['header_bg'])
         header.grid(row=0, column=0, columnspan=7, sticky='nsew')
 
-        # ボタン間のスペースを確保
+        # 両ボタンの間にスペース
         header.grid_columnconfigure(1, weight=1)
         header.grid_columnconfigure(3, weight=1)
 
         # 前月ボタン
-        prev = tk.Button(
-            header, text='＜', command=self.on_prev,
-            bg=COLORS['header_bg'], fg=COLORS['text'], relief='flat',
-            font=FONTS['header'], width=3
+        prev_btn = tk.Button(
+            header,
+            text='＜',
+            command=self.on_prev,
+            bg=COLORS['header_bg'],
+            fg=COLORS['text'],
+            relief='flat',
+            font=FONTS['header'],
+            width=3,
+            cursor='hand2'
         )
-        prev.grid(row=0, column=0, padx=6, pady=6)
-        # ホバー時の色変化
-        self.add_button_hover(prev, original_bg=COLORS["header_bg"])
+        prev_btn.grid(row=0, column=0, padx=6, pady=6)
+        self._add_button_hover(prev_btn, COLORS['header_bg'])
 
         # 年月ラベル
         tk.Label(
-            header, text=f"{self.year}年 {self.month}月",
-            font=FONTS['header'], bg=COLORS['header_bg'], fg=COLORS['text'],
-            bd=0, padx=12, pady=6
+            header,
+            text=f"{self.year}年 {self.month}月",
+            font=FONTS['header'],
+            bg=COLORS['header_bg'],
+            fg=COLORS['text'],
+            padx=12,
+            pady=6
         ).grid(row=0, column=2, padx=6, pady=6)
 
-        # 翌月ボタン
-        nxt = tk.Button(
-            header, text='＞', command=self.on_next,
-            bg=COLORS['header_bg'], fg=COLORS['text'], relief='flat',
-            font=FONTS['header'], width=3
+        # 次月ボタン
+        next_btn = tk.Button(
+            header,
+            text='＞',
+            command=self.on_next,
+            bg=COLORS['header_bg'],
+            fg=COLORS['text'],
+            relief='flat',
+            font=FONTS['header'],
+            width=3,
+            cursor='hand2'
         )
-        nxt.grid(row=0, column=4, padx=6, pady=6)
-        # ホバー時の色変化
-        self.add_button_hover(nxt, original_bg=COLORS["header_bg"])
+        next_btn.grid(row=0, column=4, padx=6, pady=6)
+        self._add_button_hover(next_btn, COLORS['header_bg'])
 
-    def draw_weekday_labels(self):
-        """曜日名（日～土）を表示"""
-        labels = ['日', '月', '火', '水', '木', '金', '土']
-        for idx, wd in enumerate(labels):
-            color = COLORS['text']
-            if wd == '日': color = '#D14'  # 日曜は赤みを強調
-            if wd == '土': color = '#449'  # 土曜は青みを強調
+    def _draw_weekday_labels(self):
+        """日～土の曜日ラベルを表示"""
+        days = ['日', '月', '火', '水', '木', '金', '土']
+        for idx, wd in enumerate(days):
+            fg = COLORS['text']
+            if wd == '日':
+                fg = '#D14'  # 日曜赤
+            elif wd == '土':
+                fg = '#449'  # 土曜青
 
             tk.Label(
-                self.frame, text=wd, font=FONTS['base'],
-                bg=COLORS['header_bg'], fg=color,
-                width=6, pady=4, bd=0
+                self.frame,
+                text=wd,
+                font=FONTS['base'],
+                bg=COLORS['header_bg'],
+                fg=fg,
+                width=6,
+                pady=4
             ).grid(row=1, column=idx, padx=4, pady=4)
 
-    def draw_days(self):
-        """日付セルを生成し、イベントや祝日を反映"""
+    def _draw_days(self):
+        """各日付セルを生成し、イベントや祝日を反映"""
         matrix = generate_calendar_matrix(self.year, self.month)
 
-        for row, week in enumerate(matrix, start=2):
-            for col, day in enumerate(week):
+        for row_index, week in enumerate(matrix, start=2):
+            for col_index, day in enumerate(week):
                 text = str(day) if day else ''
                 key = f"{self.year}-{self.month:02d}-{day:02d}" if day else None
-
-                # 背景色の決定
-                bg = self.get_day_background(day, col, key)
+                bg = self._get_day_bg(day, col_index, key)
 
                 lbl = tk.Label(
-                    self.frame, text=text, font=FONTS['base'],
-                    bg=bg, fg=COLORS['text'],
-                    width=6, height=2, bd=1, relief='ridge'
+                    self.frame,
+                    text=text,
+                    font=FONTS['base'],
+                    bg=bg,
+                    fg=COLORS['text'],
+                    width=6,
+                    height=2,
+                    bd=1,
+                    relief='ridge'
                 )
-                lbl.grid(row=row, column=col, padx=1, pady=1)
+                lbl.grid(row=row_index, column=col_index, padx=1, pady=1)
 
                 if day:
-                    # クリックでイベントダイアログを開く
+                    # クリック時の挙動設定
                     lbl.bind('<Button-1>', lambda e, d=key: self.on_date_click(d))
-
-                    # ホバーで色変化
-                    self.add_hover_effect(lbl, bg)
-
-                    # イベントがある日のみツールチップ追加
+                    # ホバー時の背景変化
+                    self._add_hover_effect(lbl, bg)
+                    # イベントがある日はツールチップ表示
                     if key in self.events:
-                        tip = self.generate_event_summary(self.events[key])
-                        ToolTip(lbl, tip)
+                        tip_text = self._make_event_summary(self.events[key])
+                        ToolTip(lbl, tip_text)
 
-    def get_day_background(self, day, col, key):
-        """日セルの背景色を優先順位に従い返す"""
+    def _get_day_bg(self, day, col, key) -> str:
+        """
+        日付セルの背景色を決定。
+        優先度：空セル → イベント → 祝日 → 今日 → 日曜 → 土曜 → 通常
+        """
         if not day:
             return COLORS['bg']
         if key in self.events:
             return COLORS['highlight']
         if key in self.holidays:
             return COLORS['accent']
-        if self.is_today(day):
+        if self._is_today(day):
             return COLORS['today']
         if col == 0:
             return COLORS['sunday']
@@ -148,29 +179,35 @@ class CalendarView:
             return COLORS['saturday']
         return COLORS['bg']
 
-    def is_today(self, day):
-        """日付が本日かどうか判定"""
+    def _is_today(self, day) -> bool:
+        """指定した日付が「今日」であるかを判定"""
         now = datetime.today()
-        return day == now.day and self.month == now.month and self.year == now.year
+        return (
+            now.year == self.year and
+            now.month == self.month and
+            now.day == day
+        )
 
-    def add_hover_effect(self, widget, orig_bg):
-        """ホバー時に背景色を変える"""
+    def _add_hover_effect(self, widget, orig_bg):
+        """日付セルにマウスホバーで背景色を変える効果を追加"""
         hover_bg = '#D0EBFF'
         widget.bind('<Enter>', lambda e: widget.config(bg=hover_bg))
         widget.bind('<Leave>', lambda e: widget.config(bg=orig_bg))
-        
-    def add_button_hover(self, button, original_bg):
-        """ナビゲーションボタンホバーの色変化設定"""
-        hover_bg = "#FFFFFF"  # ヘッダー背景より目立たないグレー
-        button.bind("<Enter>", lambda e: button.config(bg=hover_bg))
-        button.bind("<Leave>", lambda e: button.config(bg=original_bg))
 
-    def generate_event_summary(self, events):
-        """イベントリストをツールチップ用テキストに変換"""
+    def _add_button_hover(self, button, orig_bg, hover_bg='#F0F0F0'):
+        """ナビゲーションボタンにホバー効果を追加"""
+        button.bind('<Enter>', lambda e: button.config(bg=hover_bg))
+        button.bind('<Leave>', lambda e: button.config(bg=orig_bg))
+
+    def _make_event_summary(self, events_list) -> str:
+        """
+        ツールチップ用に、複数イベントを「時刻〜タイトル（メモ）」形式で整形
+        改行区切りで返す
+        """
         lines = []
-        for ev in events:
-            rng = f"{ev['start_time']}〜{ev['end_time']}"
-            line = f"{rng} {ev['title']}"
+        for ev in events_list:
+            times = f"{ev['start_time']}〜{ev['end_time']}"
+            line = f"{times} {ev['title']}"
             if ev.get('memo'):
                 line += f" - {ev['memo']}"
             lines.append(line)

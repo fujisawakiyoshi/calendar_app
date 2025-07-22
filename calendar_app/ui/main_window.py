@@ -14,74 +14,71 @@ class MainWindow:
     """アプリケーションのメインウィンドウを構成するクラス"""
 
     def __init__(self):
-        # Tkinterルートウィンドウの作成と初期設定
+        # 1) Tkinter ルートウィンドウをいったん隠して構築（ちらつき防止）
         self.root = tk.Tk()
-        self.root.withdraw()  # チラつき防止のため最初は非表示
+        self.root.withdraw()
 
+        # 2) ウィンドウタイトル
         self.root.title("Desktop Calendar")
-        # resource_path を使ってアイコンを指定
-        self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
 
+        # 3) アイコンを PNG で設定（PhotoImage の参照を保持）
+        self.icon_img = tk.PhotoImage(file=resource_path("ui/icons/event_icon.png"))
+        self.root.iconphoto(True, self.icon_img)
+
+        # 4) 背景色・リサイズ制御
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)
         self.root.attributes("-topmost", False)
 
-        # ウィンドウサイズと位置の設定
-        self.configure_window_position()
+        # 5) 位置・サイズを調整して少し右上に寄せる
+        self._configure_window_position()
 
-        # カレンダー管理用コントローラーの初期化
+        # 6) カレンダー制御用コントローラー
         self.controller = CalendarController()
 
-        # カレンダーや時計などのUI構築
-        self.setup_ui()
+        # 7) カレンダー＆時計ウィジェットを組み立て
+        self._setup_ui()
 
-        # UI構築完了後にウィンドウを表示
+        # 8) 完成後に表示
         self.root.after(0, self.root.deiconify)
 
-    def configure_window_position(self):
-        """画面サイズを取得し、ウィンドウを少し右上に寄せて表示"""
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
+    def _configure_window_position(self):
+        """ウィンドウを画面中央から少し右上に寄せる"""
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        ww, wh = 550, 480
+        x = (sw - ww)//2 + 100
+        y = (sh - wh)//2 - 80
+        self.root.geometry(f"{ww}x{wh}+{x}+{y}")
 
-        window_width = 550
-        window_height = 480
-
-        # 中央から +100px 右、-80px 上にずらす
-        x = (screen_width - window_width) // 2 + 100
-        y = (screen_height - window_height) // 2 - 80
-
-        self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
-
-    def setup_ui(self):
-        """UIコンポーネント（カレンダー・時計）をセットアップ"""
-
-        # カレンダーの表示部分を作成
+    def _setup_ui(self):
+        """カレンダーと時計のウィジェットを配置"""
+        # カレンダー領域
         self.calendar_view = CalendarView(
             self.root,
             self.controller.current_year,
             self.controller.current_month,
             self.controller.holidays,
             self.controller.events,
-            on_date_click=self.open_event_dialog,  # 日付クリック時の動作
-            on_prev=self.on_prev_month,           # 前月ボタン
-            on_next=self.on_next_month            # 次月ボタン
+            on_date_click=self.open_event_dialog,
+            on_prev=self.on_prev_month,
+            on_next=self.on_next_month
         )
-
-        # 右下に現在時刻を表示するウィジェット
+        # 右下に時計
         ClockWidget(self.root)
 
     def on_prev_month(self):
-        """前月に移動してカレンダーを更新"""
+        """＜ボタンで前月へ"""
         self.controller.prev_month()
-        self.update_calendar()
+        self._refresh_calendar()
 
     def on_next_month(self):
-        """次月に移動してカレンダーを更新"""
+        """＞ボタンで次月へ"""
         self.controller.next_month()
-        self.update_calendar()
+        self._refresh_calendar()
 
-    def update_calendar(self):
-        """カレンダーUIを最新の状態に再描画"""
+    def _refresh_calendar(self):
+        """カレンダーを最新データで再描画"""
         self.calendar_view.update(
             self.controller.current_year,
             self.controller.current_month,
@@ -90,10 +87,10 @@ class MainWindow:
         )
 
     def open_event_dialog(self, date_key):
-        """指定された日付のイベント一覧ダイアログを開く"""
+        """日付クリックでイベントダイアログを開く"""
         from ui.event_dialog import EventDialog
-        EventDialog(self.root, date_key, self.controller.events, self.update_calendar)
+        EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
 
     def run(self):
-        """アプリケーションを開始するメインループ"""
+        """メインループ開始"""
         self.root.mainloop()

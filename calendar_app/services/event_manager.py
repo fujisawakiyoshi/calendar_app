@@ -1,35 +1,80 @@
+# calendar_app/services/event_manager.py
+
 import json
 import os
+import sys
+from threading import Lock
 from utils.resource import resource_path
 
+# PyInstaller 化後でも参照できるよう、resource_path でファイルパスを解決
 EVENTS_FILE = resource_path("data/events.json")
 
-def load_events():
-    if os.path.exists(EVENTS_FILE):
+# 複数スレッドから同時に書き込むのを防ぐためロックを用意
+_FILE_LOCK = Lock()
+
+
+def load_events() -> dict:
+    """
+    イベントデータを JSON ファイルから読み込んで返します。
+    ファイルがなければ空の dict、JSON が壊れていれば警告のうえ空の dict を返します。
+    """
+    try:
         with open(EVENTS_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+            data = json.load(f)
+            if isinstance(data, dict):
+                return data
+            # 形式が dict でない場合も空にフォールバック
+            return {}
+    except FileNotFoundError:
+        # ファイル未作成時は空データ
+        return {}
+    except json.JSONDecodeError:
+        # JSON 故障時の警告
+        print(f"[warning] イベントファイルの読み込みに失敗しました: {EVENTS_FILE}", file=sys.stderr)
+        return {}
 
-def save_events(data):
+
+def save_events(events: dict) -> None:
+    """
+    イベントデータを JSON ファイルに書き込みます。
+    必要に応じてディレクトリを作成し、 thread-safe に動作します。
+    """
     os.makedirs(os.path.dirname(EVENTS_FILE), exist_ok=True)
-    with open(EVENTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    with _FILE_LOCK:
+        with open(EVENTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(events, f, ensure_ascii=False, indent=2)
 
-def add_event(events, date_str, title, time="", memo=""):
-    if date_str not in events:
-        events[date_str] = []
-    new_event = {
-        "title": title,
-        "time": time,
-        "memo": memo
-    }
-    events[date_str].append(new_event)
+
+def add_event(events: dict,
+              date_str: str,
+              title: str,
+              start_time: str = "",
+              end_time: str = "",
+              memo: str = "") -> None:
+    """
+    新しい予定を events に追加して保存します。
+
+    - date_str: "YYYY-MM-DD" 形式の日付キー
+    - title: イベントタイトル
+    - start_time, end_time: "HH:MM" 形式
+    - memo: 任意のメモ文字列
+    """
+    # 同じキーのリストに追加
+    events.setdefault(date_str, []).append({
+        "title":       title,
+        "start_time":  start_time,
+        "end_time":    end_time,
+        "memo":        memo
+    })
     save_events(events)
 
-def delete_event(events, date_str, index):
+
+def delete_event(events: dict, date_str: str, index: int) -> None:
+    """
+    指定の日(date_str)のイベントリストから index 番目を削除し、空になればキーごと削除して保存します。
+    """
     if date_str in events and 0 <= index < len(events[date_str]):
         events[date_str].pop(index)
         if not events[date_str]:
             del events[date_str]
         save_events(events)
-
