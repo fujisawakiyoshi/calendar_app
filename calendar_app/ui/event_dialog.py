@@ -1,4 +1,3 @@
-
 # ui/event_dialog.py
 
 import tkinter as tk
@@ -6,9 +5,12 @@ from tkinter import messagebox
 from services.event_manager import save_events
 from ui.event_edit_dialog import EditDialog
 from ui.theme import COLORS, FONTS
+from ui.tooltip import ToolTip
+from utils.resource import resource_path  # ← 追加
 
 class EventDialog:
     """指定された日付のイベント一覧を表示・編集するダイアログ"""
+
     def __init__(self, parent, date_key, events, on_update_callback):
         self.parent = parent
         self.date_key = date_key
@@ -19,7 +21,8 @@ class EventDialog:
         self.window = tk.Toplevel(self.parent)
         self.window.withdraw()
         self.window.title(f"予定一覧 {self.date_key}")
-        self.window.iconbitmap("event_icon.ico")
+        # resource_path を使ってアイコンを指定
+        self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(True, False)
 
@@ -89,7 +92,9 @@ class EventDialog:
         frame.pack(fill="x", padx=14, pady=(0, 14))
 
         # 予定追加ボタン
-        self.add_icon = tk.PhotoImage(file="plus_insert_icon.png").subsample(3, 3)
+        self.add_icon = tk.PhotoImage(
+            file=resource_path("ui/icons/plus_insert_icon.png")
+        ).subsample(3, 3)
         add_btn = tk.Button(
             frame,
             text="予定追加",
@@ -112,7 +117,9 @@ class EventDialog:
         right_frame.pack(side="right")
 
         # 編集ボタン
-        self.edit_icon = tk.PhotoImage(file="notes_edit_icon.png").subsample(3, 3)
+        self.edit_icon = tk.PhotoImage(
+            file=resource_path("ui/icons/notes_edit_icon.png")
+        ).subsample(3, 3)
         edit_btn = tk.Button(
             right_frame,
             text="編集",
@@ -131,7 +138,9 @@ class EventDialog:
         self.add_button_hover(edit_btn, original_bg="#FFE7C1")
 
         # 削除ボタン
-        self.delete_icon = tk.PhotoImage(file="delete-trash_icon3.png").subsample(3, 3)
+        self.delete_icon = tk.PhotoImage(
+            file=resource_path("ui/icons/delete-trash_icon3.png")
+        ).subsample(3, 3)
         del_btn = tk.Button(
             right_frame,
             text="削除",
@@ -187,7 +196,8 @@ class EventDialog:
         idx = sel[0]
         ev = self.events[self.date_key][idx]
         dialog = EditDialog(
-            self.window, "予定の編集",
+            self.window,
+            "予定の編集",
             default_title=ev["title"],
             default_start_time=ev["start_time"],
             default_end_time=ev["end_time"],

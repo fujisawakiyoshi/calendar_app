@@ -7,6 +7,7 @@ from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
 from ui.theme import COLORS
+from utils.resource import resource_path
 
 
 class MainWindow:
@@ -18,7 +19,9 @@ class MainWindow:
         self.root.withdraw()  # チラつき防止のため最初は非表示
 
         self.root.title("Desktop Calendar")
-        self.root.iconbitmap("event_icon.ico")
+        # resource_path を使ってアイコンを指定
+        self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
+
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)
         self.root.attributes("-topmost", False)

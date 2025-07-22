@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
+from utils.resource import resource_path
 
 class EditDialog:
     """予定の追加・編集用ダイアログウィンドウ"""
@@ -14,10 +15,12 @@ class EditDialog:
         self.window = tk.Toplevel(parent)
         self.window.withdraw()
         self.window.title(title)
-        self.window.iconbitmap("event_icon.ico")
+        
+        
+        self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
-
+        
         # ウィンドウのサイズと表示位置を設定
         w, h = 300, 270
         sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
@@ -40,6 +43,8 @@ class EditDialog:
         self.window.grab_set()
         # 構築後に表示
         self.window.deiconify()
+        
+        self.ent_title.focus_set() 
 
     def _build_ui(self):
         """ダイアログ内の各セクションを配置"""

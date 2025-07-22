@@ -1,7 +1,8 @@
 import json
 import os
+from utils.resource import resource_path
 
-EVENTS_FILE = "data/events.json"
+EVENTS_FILE = resource_path("data/events.json")
 
 def load_events():
     if os.path.exists(EVENTS_FILE):
