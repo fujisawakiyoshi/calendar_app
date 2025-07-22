@@ -1,3 +1,5 @@
+# ui/event_edit_dialog.py
+
 import tkinter as tk
 from tkinter import ttk
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
@@ -10,12 +12,12 @@ class EditDialog:
                  default_end_time="", default_content=""):
         self.result = None
         self.window = tk.Toplevel(parent)
+        self.window.withdraw()
         self.window.title(title)
         self.window.iconbitmap("event_icon.ico")
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
 
-        # サイズ調整 & 中央表示
         w, h = 280, 260
         sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         x, y = (sw - w)//2, (sh - h)//2
@@ -31,7 +33,7 @@ class EditDialog:
         self.ent_title.focus_set()
         self.window.transient(parent)
         self.window.grab_set()
-        self.window.wait_window()
+        self.window.deiconify()  # UI構築後に表示
 
     def build_ui(self):
         pad = 6
@@ -119,5 +121,3 @@ class EditDialog:
             self.content_var.get()
         )
         self.window.destroy()
-        
-        

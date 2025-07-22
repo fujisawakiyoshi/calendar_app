@@ -1,3 +1,5 @@
+# ui/event_dialog.py
+
 import tkinter as tk
 from tkinter import messagebox
 from services.event_manager import save_events
@@ -15,6 +17,7 @@ class EventDialog:
         self.on_update_callback = on_update_callback
 
         self.window = tk.Toplevel(self.parent)
+        self.window.withdraw()  # 一旦非表示で構築
         self.window.title(f"予定一覧 {self.date_key}")
         self.window.iconbitmap("event_icon.ico")
         self.window.configure(bg=COLORS["dialog_bg"])
@@ -30,7 +33,7 @@ class EventDialog:
 
         self.window.transient(self.parent)
         self.window.grab_set()
-        self.window.wait_window()
+        self.window.deiconify()  # UI構築後に表示
 
     def build_ui(self):
         self.create_header()
@@ -70,22 +73,24 @@ class EventDialog:
         frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
         frame.pack(fill="x", padx=14, pady=(0, 14))
 
-        # 左側：追加ボタン
+        self.add_icon = tk.PhotoImage(file="plus_insert_icon.png").subsample(3, 3)
         add_btn = tk.Button(
-            frame, text="予定追加 ＋", command=self.add_event,
-            font=FONTS["base"], bg="#AEDFF7", fg=COLORS["text"],
+            frame, text="予定追加", image=self.add_icon, compound="right",
+            command=self.add_event,
+            font=FONTS["base"], bg=COLORS["today"], fg=COLORS["text"],
             relief="flat", padx=8, pady=4
         )
         add_btn.pack(side="left")
         ToolTip(add_btn, "新しい予定を追加")
 
-        # 右側：編集・削除
         right_frame = tk.Frame(frame, bg=COLORS["dialog_bg"])
         right_frame.pack(side="right")
 
+        self.edit_icon = tk.PhotoImage(file="notes_edit_icon.png").subsample(3, 3)
         edit_btn = tk.Button(
-            right_frame, text="編集", command=self.edit_event,
-            font=FONTS["base"], bg="#FFDDAA", fg=COLORS["text"],
+            right_frame, text="編集", image=self.edit_icon, compound="right",
+            command=self.edit_event,
+            font=FONTS["base"], bg="#FFE7C1", fg=COLORS["text"],
             relief="flat", padx=8, pady=4
         )
         edit_btn.pack(side="left", padx=4)
@@ -116,6 +121,7 @@ class EventDialog:
 
     def add_event(self):
         dialog = EditDialog(self.window, "予定の追加")
+        dialog.window.wait_window()  # ここでブロック
         if dialog.result:
             title, st, et, memo = dialog.result
             self.events.setdefault(self.date_key, []).append({
@@ -139,6 +145,7 @@ class EventDialog:
             default_end_time=ev["end_time"],
             default_content=ev.get("memo", "")
         )
+        dialog.window.wait_window()
         if dialog.result:
             self.events[self.date_key][idx] = {
                 "title": dialog.result[0],

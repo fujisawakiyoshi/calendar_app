@@ -23,7 +23,15 @@ class CalendarView:
         self.frame.pack(pady=10)
 
         self.render()
-    
+
+    def update(self, year, month, holidays, events):
+        """カレンダー内容を更新して再描画する"""
+        self.year = year
+        self.month = month
+        self.holidays = holidays
+        self.events = events
+        self.render()
+
     def render(self):
         self.clear()
         self.draw_header()
@@ -35,11 +43,9 @@ class CalendarView:
             widget.destroy()
 
     def draw_header(self):
-        # ヘッダー用サブフレームを作成し背景色を統一
         header_frame = tk.Frame(self.frame, bg=COLORS["header_bg"])
         header_frame.grid(row=0, column=0, columnspan=7, sticky="nsew")
 
-        # 両端にボタンを配置するためのスペーサーカラムに重みを設定
         header_frame.grid_columnconfigure(1, weight=1)
         header_frame.grid_columnconfigure(3, weight=1)
 
@@ -65,11 +71,13 @@ class CalendarView:
         nxt.grid(row=0, column=4, padx=6, pady=6)
 
     def draw_weekday_labels(self):
-        weekdays = ["日","月","火","水","木","金","土"]
+        weekdays = ["日", "月", "火", "水", "木", "金", "土"]
         for i, wd in enumerate(weekdays):
             fg = COLORS["text"]
-            if wd == "日": fg = "#D14"  # 日曜は赤みをほんのり
-            if wd == "土": fg = "#449"  # 土曜は青みをほんのり
+            if wd == "日":
+                fg = "#D14"
+            if wd == "土":
+                fg = "#449"
             lbl = tk.Label(
                 self.frame, text=wd, font=FONTS["base"],
                 bg=COLORS["header_bg"], fg=fg,
@@ -101,7 +109,6 @@ class CalendarView:
                 lbl.grid(row=r, column=c, padx=4, pady=4)
 
     def get_day_background(self, day, col_index, key):
-        """日付セルの背景色を優先順位に従って決定する"""
         if not day:
             return COLORS["bg"]
         if key in self.events:

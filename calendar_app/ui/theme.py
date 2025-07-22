@@ -13,7 +13,7 @@ COLORS = {
     "sunday": "#FADCD9",
     "saturday": "#DCEEF9",
     "holiday": "#F6CACA",
-    "today": "#C8E4F7",
+    "today": "#B7DCF5",
     "highlight": "#FFF4CC",
     "accent": "#FFC0CB",  # 祝日
 

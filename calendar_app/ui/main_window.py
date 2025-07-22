@@ -5,84 +5,64 @@ from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
 from ui.theme import COLORS
+from datetime import datetime
+
 
 class MainWindow:
     """アプリケーションのメインウィンドウ。"""
     def __init__(self):
         # Tkルートウィンドウの初期設定
         self.root = tk.Tk()
+        self.root.withdraw()  # 一旦非表示（ちらつき防止）
         self.root.title("Desktop Calendar")
         self.root.iconbitmap("event_icon.ico")
-        self.root.geometry("550x550")                 # 少し大きめにして余白を確保
+        self.root.geometry("580x530")
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)
-        self.root.attributes("-topmost")
+        self.root.attributes("-topmost", False)
 
-        # カレンダーの状態管理用 Controller を生成
+        # コントローラーとUIのセットアップ
         self.controller = CalendarController()
-
-        # UI部品を組み立て
         self.setup_ui()
 
+        # UI構築後に表示（ちらつき防止）
+        self.root.after(0, self.root.deiconify)
+
     def setup_ui(self):
-        """全体レイアウト（カレンダー＋時計）の構築"""
-        main_frame = tk.Frame(self.root, bg=COLORS["header_bg"])
-        main_frame.pack(fill="both", expand=True)
-
-        # カレンダー表示領域を中央に
-        self.calendar_container = tk.Frame(main_frame, bg=COLORS["header_bg"])
-        self.calendar_container.pack(pady=20, fill="both", expand=True)
-
-        self.show_calendar()
-
-        # 時計ウィジェット
-        clock_frame = tk.Frame(main_frame, bg=COLORS["header_bg"])
-        clock_frame.pack(fill="both", expand=True)
-        ClockWidget(clock_frame)
-
-    def show_calendar(self):
-        """Controller から最新データを取得し、CalendarView を中央に描画"""
-        # 既存のカレンダーウィジェットをクリア
-        for w in self.calendar_container.winfo_children():
-            w.destroy()
-
-        # カレンダーを中央揃えするためのラップフレーム
-        wrapper = tk.Frame(self.calendar_container, bg=COLORS["header_bg"])
-        wrapper.pack(expand=True)
-
-        # カレンダー表示用コンポーネントに状態を渡す
-        CalendarView(
-            parent=wrapper,
-            year=self.controller.current_year,
-            month=self.controller.current_month,
-            holidays=self.controller.holidays,
-            events=self.controller.events,
+        # カレンダー表示部
+        self.calendar_view = CalendarView(
+            self.root,
+            self.controller.current_year,
+            self.controller.current_month,
+            self.controller.holidays,
+            self.controller.events,
             on_date_click=self.open_event_dialog,
-            on_prev=self.on_prev_click,
-            on_next=self.on_next_click
+            on_prev=self.on_prev_month,
+            on_next=self.on_next_month
         )
-    def on_prev_click(self):
-        """＜ボタン押下時：Controller で前月に移動し再描画"""
+
+        # 時計ウィジェット（右下）
+        ClockWidget(self.root)
+
+    def on_prev_month(self):
         self.controller.prev_month()
-        self.show_calendar()
+        self.update_calendar()
 
-    def on_next_click(self):
-        """＞ボタン押下時：Controller で次月に移動し再描画"""
+    def on_next_month(self):
         self.controller.next_month()
-        self.show_calendar()
+        self.update_calendar()
 
-    def open_event_dialog(self, date_key: str):
-        """日付セルクリック時：EventDialog を開き、更新後にカレンダー再描画"""
-        from ui.event_dialog import EventDialog  # 循環インポート回避
-        EventDialog(self.root, date_key, self.controller.events, self.show_calendar)
+    def update_calendar(self):
+        self.calendar_view.update(
+            self.controller.current_year,
+            self.controller.current_month,
+            self.controller.holidays,
+            self.controller.events
+        )
+
+    def open_event_dialog(self, date_key):
+        from ui.event_dialog import EventDialog
+        EventDialog(self.root, date_key, self.controller.events, self.update_calendar)
 
     def run(self):
-        """アプリ起動"""
-        # ←→キーでも月移動できるようにバインド
-        self.root.bind("<Left>", lambda e: self.on_prev_click())
-        self.root.bind("<Right>", lambda e: self.on_next_click())
         self.root.mainloop()
-
-
-if __name__ == "__main__":
-    MainWindow().run()
