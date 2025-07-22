@@ -22,8 +22,7 @@ class MainWindow:
         self.root.title("Desktop Calendar")
 
         # 3) アイコンを PNG で設定（PhotoImage の参照を保持）
-        self.icon_img = tk.PhotoImage(file=resource_path("ui/icons/event_icon.png"))
-        self.root.iconphoto(True, self.icon_img)
+        self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
 
         # 4) 背景色・リサイズ制御
         self.root.configure(bg=COLORS["header_bg"])
