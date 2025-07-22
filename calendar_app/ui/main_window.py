@@ -16,7 +16,21 @@ class MainWindow:
         self.root.withdraw()  # 一旦非表示（ちらつき防止）
         self.root.title("Desktop Calendar")
         self.root.iconbitmap("event_icon.ico")
-        self.root.geometry("580x530")
+        
+        # スクリーンサイズ取得
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        window_width = 550
+        window_height = 550
+
+        # 画面中央から少し右上にずらす（+40px右、-30px上）
+        x = (screen_width - window_width) // 2 + 100
+        y = (screen_height - window_height) // 2 - 80
+
+        self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        
+        
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)
         self.root.attributes("-topmost", False)

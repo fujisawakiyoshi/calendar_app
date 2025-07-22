@@ -57,7 +57,8 @@ class EventDialog:
 
         self.listbox = tk.Listbox(
             frame, font=FONTS["base"], bg=COLORS["bg"], fg=COLORS["text"],
-            bd=0, relief="flat", selectbackground="#CCE8FF", activestyle="none",
+            bd=0, relief="flat", selectbackground="#CCE8FF", selectforeground="#000000",  # 選択時の文字色（黒）
+            activestyle="none",
             height=6, width=35
         )
         self.listbox.pack(side="left", fill="both", expand=True)
@@ -81,7 +82,6 @@ class EventDialog:
             relief="flat", padx=8, pady=4
         )
         add_btn.pack(side="left")
-        ToolTip(add_btn, "新しい予定を追加")
 
         right_frame = tk.Frame(frame, bg=COLORS["dialog_bg"])
         right_frame.pack(side="right")
@@ -94,7 +94,6 @@ class EventDialog:
             relief="flat", padx=8, pady=4
         )
         edit_btn.pack(side="left", padx=4)
-        ToolTip(edit_btn, "選択中の予定を編集")
 
         self.delete_icon = tk.PhotoImage(file="delete-trash_icon3.png").subsample(3, 3)
         del_btn = tk.Button(
@@ -104,7 +103,6 @@ class EventDialog:
             fg=COLORS["text"], relief="flat", padx=8, pady=4
         )
         del_btn.pack(side="left", padx=4)
-        ToolTip(del_btn, "選択中の予定を削除")
 
     def bind_shortcuts(self):
         self.listbox.bind("<Return>", lambda e: self.edit_event())

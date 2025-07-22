@@ -4,7 +4,7 @@ COLORS = {
     # 背景
     "bg": "#FFFFFF",
     "dialog_bg": "#FFFFFF",
-    "header_bg": "#F7F7F7",
+    "header_bg": "#FAFAFA",
 
     # テキスト
     "text": "#333333",
