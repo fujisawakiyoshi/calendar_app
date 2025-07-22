@@ -22,12 +22,6 @@ COLORS = {
     "button_fg": "#444444",
 }
 
-
-# 個別の定数
-DIALOG_BG_COLOR = COLORS["dialog_bg"]
-BUTTON_BG_COLOR = COLORS["button_bg"]
-BUTTON_FG_COLOR = COLORS["button_fg"]
-
 # フォント（Font Styles）
 FONTS = {
     "base": ("游ゴシック", 12),
