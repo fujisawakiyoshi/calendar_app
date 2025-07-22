@@ -41,7 +41,7 @@ class MainWindow:
         screen_height = self.root.winfo_screenheight()
 
         window_width = 550
-        window_height = 550
+        window_height = 480
 
         # 中央から +100px 右、-80px 上にずらす
         x = (screen_width - window_width) // 2 + 100

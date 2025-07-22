@@ -127,7 +127,7 @@ class EditDialog:
         # OK ボタン（today カラーをアクセントに）
         tk.Button(
             btn_frame,
-            text="OK",
+            text="   OK   ",
             command=self.on_ok,
             font=FONTS["base"],
             bg=COLORS["today"],
