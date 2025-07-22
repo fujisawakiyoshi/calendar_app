@@ -19,8 +19,9 @@ class EventDialog:
         # モーダルウィンドウ設定
         self.window = tk.Toplevel(self.parent)
         self.window.title(f"予定一覧 {self.date_key}")
+        self.window.iconbitmap("event_icon.ico")
         self.window.configure(bg=COLORS["dialog_bg"])
-        self.window.resizable(False, False)
+        self.window.resizable(True, False)
 
         # サイズ調整 & 中央表示（メイン画面に合わせて小さめ）
         w, h = 380, 260
@@ -88,7 +89,7 @@ class EventDialog:
         right_frame.pack(side="right")
 
         edit_btn = tk.Button(
-            right_frame, text="編集 ✎", command=self.edit_event,
+            right_frame, text="編集", command=self.edit_event,
             font=FONTS["base"],
             bg="#FFDDAA", fg=COLORS["text"],  # パステルオレンジ
             relief="flat", padx=8, pady=4
@@ -96,14 +97,20 @@ class EventDialog:
         edit_btn.pack(side="left", padx=4)
         ToolTip(edit_btn, "選択中の予定を編集")
 
+        self.delete_icon = tk.PhotoImage(file="delete-trash_icon3.png").subsample(3, 3)
         del_btn = tk.Button(
-            right_frame, text="削除 🗑", command=self.delete_event,
+            right_frame, text="削除", image=self.delete_icon, compound="right",
+            command=self.delete_event,
             font=FONTS["base"],
-            bg="#F7C6C7", fg=COLORS["text"],  # パステルレッド
+            bg="#F7C6C7", activebackground="#F4B6B7", fg=COLORS["text"],  # パステルレッド
             relief="flat", padx=8, pady=4
         )
         del_btn.pack(side="left", padx=4)
         ToolTip(del_btn, "選択中の予定を削除")
+        
+        self.listbox.bind("<Return>", lambda e: self.edit_event())
+        self.listbox.bind("<Delete>", lambda e: self.delete_event())
+        self.window.bind("<Escape>", lambda e: self.window.destroy())  # Escで閉じる
 
     def refresh_list(self):
         self.listbox.delete(0, tk.END)

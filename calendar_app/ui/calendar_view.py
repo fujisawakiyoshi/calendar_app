@@ -91,10 +91,12 @@ class CalendarView:
                         bgc = COLORS["bg"]
                     elif key in self.events:
                         bgc = COLORS["highlight"]
-                    elif key in self.holidays or (
+                    elif key in self.holidays:
+                        bgc = COLORS["accent"]
+                    elif (
                         day == today.day and self.month == today.month and self.year == today.year
                     ):
-                        bgc = COLORS["accent"]
+                        bgc = COLORS["today"]
                     elif c == 0:
                         bgc = "#FADCD9"  # 日曜薄赤
                     elif c == 6:

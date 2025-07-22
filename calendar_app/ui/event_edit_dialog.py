@@ -13,6 +13,7 @@ class EditDialog:
         self.result = None
         self.window = tk.Toplevel(parent)
         self.window.title(title)
+        self.window.iconbitmap("event_icon.ico")
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
 
@@ -117,6 +118,8 @@ class EditDialog:
             font=FONTS["base"], bg=COLORS["dialog_bg"], fg=COLORS["text"],
             relief="flat", borderwidth=0, padx=10, pady=4, takefocus=True
         ).pack(side="right", expand=True, padx=4)
+        
+        self.window.bind("<Escape>", lambda e: self.window.destroy())  # Escで閉じる
 
     def on_ok(self):
         self.result = (

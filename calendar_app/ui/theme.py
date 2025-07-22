@@ -15,7 +15,7 @@ COLORS = {
     "dialog_bg": "#FFFFFF",
     "dialog_section_bg": "#EAF6ED",
     "highlight": "#FFF4CC",
-    "accent": "#C8E4F7",
+    "accent": "#FFC0CB", #祝日
     "bg": "#FFFFFF",
     
 }

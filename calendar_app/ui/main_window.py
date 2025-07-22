@@ -12,9 +12,11 @@ class MainWindow:
         # Tkルートウィンドウの初期設定
         self.root = tk.Tk()
         self.root.title("Desktop Calendar")
+        self.root.iconbitmap("event_icon.ico")
         self.root.geometry("550x550")                 # 少し大きめにして余白を確保
         self.root.configure(bg=COLORS["header_bg"])
         self.root.resizable(True, True)
+        self.root.attributes("-topmost")
 
         # カレンダーの状態管理用 Controller を生成
         self.controller = CalendarController()
