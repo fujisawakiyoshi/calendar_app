@@ -61,11 +61,14 @@ class CalendarView:
         header.grid_columnconfigure(3, weight=1)
 
         # 前月ボタン
-        tk.Button(
+        prev = tk.Button(
             header, text='＜', command=self.on_prev,
             bg=COLORS['header_bg'], fg=COLORS['text'], relief='flat',
             font=FONTS['header'], width=3
-        ).grid(row=0, column=0, padx=6, pady=6)
+        )
+        prev.grid(row=0, column=0, padx=6, pady=6)
+        # ホバー時の色変化
+        self.add_button_hover(prev, original_bg=COLORS["header_bg"])
 
         # 年月ラベル
         tk.Label(
@@ -75,11 +78,14 @@ class CalendarView:
         ).grid(row=0, column=2, padx=6, pady=6)
 
         # 翌月ボタン
-        tk.Button(
+        nxt = tk.Button(
             header, text='＞', command=self.on_next,
             bg=COLORS['header_bg'], fg=COLORS['text'], relief='flat',
             font=FONTS['header'], width=3
-        ).grid(row=0, column=4, padx=6, pady=6)
+        )
+        nxt.grid(row=0, column=4, padx=6, pady=6)
+        # ホバー時の色変化
+        self.add_button_hover(nxt, original_bg=COLORS["header_bg"])
 
     def draw_weekday_labels(self):
         """曜日名（日～土）を表示"""
@@ -152,6 +158,12 @@ class CalendarView:
         hover_bg = '#D0EBFF'
         widget.bind('<Enter>', lambda e: widget.config(bg=hover_bg))
         widget.bind('<Leave>', lambda e: widget.config(bg=orig_bg))
+        
+    def add_button_hover(self, button, original_bg):
+        """ナビゲーションボタンホバーの色変化設定"""
+        hover_bg = "#FFFFFF"  # ヘッダー背景より目立たないグレー
+        button.bind("<Enter>", lambda e: button.config(bg=hover_bg))
+        button.bind("<Leave>", lambda e: button.config(bg=original_bg))
 
     def generate_event_summary(self, events):
         """イベントリストをツールチップ用テキストに変換"""
