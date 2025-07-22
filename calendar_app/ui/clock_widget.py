@@ -5,7 +5,7 @@ from ui.theme import COLORS  # もし共通のテーマ定義を使っている�
 class ClockWidget:
     def __init__(self, parent):
         # 時計用フレーム（背景色を統一感のある色に）
-        self.frame = tk.Frame(parent, bg=COLORS.get("dialog_bg", "#F9F9F9"))
+        self.frame = tk.Frame(parent, bg=COLORS.get("header_bg", "#F9F9F9"))
         self.frame.pack(fill="both", expand=True)
 
         # 時計ラベル（角丸風マージン＋控えめカラー＋柔らかフォント）
