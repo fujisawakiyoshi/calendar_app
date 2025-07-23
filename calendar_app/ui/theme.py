@@ -26,20 +26,52 @@ COLORS = {
     "button_fg":    "#444444",  # ボタンテキスト
     "button_hover": "#F0F0F0",  # ボタンホバー時背景
 }
+# ────────────────────────────────────────────────────────────
+# カラー定義（COLORS）
+# ────────────────────────────────────────────────────────────
+LIGHT_THEME = {
+    "bg": "#FFFFFF",
+    "dialog_bg": "#FFFFFF",
+    "header_bg": "#FAFAFA",
+    "text": "#333333",
+    "weekend": "#FFC1DA",
+    "today": "#B7DCF5",
+    "highlight": "#FFF4CC",
+    "accent": "#FFC0CB",
+    "button_bg": "#FFFFFF",
+    "button_fg": "#444444",
+    "button_hover": "#F0F0F0",
+    "clock_fg": "#555555"  # 時計の文字色
+}
 
 DARK_THEME = {
-    "bg": "#1E1E1E",
-    "header_bg": "#2C2C2C",
-    "text": "#DDDDDD",
-    "weekend": "#50364E",
-    "today": "#3C6F91",
-    "highlight": "#555522",
-    "accent": "#914F5F",
-    "dialog_bg": "#2C2C2C",
-    "button_bg": "#3A3A3A",
-    "button_fg": "#CCCCCC",
-    "button_hover": "#444444"
+    # 背景・ベース
+    "bg": "#FFF7F9",              # ミルキーピンク系
+    "header_bg": "#FEEEF3",       # ヘッダーは少し濃いピンクベージュ
+    "dialog_bg": "#FFF7F9",
+
+    # テキスト
+    "text": "#7D4B6C",            # 落ち着いたローズブラウン
+
+    # 特殊背景
+    "weekend": "#FFE8ED",         # 土日：ふんわりピンク
+    "sunday": "#FFD1DC",          # 日曜：さくら色
+    "saturday": "#D5F5F6",        # 土曜：ミントブルー
+    "holiday": "#FFD3E0",         # 祝日：淡ピンク
+    "today": "#FBD0D9",           # 今日：やさしいサクラピンク
+    "highlight": "#FFF4CC",       # イベントあり：レモン色
+    "accent": "#FFC1E3",          # 強調ピンク
+
+    # ボタン
+    "button_bg": "#FFF0F5",       # ライトラベンダー
+    "button_fg": "#7D4B6C",       # ローズブラウン
+    "button_hover": "#FFE4EC",     # ホバー：やわらかピンク
+    
+    "clock_fg": "#AA77AA"  # 時計の文字色
 }
+
+# 初期テーマはライト
+COLORS = LIGHT_THEME
 
 # ────────────────────────────────────────────────────────────
 # フォント定義（FONTS）

@@ -1,6 +1,7 @@
 import tkinter as tk
 from datetime import datetime
 from ui.theme import COLORS
+from services.theme_manager import ThemeManager
 
 class ClockWidget:
     """
@@ -10,38 +11,35 @@ class ClockWidget:
     ・1秒ごとに時刻を更新
     """
     def __init__(self, parent):
-        # ─── フレームの作成 ────────────────────────────
-        # 背景色はヘッダーと合わせるか、デフォルトを使う
-        bg_color = COLORS.get("header_bg", "#F9F9F9")
-        self.frame = tk.Frame(parent, bg=bg_color)
-        # 余白を詰めずに伸縮させる
-        self.frame.pack(fill="both", expand=True)
+            self.parent = parent
 
-        # ─── 時計ラベルの作成 ─────────────────────────
-        # フォントは軽やかなセゴエUI、色は薄いグレー
-        self.label = tk.Label(
-            self.frame,
-            text="",                # 初期テキストは空
-            font=("Segoe UI", 11),  # フォントサイズ11pt
-            bg=bg_color,            # フレームと同じ背景
-            fg="#555555",           # 薄いグレー文字
-            anchor="se",            # 右下寄せ
-            padx=8,                 # 内側余白左右8px
-            pady=5                  # 内側余白上下5px
-        )
-        # 右下にパディングを取りながら配置
-        self.label.pack(anchor="se", padx=10, pady=8)
+            self.frame = tk.Frame(parent, bg=ThemeManager.get('header_bg'))
+            self.frame.pack(fill="both", expand=True)
 
-        # ─── 時刻更新ループ開始 ────────────────────────
-        self._update_clock()
+            self.label = tk.Label(
+                self.frame,
+                text="",
+                font=("Segoe UI", 11),
+                bg=ThemeManager.get('header_bg'),
+                fg="#555555",
+                anchor="se",
+                padx=8,
+                pady=5
+            )
+            self.label.pack(anchor="se", padx=10, pady=8)
+
+            self._update_clock()
 
     def _update_clock(self):
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.label.config(text=f"🕒 {now_str}")
+            self.label.after(1000, self._update_clock)
+
+    def update_theme(self):
         """
-        ラベルに現在時刻を設定し、1秒後に再度自分を呼び出す。
+        テーマ切り替え時に呼び出し、背景・文字色を更新する。
         """
-        # 現在日時をフォーマット
-        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # ラベルに日時をセット（先頭にアイコン＋スペース）
-        self.label.config(text=f"🕒 {now_str}")
-        # 1,000ミリ秒後に再実行
-        self.label.after(1000, self._update_clock)
+        new_bg = ThemeManager.get('header_bg')
+        new_fg = ThemeManager.get('clock_fg', fallback="#555555")  # フォント色もテーマ化
+        self.frame.config(bg=new_bg)
+        self.label.config(bg=new_bg, fg=new_fg)

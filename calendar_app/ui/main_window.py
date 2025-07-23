@@ -7,6 +7,7 @@ from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
 from ui.theme import COLORS
+from services.theme_manager import ThemeManager
 from utils.resource import resource_path
 
 
@@ -25,7 +26,7 @@ class MainWindow:
         self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
 
         # 4) 背景色・リサイズ制御
-        self.root.configure(bg=COLORS["header_bg"])
+        self.root.configure(bg=ThemeManager.get("header_bg"))
         self.root.resizable(True, True)
         self.root.attributes("-topmost", False)
 
@@ -52,7 +53,7 @@ class MainWindow:
 
     def _setup_ui(self):
         """カレンダーと時計のウィジェットを配置"""
-        # カレンダー領域
+        # カレンダー
         self.calendar_view = CalendarView(
             self.root,
             self.controller.current_year,
@@ -63,8 +64,21 @@ class MainWindow:
             on_prev=self.on_prev_month,
             on_next=self.on_next_month
         )
-        # 右下に時計
-        ClockWidget(self.root)
+
+        # 時計
+        self.clock_widget = ClockWidget(self.root)
+
+        # 🌙テーマ切り替えボタンの作成と配置
+        self.toggle_btn = tk.Button(
+            self.root,
+            text="☀ レギュラーモード" if ThemeManager.is_dark_mode() else "✨ かわいいモード",
+            bg=ThemeManager.get("button_bg"),
+            fg=ThemeManager.get("button_fg"),
+            font=("Helvetica", 11),
+            relief="flat",
+            command=self.toggle_theme
+        )
+        self.toggle_btn.pack(pady=(0, 10))  # カレンダーの下に余白付きで配置
 
     def on_prev_month(self):
         """＜ボタンで前月へ"""
@@ -93,6 +107,24 @@ class MainWindow:
         except Exception as e:
             print(f"イベントダイアログでエラー発生: {e}")
 
+    def toggle_theme(self):
+        ThemeManager.toggle_theme()
+
+        # テーマ切り替え後の状態でUI更新
+        is_dark = ThemeManager.is_dark_mode()
+
+        self.root.configure(bg=ThemeManager.get("header_bg"))
+        self._refresh_calendar()
+        self.clock_widget.update_theme()
+
+        # ボタンの表示を切り替え後の状態に合わせて更新
+        self.toggle_btn.configure(
+            text="☀ レギュラーモード" if is_dark else "✨ かわいいモード",
+            bg=ThemeManager.get("button_bg"),
+            fg=ThemeManager.get("button_fg")
+        )
+
+        
     def run(self):
         """メインループ開始"""
         self.root.mainloop()
