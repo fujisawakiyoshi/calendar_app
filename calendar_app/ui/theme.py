@@ -27,6 +27,20 @@ COLORS = {
     "button_hover": "#F0F0F0",  # ボタンホバー時背景
 }
 
+DARK_THEME = {
+    "bg": "#1E1E1E",
+    "header_bg": "#2C2C2C",
+    "text": "#DDDDDD",
+    "weekend": "#50364E",
+    "today": "#3C6F91",
+    "highlight": "#555522",
+    "accent": "#914F5F",
+    "dialog_bg": "#2C2C2C",
+    "button_bg": "#3A3A3A",
+    "button_fg": "#CCCCCC",
+    "button_hover": "#444444"
+}
+
 # ────────────────────────────────────────────────────────────
 # フォント定義（FONTS）
 # ────────────────────────────────────────────────────────────
