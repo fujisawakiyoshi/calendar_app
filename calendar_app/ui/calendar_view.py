@@ -113,7 +113,7 @@ class CalendarView:
         for idx, wd in enumerate(days):
             fg = COLORS['text']
             if wd in ('日', '土'):
-                fg = '#663399'  # 紫系の落ち着いた文字色（お好みで）
+                fg = '#9D5C64'  
 
             tk.Label(
                 self.frame,
@@ -131,8 +131,13 @@ class CalendarView:
 
         for row_index, week in enumerate(matrix, start=2):
             for col_index, day in enumerate(week):
-                text = str(day) if day else ''
-                key = f"{self.year}-{self.month:02d}-{day:02d}" if day else None
+                if not day:
+                    text, key = '', None
+                else:
+                    key = f"{self.year}-{self.month:02d}-{day:02d}"
+                    # 今日を強調
+                    text = f"｟ {day} ｠" if self._is_today(day) else str(day)
+                
                 bg = self._get_day_bg(day, col_index, key)
 
                 lbl = tk.Label(

@@ -144,7 +144,7 @@ class EditDialog:
             fg=COLORS["text"],
             activebackground=COLORS["today"],
             relief="flat",
-            padx=12, pady=5,
+            padx=14, pady=4,
             cursor="hand2"
         )
         ok_btn.pack(side="left", anchor="w")
@@ -160,7 +160,7 @@ class EditDialog:
             fg=COLORS["text"],
             activebackground="#F4B6B7",
             relief="flat",
-            padx=12, pady=5,
+            padx=11, pady=4,
             cursor="hand2"
         )
         cancel_btn.pack(side="right", anchor="e")
