@@ -1,42 +1,61 @@
+# ui/theme.py
 
-# 色
+# ────────────────────────────────────────────────────────────
+# カラー定義（COLORS）
+# ────────────────────────────────────────────────────────────
 COLORS = {
-    "default_bg": "#FFFFFF",
-    "header_bg": "#F7F7F7",
-    "weekday_header_bg": "#EAF6ED",
-    "text": "#333333",
-    "sunday": "#FADCD9",
-    "saturday": "#DCEEF9",
-    "holiday": "#F6CACA",
-    "today": "#C8E4F7",
-    "event": "#FFF4CC",
-    "button_bg": "#FFFFFF",
-    "button_fg": "#444444",
-    "dialog_bg": "#FFFFFF",
-    "dialog_section_bg": "#EAF6ED",
+    # ◾ 背景色
+    "bg":           "#FFFFFF",  # メイン背景
+    "dialog_bg":    "#FFFFFF",  # ダイアログ背景
+    "header_bg":    "#FAFAFA",  # ヘッダー（ナビゲーション部）背景
+
+    # ◾ テキスト色
+    "text":         "#333333",  # 標準テキスト
+
+    # ◾ 日付セルの特殊背景
+    "sunday":       "#FADCD9",  # 日曜セル
+    "saturday":     "#DCEEF9",  # 土曜セル
+    "holiday":      "#F6CACA",  # 祝日セル（未使用ならaccentと統合可能）
+    "today":        "#B7DCF5",  # 今日セルの強調
+    "highlight":    "#FFF4CC",  # イベントありセル
+    "accent":       "#FFC0CB",  # 祝日セル用アクセント
+
+    # ◾ ボタン共通
+    "button_bg":    "#FFFFFF",  # ボタン標準背景
+    "button_fg":    "#444444",  # ボタンテキスト
+    "button_hover": "#F0F0F0",  # ボタンホバー時背景
 }
 
-# 個別の定数
-DIALOG_BG_COLOR = COLORS["dialog_bg"]
-BUTTON_BG_COLOR = COLORS["button_bg"]
-BUTTON_FG_COLOR = COLORS["button_fg"]
-
-# フォント（Font Styles）
+# ────────────────────────────────────────────────────────────
+# フォント定義（FONTS）
+# ────────────────────────────────────────────────────────────
+# フォント種類とサイズをここで一元管理します。
 FONTS = {
-    "base": ("Arial", 11),
-    "bold": ("Arial", 11, "bold"),
-    "header": ("Arial", 14, "bold"),
-    "dialog_title": ("Arial", 13, "bold"),
-    "button": ("Arial", 12),
+    "base":         ("游ゴシック", 12),            # 標準テキスト
+    "bold":         ("游ゴシック", 12, "bold"),    # 太字
+    "small":        ("游ゴシック", 10),            # 補助テキスト・ラベル
+    "header":       ("游ゴシック", 14, "bold"),    # カレンダー見出し
+    "dialog_title": ("游ゴシック", 13, "bold"),    # ダイアログタイトル
+    "button":       ("游ゴシック", 12),            # ボタンテキスト
 }
 
-# 定数リスト（選択肢）
+# ────────────────────────────────────────────────────────────
+# 選択肢リスト
+# ────────────────────────────────────────────────────────────
+# コンボボックス等で利用する選択肢を定義
 TITLE_CHOICES = [
-    "会議/打合せ", "来客", "外出", "出張", "休暇", "私用", "その他"
+    "会議/打合せ",
+    "来客",
+    "外出",
+    "出張",
+    "休暇",
+    "私用",
+    "その他"
 ]
 
+# 時刻選択肢：07:00～21:30 まで 30 分刻み
 TIME_CHOICES = [
     f"{h:02d}:{m:02d}"
-    for h in range(7, 22)
-    for m in (0, 30)
+    for h in range(7, 22)    # 07時～21時
+    for m in (0, 30)         # on the hour / half past
 ]

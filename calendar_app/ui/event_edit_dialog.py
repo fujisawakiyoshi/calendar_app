@@ -1,147 +1,203 @@
+# ui/event_edit_dialog.py
+
 import tkinter as tk
 from tkinter import ttk
-from ui.theme import COLORS, TITLE_CHOICES, TIME_CHOICES
+from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
+from utils.resource import resource_path
 
 class EditDialog:
-    """イベントのタイトル・時間・内容を編集するためのダイアログ"""
+    """予定の追加・編集用ダイアログウィンドウ"""
+
     def __init__(
-        self, 
-        parent, 
-        title, 
-        default_title="", 
-        default_start_time="", 
-        default_end_time="", 
-        default_content=""
-        ):
-        """
-        parent (tk.Widget): 親ウィンドウ。
-        title (str): ダイアログのタイトル。
-        default_title (str, optional): 初期タイトル値。
-        default_start_time (str, optional): 初期開始時間。
-        default_end_time (str, optional): 初期終了時間。
-        default_content (str, optional): 初期内容。
-        """
+        self, parent, title,
+        default_title="", default_start_time="",
+        default_end_time="", default_content=""
+    ):
+        # ダイアログから返す結果（OK 押下時にタプルで設定）
         self.result = None
 
-        self.start_time_var = tk.StringVar(value=default_start_time)
-        self.end_time_var = tk.StringVar(value=default_end_time)
-
+        # Toplevel を作成 → まず非表示化（UI構築中のちらつき防止）
         self.window = tk.Toplevel(parent)
+        self.window.withdraw()
         self.window.title(title)
+        # アイコンを resource_path 経由で読み込み
+        self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
 
-        # ウィジェットを生成
-        self.create_widgets(default_title, default_content)
-  
+        # ウィンドウのサイズと中央配置
+        w, h = 300, 270
+        sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
+        x, y = (sw - w) // 2, (sh - h) // 2
+        self.window.geometry(f"{w}x{h}+{x}+{y}")
+
+        # 初期値を StringVar にセット
+        self.title_var   = tk.StringVar(value=default_title)
+        self.start_var   = tk.StringVar(value=default_start_time)
+        self.end_var     = tk.StringVar(value=default_end_time)
+        self.content_var = tk.StringVar(value=default_content)
+
+        # UI 構築
+        self._build_ui()
+
+        # モーダル設定：親の上に表示 & 他操作をブロック
         self.window.transient(parent)
         self.window.grab_set()
-        self.window.wait_window()
 
-    def create_widgets(self, default_title, default_content):
-        """入力フィールド（タイトル、時間、内容）と操作ボタンを作成する。"""
-        # --- 入力フォームの外枠 ---
-        form_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        form_frame.pack(padx=20, pady=15, fill="x")
+        # 初期フォーカス
+        self.ent_title.focus_set()
+        # UI 完成後に表示
+        self.window.deiconify()
 
-        # --- タイトル選択欄（コンボボックス） ---
+    def _build_ui(self):
+        """ダイアログ内のフレームと各入力セクションを配置"""
+        pad = 8
+        frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        frame.pack(fill="both", expand=True, padx=pad, pady=pad)
+
+        # 各セクション
+        self._create_title_section(frame)
+        self._create_time_section(frame)
+        self._create_content_section(frame)
+        self._create_button_section()
+
+        # Esc キーで閉じる
+        self.window.bind("<Escape>", lambda e: self.window.destroy())
+
+    def _create_title_section(self, parent):
+        """タイトル入力用のラベル+Combobox"""
         tk.Label(
-            form_frame, text="タイトル（選択または入力）：", 
+            parent,
+            text="タイトル：",
+            font=FONTS["small"],
             bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
+            fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, 2))
 
-        self.title_var = tk.StringVar(value=default_title)
-        self.title_entry = ttk.Combobox(
-            form_frame,
+        self.ent_title = ttk.Combobox(
+            parent,
             textvariable=self.title_var,
             values=TITLE_CHOICES,
-            state="normal",
-            font=("Arial", 11)
+            font=FONTS["small"],
+            state="normal",   # 自由入力＋候補あり
+            takefocus=True
         )
-        self.title_entry.pack(fill="x", pady=(0,8))
+        self.ent_title.pack(fill="x", pady=(0, 8))
 
-        # --- 開始時間選択欄 ---
+    def _create_time_section(self, parent):
+        """開始・終了時間入力用のラベル＋Combobox（2つ並べる）"""
+        for label_text, var in [("開始時間：", self.start_var), ("終了時間：", self.end_var)]:
+            tk.Label(
+                parent,
+                text=label_text,
+                font=FONTS["small"],
+                bg=COLORS["dialog_bg"],
+                fg=COLORS["text"]
+            ).pack(anchor="w", pady=(0, 2))
+
+            ttk.Combobox(
+                parent,
+                textvariable=var,
+                values=TIME_CHOICES,
+                font=FONTS["small"],
+                state="normal",
+                takefocus=True
+            ).pack(fill="x", pady=(0, 8))
+
+    def _create_content_section(self, parent):
+        """メモ用の Entry とプレースホルダー機能"""
         tk.Label(
-            form_frame, text="開始時間（選択または入力）：",
+            parent,
+            text="内容：",
+            font=FONTS["small"],
             bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
+            fg=COLORS["text"]
+        ).pack(anchor="w", pady=(0, 2))
 
-        self.start_time_entry = ttk.Combobox(
-            form_frame,
-            textvariable=self.start_time_var,
-            values=TIME_CHOICES,
-            state="normal",
-            font=("Arial", 11)
+        self.ent_content = tk.Entry(
+            parent,
+            textvariable=self.content_var,
+            font=FONTS["small"],
+            relief="groove",
+            takefocus=True,
+            bg="#FAFAFA",  # 薄い背景
+            fg="#888888"   # 初期文字色グレー
         )
-        self.start_time_entry.pack(fill="x", pady=(0,8))
+        self.ent_content.pack(fill="x", pady=(0, 8))
 
-        # --- 終了時間選択欄 ---
-        tk.Label(
-            form_frame, text="終了時間（選択または入力）：",
-            bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
+        # プレースホルダー挿入
+        self._add_placeholder(self.ent_content, "メモを入力")
 
-        self.end_time_entry = ttk.Combobox(
-            form_frame,
-            textvariable=self.end_time_var,
-            values=TIME_CHOICES,
-            state="normal",
-            font=("Arial", 11)
-        )
-        self.end_time_entry.pack(fill="x", pady=(0,8))
+    def _create_button_section(self, parent=None):
+        """OK / キャンセル ボタン配置"""
+        pad = 8
+        btn_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
 
-        # --- 内容入力欄 ---
-        tk.Label(
-            form_frame, text="内容：", bg=COLORS["dialog_bg"],
-            anchor="w", font=("Arial", 11)
-        ).pack(fill="x", pady=(0,2))
-
-        self.content_entry = tk.Entry(
-            form_frame, font=("Arial", 11),
-            relief="ridge", bd=1
-        )
-        self.content_entry.insert(0, default_content)
-        self.content_entry.pack(fill="x", pady=(0,8))
-
-        # --- OK / Cancel ボタン ---
-        button_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
-        button_frame.pack(pady=10)
-
-        ok_button = tk.Button(
-            button_frame,
-            text="OK",
+        # OK ボタン（アクセントカラー：today）
+        ok_btn = tk.Button(
+            btn_frame,
+            text="    OK    ",
             command=self.on_ok,
-            bg=COLORS["button_bg"],
-            fg=COLORS["button_fg"],
+            font=FONTS["base"],
+            bg=COLORS["today"],
+            fg=COLORS["text"],
+            activebackground=COLORS["today"],
             relief="flat",
-            font=("Arial", 11),
-            width=10
+            padx=12, pady=5,
+            cursor="hand2"
         )
-        ok_button.pack(side="left", padx=10)
+        ok_btn.pack(side="left", anchor="w")
+        self.add_button_hover(ok_btn, original_bg=COLORS["today"])
 
-        cancel_button = tk.Button(
-            button_frame,
-            text="Cancel",
+        # キャンセル ボタン（目立つ赤系）
+        cancel_btn = tk.Button(
+            btn_frame,
+            text="キャンセル",
             command=self.window.destroy,
-            bg=COLORS["button_bg"],
-            fg=COLORS["button_fg"],
+            font=FONTS["base"],
+            bg="#F7C6C7",
+            fg=COLORS["text"],
+            activebackground="#F4B6B7",
             relief="flat",
-            font=("Arial", 11),
-            width=10
+            padx=12, pady=5,
+            cursor="hand2"
         )
-        cancel_button.pack(side="left", padx=10)
+        cancel_btn.pack(side="right", anchor="e")
+        self.add_button_hover(cancel_btn, original_bg="#F7C6C7")
+
+    def _add_placeholder(self, widget, placeholder):
+        """Entry に簡易プレースホルダー機能を追加"""
+        def on_focus_in(event):
+            if widget.get() == placeholder:
+                widget.delete(0, tk.END)
+                widget.config(fg=COLORS["text"])
+        def on_focus_out(event):
+            if not widget.get():
+                widget.insert(0, placeholder)
+                widget.config(fg="#888888")
+
+        # 初期状態で placeholder を挿入
+        if not widget.get():
+            widget.insert(0, placeholder)
+
+        widget.bind("<FocusIn>", on_focus_in)
+        widget.bind("<FocusOut>", on_focus_out)
 
     def on_ok(self):
-        """ユーザーが入力したデータを result に格納し、ダイアログを閉じる。"""
-        title = self.title_var.get()
-        start_time = self.start_time_var.get()
-        end_time = self.end_time_var.get()
-        content = self.content_entry.get()
-
-        self.result = (title, start_time, end_time, content)
+        """OK 押下で StringVar から値を回収し、result に格納 → ウィンドウを閉じる"""
+        self.result = (
+            self.title_var.get(),
+            self.start_var.get(),
+            self.end_var.get(),
+            self.content_var.get()
+        )
         self.window.destroy()
 
+    def add_button_hover(self, button, original_bg, hover_bg=None):
+        """ボタンにホバー時の背景色変化を追加"""
+        if hover_bg is None:
+            hover_bg = COLORS["button_hover"]
 
+        button.bind("<Enter>", lambda e: button.config(bg=hover_bg))
+        button.bind("<Leave>", lambda e: button.config(bg=original_bg))

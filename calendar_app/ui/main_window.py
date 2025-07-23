@@ -1,81 +1,98 @@
+# ui/main_window.py
+
 import tkinter as tk
+from datetime import datetime
+
 from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
 from ui.theme import COLORS
+from utils.resource import resource_path
+
 
 class MainWindow:
-    """アプリケーションのメインウィンドウ。"""
-    def __init__(self):
-        # Tkルートウィンドウの初期設定
-        self.root = tk.Tk()
-        self.root.title("Desktop Calendar")
-        self.root.geometry("480x520")
-        self.root.configure(bg=COLORS["header_bg"])
+    """アプリケーションのメインウィンドウを構成するクラス"""
 
-        # カレンダーの状態管理用 Controller を生成
+    def __init__(self):
+        # 1) Tkinter ルートウィンドウをいったん隠して構築（ちらつき防止）
+        self.root = tk.Tk()
+        self.root.withdraw()
+
+        # 2) ウィンドウタイトル
+        self.root.title("Desktop Calendar")
+
+        # 3) アイコンを ICO で設定
+        self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
+
+        # 4) 背景色・リサイズ制御
+        self.root.configure(bg=COLORS["header_bg"])
+        self.root.resizable(True, True)
+        self.root.attributes("-topmost", False)
+
+        # 5) 位置・サイズを調整して少し右上に寄せる
+        self._configure_window_position()
+
+        # 6) カレンダー制御用コントローラー
         self.controller = CalendarController()
 
-        # UI部品を組み立て
-        self.setup_ui()
+        # 7) カレンダー＆時計ウィジェットを組み立て
+        self._setup_ui()
 
-    def setup_ui(self):
-        """全体レイアウト（カレンダー＋時計）の構築"""
-        main_frame = tk.Frame(self.root, bg=COLORS["header_bg"])
-        main_frame.pack(fill="both", expand=True)
+        # 8) 完成後に表示
+        self.root.after(0, self.root.deiconify)
 
-        # カレンダー表示領域
-        self.calendar_container = tk.Frame(main_frame, bg=COLORS["header_bg"])
-        self.calendar_container.pack(pady=10)
-        self.show_calendar()
+    def _configure_window_position(self):
+        """ウィンドウを画面中央から少し右上に寄せる"""
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        ww, wh = 550, 490
+        x = (sw - ww)//2 + 100
+        y = (sh - wh)//2 - 80
+        self.root.geometry(f"{ww}x{wh}+{x}+{y}")
 
-        # 時計ウィジェット
-        clock_frame = tk.Frame(main_frame, bg=COLORS["header_bg"])
-        clock_frame.pack(fill="both", expand=True)
-        ClockWidget(clock_frame)
-
-    def show_calendar(self):
-        """Controller から最新データを取得し、CalendarView を描画"""
-        # 既存のカレンダーウィジェットをクリア
-        for w in self.calendar_container.winfo_children():
-            w.destroy()
-
-        year    = self.controller.current_year
-        month   = self.controller.current_month
-        holidays = self.controller.holidays
-        events   = self.controller.events
-
-        # カレンダー表示用コンポーネントに状態を渡す
-        CalendarView(
-            parent=self.calendar_container,
-            year=year,
-            month=month,
-            holidays=holidays,
-            events=events,
+    def _setup_ui(self):
+        """カレンダーと時計のウィジェットを配置"""
+        # カレンダー領域
+        self.calendar_view = CalendarView(
+            self.root,
+            self.controller.current_year,
+            self.controller.current_month,
+            self.controller.holidays,
+            self.controller.events,
             on_date_click=self.open_event_dialog,
-            on_prev=self.on_prev_click,
-            on_next=self.on_next_click
+            on_prev=self.on_prev_month,
+            on_next=self.on_next_month
+        )
+        # 右下に時計
+        ClockWidget(self.root)
+
+    def on_prev_month(self):
+        """＜ボタンで前月へ"""
+        self.controller.prev_month()
+        self._refresh_calendar()
+
+    def on_next_month(self):
+        """＞ボタンで次月へ"""
+        self.controller.next_month()
+        self._refresh_calendar()
+
+    def _refresh_calendar(self):
+        """カレンダーを最新データで再描画"""
+        self.calendar_view.update(
+            self.controller.current_year,
+            self.controller.current_month,
+            self.controller.holidays,
+            self.controller.events
         )
 
-    def on_prev_click(self):
-        """＜ボタン押下時：Controller で前月に移動し再描画"""
-        self.controller.prev_month()
-        self.show_calendar()
-
-    def on_next_click(self):
-        """＞ボタン押下時：Controller で次月に移動し再描画"""
-        self.controller.next_month()
-        self.show_calendar()
-
-    def open_event_dialog(self, date_key: str):
-        """日付セルクリック時：EventDialog を開き、更新後にカレンダー再描画"""
-        from ui.event_dialog import EventDialog  # 循環インポート回避
-        EventDialog(self.root, date_key, self.controller.events, self.show_calendar)
+    def open_event_dialog(self, date_key):
+        """日付クリックでイベントダイアログを開く"""
+        try:
+            from ui.event_dialog import EventDialog
+            EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
+        except Exception as e:
+            print(f"イベントダイアログでエラー発生: {e}")
 
     def run(self):
-        """アプリ起動"""
+        """メインループ開始"""
         self.root.mainloop()
-
-
-if __name__ == "__main__":
-    MainWindow().run()

@@ -1,8 +1,9 @@
 import json
 import os
 import requests
+from utils.resource import resource_path
 
-CACHE_FILE = "data/holidays.json"
+CACHE_FILE = resource_path("data/holidays.json")
 
 def fetch_holidays_from_api(year):
     """祝日APIから取得"""

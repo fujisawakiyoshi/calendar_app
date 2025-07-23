@@ -1,4 +1,3 @@
-# controllers/calendar_controller.py
 from datetime import datetime
 from services.holiday_service import get_holidays_for_year
 from services.event_manager import load_events
