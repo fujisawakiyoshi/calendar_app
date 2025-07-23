@@ -29,7 +29,7 @@ class CalendarView:
 
         # カレンダー全体を入れるフレームを作成
         self.frame = tk.Frame(self.parent, bg=COLORS['bg'])
-        self.frame.pack(pady=10)
+        self.frame.pack(padx=15, pady=15)
 
         # 初回描画
         self.render()
@@ -112,10 +112,8 @@ class CalendarView:
         days = ['日', '月', '火', '水', '木', '金', '土']
         for idx, wd in enumerate(days):
             fg = COLORS['text']
-            if wd == '日':
-                fg = '#D14'  # 日曜赤
-            elif wd == '土':
-                fg = '#449'  # 土曜青
+            if wd in ('日', '土'):
+                fg = '#663399'  # 紫系の落ち着いた文字色（お好みで）
 
             tk.Label(
                 self.frame,
@@ -125,7 +123,7 @@ class CalendarView:
                 fg=fg,
                 width=6,
                 pady=4
-            ).grid(row=1, column=idx, padx=4, pady=4)
+            ).grid(row=1, column=idx, padx=1, pady=4)
 
     def _draw_days(self):
         """各日付セルを生成し、イベントや祝日を反映"""
@@ -173,10 +171,8 @@ class CalendarView:
             return COLORS['accent']
         if self._is_today(day):
             return COLORS['today']
-        if col == 0:
-            return COLORS['sunday']
-        if col == 6:
-            return COLORS['saturday']
+        if col in (0, 6):  # 土日どちらも
+            return COLORS['weekend']
         return COLORS['bg']
 
     def _is_today(self, day) -> bool:

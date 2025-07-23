@@ -113,7 +113,7 @@ class EventDialog:
             image=self.add_icon,
             compound="right",          # テキスト右にアイコン
             command=self.add_event,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg=COLORS["today"],        # todayカラーで強調
             fg=COLORS["text"],
             relief="flat",
@@ -137,7 +137,7 @@ class EventDialog:
             image=self.edit_icon,
             compound="right",
             command=self.edit_event,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg="#FFE7C1",    # パステルオレンジ
             fg=COLORS["text"],
             relief="flat",
@@ -149,7 +149,7 @@ class EventDialog:
 
         # 削除ボタン
         self.delete_icon = tk.PhotoImage(
-            file=resource_path("ui/icons/delete-trash_icon3.png")
+            file=resource_path("ui/icons/trash_icon.png")
         ).subsample(3,3)
         del_btn = tk.Button(
             right_frame,
@@ -157,7 +157,7 @@ class EventDialog:
             image=self.delete_icon,
             compound="right",
             command=self.delete_event,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg="#F7C6C7",    # パステルレッド
             activebackground="#F4B6B7",
             fg=COLORS["text"],
