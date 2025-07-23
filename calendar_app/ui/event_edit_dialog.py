@@ -65,7 +65,7 @@ class EditDialog:
         self.window.bind("<Escape>", lambda e: self.window.destroy())
 
     def _create_title_section(self, parent):
-        """タイトル入力用のラベル＋Combobox"""
+        """タイトル入力用のラベル+Combobox"""
         tk.Label(
             parent,
             text="タイトル：",

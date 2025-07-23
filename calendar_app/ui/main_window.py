@@ -21,7 +21,7 @@ class MainWindow:
         # 2) ウィンドウタイトル
         self.root.title("Desktop Calendar")
 
-        # 3) アイコンを PNG で設定（PhotoImage の参照を保持）
+        # 3) アイコンを ICO で設定
         self.root.iconbitmap(resource_path("ui/icons/event_icon.ico"))
 
         # 4) 背景色・リサイズ制御
@@ -87,8 +87,11 @@ class MainWindow:
 
     def open_event_dialog(self, date_key):
         """日付クリックでイベントダイアログを開く"""
-        from ui.event_dialog import EventDialog
-        EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
+        try:
+            from ui.event_dialog import EventDialog
+            EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
+        except Exception as e:
+            print(f"イベントダイアログでエラー発生: {e}")
 
     def run(self):
         """メインループ開始"""
