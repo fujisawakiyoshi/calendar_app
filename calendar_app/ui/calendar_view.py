@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime
 from utils.calendar_utils import generate_calendar_matrix
 from ui.theme import COLORS, FONTS
+from services.theme_manager import ThemeManager
 from ui.tooltip import ToolTip
 
 class CalendarView:
@@ -28,8 +29,8 @@ class CalendarView:
         self.on_next = on_next
 
         # カレンダー全体を入れるフレームを作成
-        self.frame = tk.Frame(self.parent, bg=COLORS['bg'])
-        self.frame.pack(pady=10)
+        self.frame = tk.Frame(self.parent, bg=ThemeManager.get('bg'))
+        self.frame.pack(padx=15, pady=15)
 
         # 初回描画
         self.render()
@@ -59,7 +60,7 @@ class CalendarView:
 
     def _draw_header(self):
         """年・月と前後移動ボタンを表示するヘッダーを作成"""
-        header = tk.Frame(self.frame, bg=COLORS['header_bg'])
+        header = tk.Frame(self.frame, bg=ThemeManager.get('header_bg'))
         header.grid(row=0, column=0, columnspan=7, sticky='nsew')
 
         # 両ボタンの間にスペース
@@ -71,15 +72,15 @@ class CalendarView:
             header,
             text='＜',
             command=self.on_prev,
-            bg=COLORS['header_bg'],
-            fg=COLORS['text'],
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('text'),
             relief='flat',
             font=FONTS['header'],
             width=3,
             cursor='hand2'
         )
         prev_btn.grid(row=0, column=0, padx=6, pady=6)
-        self._add_button_hover(prev_btn, COLORS['header_bg'])
+        self._add_button_hover(prev_btn, ThemeManager.get('header_bg'))
 
         # 年月ラベル
         tk.Label(
@@ -97,35 +98,33 @@ class CalendarView:
             header,
             text='＞',
             command=self.on_next,
-            bg=COLORS['header_bg'],
-            fg=COLORS['text'],
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('text'),
             relief='flat',
             font=FONTS['header'],
             width=3,
             cursor='hand2'
         )
         next_btn.grid(row=0, column=4, padx=6, pady=6)
-        self._add_button_hover(next_btn, COLORS['header_bg'])
+        self._add_button_hover(next_btn, ThemeManager.get('header_bg'))
 
     def _draw_weekday_labels(self):
         """日～土の曜日ラベルを表示"""
         days = ['日', '月', '火', '水', '木', '金', '土']
         for idx, wd in enumerate(days):
             fg = COLORS['text']
-            if wd == '日':
-                fg = '#D14'  # 日曜赤
-            elif wd == '土':
-                fg = '#449'  # 土曜青
+            if wd in ('日', '土'):
+                fg = '#9D5C64'  
 
             tk.Label(
                 self.frame,
                 text=wd,
                 font=FONTS['base'],
-                bg=COLORS['header_bg'],
+                bg=ThemeManager.get('header_bg'),
                 fg=fg,
                 width=6,
                 pady=4
-            ).grid(row=1, column=idx, padx=4, pady=4)
+            ).grid(row=1, column=idx, padx=1, pady=4)
 
     def _draw_days(self):
         """各日付セルを生成し、イベントや祝日を反映"""
@@ -133,8 +132,13 @@ class CalendarView:
 
         for row_index, week in enumerate(matrix, start=2):
             for col_index, day in enumerate(week):
-                text = str(day) if day else ''
-                key = f"{self.year}-{self.month:02d}-{day:02d}" if day else None
+                if not day:
+                    text, key = '', None
+                else:
+                    key = f"{self.year}-{self.month:02d}-{day:02d}"
+                    # 今日を強調
+                    text = f"  {day} °" if self._is_today(day) else str(day)
+                
                 bg = self._get_day_bg(day, col_index, key)
 
                 lbl = tk.Label(
@@ -142,7 +146,7 @@ class CalendarView:
                     text=text,
                     font=FONTS['base'],
                     bg=bg,
-                    fg=COLORS['text'],
+                    fg=ThemeManager.get('text'),
                     width=6,
                     height=2,
                     bd=1,
@@ -166,18 +170,16 @@ class CalendarView:
         優先度：空セル → イベント → 祝日 → 今日 → 日曜 → 土曜 → 通常
         """
         if not day:
-            return COLORS['bg']
+            return ThemeManager.get('bg')
         if key in self.events:
-            return COLORS['highlight']
+            return ThemeManager.get('highlight')
         if key in self.holidays:
-            return COLORS['accent']
+            return ThemeManager.get('accent')
         if self._is_today(day):
-            return COLORS['today']
-        if col == 0:
-            return COLORS['sunday']
-        if col == 6:
-            return COLORS['saturday']
-        return COLORS['bg']
+            return ThemeManager.get('today')
+        if col in (0, 6):  # 土日どちらも
+            return ThemeManager.get('weekend')
+        return ThemeManager.get('bg')
 
     def _is_today(self, day) -> bool:
         """指定した日付が「今日」であるかを判定"""

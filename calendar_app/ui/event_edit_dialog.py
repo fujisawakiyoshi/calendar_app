@@ -3,6 +3,7 @@
 import tkinter as tk
 from tkinter import ttk
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
+from services.theme_manager import ThemeManager
 from utils.resource import resource_path
 
 class EditDialog:
@@ -71,7 +72,7 @@ class EditDialog:
             text="タイトル：",
             font=FONTS["small"],
             bg=COLORS["dialog_bg"],
-            fg=COLORS["text"]
+            fg=ThemeManager.get("text")
         ).pack(anchor="w", pady=(0, 2))
 
         self.ent_title = ttk.Combobox(
@@ -92,7 +93,7 @@ class EditDialog:
                 text=label_text,
                 font=FONTS["small"],
                 bg=COLORS["dialog_bg"],
-                fg=COLORS["text"]
+                fg=ThemeManager.get("text")
             ).pack(anchor="w", pady=(0, 2))
 
             ttk.Combobox(
@@ -111,7 +112,7 @@ class EditDialog:
             text="内容：",
             font=FONTS["small"],
             bg=COLORS["dialog_bg"],
-            fg=COLORS["text"]
+            fg=ThemeManager.get("text")
         ).pack(anchor="w", pady=(0, 2))
 
         self.ent_content = tk.Entry(
@@ -139,12 +140,12 @@ class EditDialog:
             btn_frame,
             text="    OK    ",
             command=self.on_ok,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg=COLORS["today"],
-            fg=COLORS["text"],
+            fg=ThemeManager.get("text"),
             activebackground=COLORS["today"],
             relief="flat",
-            padx=12, pady=5,
+            padx=14, pady=4,
             cursor="hand2"
         )
         ok_btn.pack(side="left", anchor="w")
@@ -155,12 +156,12 @@ class EditDialog:
             btn_frame,
             text="キャンセル",
             command=self.window.destroy,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg="#F7C6C7",
-            fg=COLORS["text"],
+            fg=ThemeManager.get("text"),
             activebackground="#F4B6B7",
             relief="flat",
-            padx=12, pady=5,
+            padx=11, pady=4,
             cursor="hand2"
         )
         cancel_btn.pack(side="right", anchor="e")
@@ -171,7 +172,7 @@ class EditDialog:
         def on_focus_in(event):
             if widget.get() == placeholder:
                 widget.delete(0, tk.END)
-                widget.config(fg=COLORS["text"])
+                widget.config(fg=ThemeManager.get("text"))
         def on_focus_out(event):
             if not widget.get():
                 widget.insert(0, placeholder)

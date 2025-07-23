@@ -5,6 +5,7 @@ from tkinter import messagebox
 from services.event_manager import save_events
 from ui.event_edit_dialog import EditDialog
 from ui.theme import COLORS, FONTS
+from services.theme_manager import ThemeManager
 from ui.tooltip import ToolTip
 from utils.resource import resource_path  # アイコン等のリソースパス解決用
 
@@ -64,22 +65,22 @@ class EventDialog:
             self.window,
             text=f"予定一覧（{self.date_key}）",
             font=(FONTS["base"][0], 13, "bold"),  # 少し大きめの太字フォント
-            bg=COLORS["header_bg"],
-            fg=COLORS["text"],
+            bg=ThemeManager.get("header_bg"),
+            fg=ThemeManager.get("text"),
             pady=6
         ).pack(fill="x")
 
     def create_listbox_area(self):
         """イベント一覧の Listbox とスクロールバーを配置"""
-        frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        frame = tk.Frame(self.window, bg=ThemeManager.get("dialog_bg"))
         frame.pack(fill="both", expand=True, padx=12, pady=6)
 
         # イベント表示用 Listbox
         self.listbox = tk.Listbox(
             frame,
             font=FONTS["base"],
-            bg=COLORS["bg"],
-            fg=COLORS["text"],
+            bg=ThemeManager.get("bg"),
+            fg=ThemeManager.get("text"),
             bd=0, relief="flat",
             selectbackground="#CCE8FF",  # 選択背景色
             selectforeground="#000000",  # 選択文字色
@@ -113,9 +114,9 @@ class EventDialog:
             image=self.add_icon,
             compound="right",          # テキスト右にアイコン
             command=self.add_event,
-            font=FONTS["base"],
-            bg=COLORS["today"],        # todayカラーで強調
-            fg=COLORS["text"],
+            font=FONTS["base_minus"],
+            bg=ThemeManager.get("today"),        # todayカラーで強調
+            fg=ThemeManager.get("text"),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"
@@ -124,7 +125,7 @@ class EventDialog:
         self.add_button_hover(add_btn, original_bg=COLORS["today"])
 
         # ─── 2. 編集・削除ボタンを右側にまとめる ───────────────
-        right_frame = tk.Frame(frame, bg=COLORS["dialog_bg"])
+        right_frame = tk.Frame(frame, bg=ThemeManager.get("dialog_bg"))
         right_frame.pack(side="right")
 
         # 編集ボタン
@@ -137,9 +138,9 @@ class EventDialog:
             image=self.edit_icon,
             compound="right",
             command=self.edit_event,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg="#FFE7C1",    # パステルオレンジ
-            fg=COLORS["text"],
+            fg=ThemeManager.get("text"),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"
@@ -149,7 +150,7 @@ class EventDialog:
 
         # 削除ボタン
         self.delete_icon = tk.PhotoImage(
-            file=resource_path("ui/icons/delete-trash_icon3.png")
+            file=resource_path("ui/icons/trash_icon.png")
         ).subsample(3,3)
         del_btn = tk.Button(
             right_frame,
@@ -157,10 +158,10 @@ class EventDialog:
             image=self.delete_icon,
             compound="right",
             command=self.delete_event,
-            font=FONTS["base"],
+            font=FONTS["base_minus"],
             bg="#F7C6C7",    # パステルレッド
             activebackground="#F4B6B7",
-            fg=COLORS["text"],
+            fg=ThemeManager.get("text"),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"

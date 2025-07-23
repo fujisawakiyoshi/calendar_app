@@ -13,6 +13,7 @@ COLORS = {
     "text":         "#333333",  # 標準テキスト
 
     # ◾ 日付セルの特殊背景
+    "weekend":      "#FFC1DA",
     "sunday":       "#FADCD9",  # 日曜セル
     "saturday":     "#DCEEF9",  # 土曜セル
     "holiday":      "#F6CACA",  # 祝日セル（未使用ならaccentと統合可能）
@@ -25,18 +26,65 @@ COLORS = {
     "button_fg":    "#444444",  # ボタンテキスト
     "button_hover": "#F0F0F0",  # ボタンホバー時背景
 }
+# ────────────────────────────────────────────────────────────
+# カラー定義（COLORS）
+# ────────────────────────────────────────────────────────────
+LIGHT_THEME = {
+    "bg": "#FFFFFF",
+    "dialog_bg": "#FFFFFF",
+    "header_bg": "#FAFAFA",
+    "text": "#333333",
+    "weekend": "#FFC1DA",
+    "today": "#B7DCF5",
+    "highlight": "#FFF4CC",
+    "accent": "#FFC0CB",
+    "button_bg": "#FFFFFF",
+    "button_fg": "#444444",
+    "button_hover": "#F0F0F0",
+    "clock_fg": "#555555"  # 時計の文字色
+}
+
+DARK_THEME = {
+    # 背景・ベース
+    "bg": "#FFF7F9",              # ミルキーピンク系
+    "header_bg": "#FEEEF3",       # ヘッダーは少し濃いピンクベージュ
+    "dialog_bg": "#FFF7F9",
+
+    # テキスト
+    "text": "#7D4B6C",            # 落ち着いたローズブラウン
+
+    # 特殊背景
+    "weekend": "#FFE8ED",         # 土日：ふんわりピンク
+    "sunday": "#FFD1DC",          # 日曜：さくら色
+    "saturday": "#D5F5F6",        # 土曜：ミントブルー
+    "holiday": "#FFD3E0",         # 祝日：淡ピンク
+    "today": "#FBD0D9",           # 今日：やさしいサクラピンク
+    "highlight": "#FFF4CC",       # イベントあり：レモン色
+    "accent": "#FFC1E3",          # 強調ピンク
+
+    # ボタン
+    "button_bg": "#FFF0F5",       # ライトラベンダー
+    "button_fg": "#7D4B6C",       # ローズブラウン
+    "button_hover": "#FFE4EC",     # ホバー：やわらかピンク
+    
+    "clock_fg": "#AA77AA"  # 時計の文字色
+}
+
+# 初期テーマはライト
+COLORS = LIGHT_THEME
 
 # ────────────────────────────────────────────────────────────
 # フォント定義（FONTS）
 # ────────────────────────────────────────────────────────────
 # フォント種類とサイズをここで一元管理します。
 FONTS = {
-    "base":         ("游ゴシック", 12),            # 標準テキスト
-    "bold":         ("游ゴシック", 12, "bold"),    # 太字
-    "small":        ("游ゴシック", 10),            # 補助テキスト・ラベル
-    "header":       ("游ゴシック", 14, "bold"),    # カレンダー見出し
-    "dialog_title": ("游ゴシック", 13, "bold"),    # ダイアログタイトル
-    "button":       ("游ゴシック", 12),            # ボタンテキスト
+    "base":         ("Helvetica", 12),            # 標準テキスト
+    "base_minus":   ("Helvetica", 11),            # 予定一覧画面の文字
+    "bold":         ("Helvetica", 12, "bold"),    # 太字
+    "small":        ("Helvetica", 10),            # 補助テキスト・ラベル
+    "header":       ("Helvetica", 14, "bold"),    # カレンダー見出し
+    "dialog_title": ("Helvetica", 13, "bold"),    # ダイアログタイトル
+    "button":       ("Helvetica", 12),            # ボタンテキスト
 }
 
 # ────────────────────────────────────────────────────────────
