@@ -66,7 +66,7 @@ class MainWindow:
         )
 
         # 時計
-        self.clock_widget = ClockWidget(self.root)
+        self.clock_widget = ClockWidget(self.root, on_theme_toggle=self.toggle_theme)
 
         # 🌙テーマ切り替えボタンの作成と配置
         self.toggle_btn = tk.Button(
