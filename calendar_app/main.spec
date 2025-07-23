@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('data/events.json', 'data'), ('data/holidays.json', 'data'), ('ui/icons/event_icon.ico', 'ui/icons')],
+    datas=[('data/events.json', 'data'), ('data/holidays.json', 'data'), ('ui/icons', 'ui/icons')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['ui\\icons\\event_icon.ico'],
 )

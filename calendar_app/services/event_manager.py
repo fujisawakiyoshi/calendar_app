@@ -6,8 +6,8 @@ import sys
 from threading import Lock
 from utils.resource import resource_path
 
-# PyInstaller 化後でも参照できるよう、resource_path でファイルパスを解決
-EVENTS_FILE = resource_path("data/events.json")
+# 書き込み対応のファイルパス
+EVENTS_FILE = resource_path("data/events.json", writable=True)
 
 # 複数スレッドから同時に書き込むのを防ぐためロックを用意
 _FILE_LOCK = Lock()
