@@ -29,7 +29,7 @@ class EventDialog:
         self.window.title(f"予定一覧 {self.date_key}")
         # アイコンを resource_path 経由でセット
         self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
-        self.window.configure(bg=COLORS["dialog_bg"])
+        self.window.configure(bg=ThemeManager.get("dialog_bg"))
         self.window.resizable(True, False)
 
         # ───────────────────────────────────────────────────
@@ -101,7 +101,7 @@ class EventDialog:
 
     def create_button_area(self):
         """追加・編集・削除ボタンを作成して並べる"""
-        frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        frame = tk.Frame(self.window, bg=ThemeManager.get("dialog_bg"))
         frame.pack(fill="x", padx=14, pady=(0, 14))
 
         # ─── 1. 予定追加ボタン ────────────────────────────────
@@ -115,14 +115,14 @@ class EventDialog:
             compound="right",          # テキスト右にアイコン
             command=self.add_event,
             font=FONTS["base_minus"],
-            bg=ThemeManager.get("today"),        # todayカラーで強調
+            bg=ThemeManager.get("button_bg_add"),        # todayカラーで強調
             fg=ThemeManager.get("text"),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"
         )
         add_btn.pack(side="left")
-        self.add_button_hover(add_btn, original_bg=COLORS["today"])
+        self.add_button_hover(add_btn, original_bg=ThemeManager.get("button_bg_add"))
 
         # ─── 2. 編集・削除ボタンを右側にまとめる ───────────────
         right_frame = tk.Frame(frame, bg=ThemeManager.get("dialog_bg"))
@@ -139,7 +139,7 @@ class EventDialog:
             compound="right",
             command=self.edit_event,
             font=FONTS["base_minus"],
-            bg="#FFE7C1",    # パステルオレンジ
+            bg=ThemeManager.get("button_bg_edit"),    # パステルオレンジ
             fg=ThemeManager.get("text"),
             relief="flat",
             padx=6, pady=2,
@@ -159,7 +159,7 @@ class EventDialog:
             compound="right",
             command=self.delete_event,
             font=FONTS["base_minus"],
-            bg="#F7C6C7",    # パステルレッド
+            bg=ThemeManager.get("button_bg_delete"),    # パステルレッド
             activebackground="#F4B6B7",
             fg=ThemeManager.get("text"),
             relief="flat",

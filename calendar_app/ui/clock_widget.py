@@ -6,62 +6,70 @@ from services.theme_manager import ThemeManager
 class ClockWidget:
     def __init__(self, parent, on_theme_toggle=None):
         self.parent = parent
-        self.on_theme_toggle = on_theme_toggle  # ← トグル関数を受け取る
+        self.on_theme_toggle = on_theme_toggle
 
-        self.frame = tk.Frame(parent, bg=ThemeManager.get('header_bg'))
+        bg = ThemeManager.get("header_bg")
+        fg = ThemeManager.get("clock_fg", "#555")
+
+        self.frame = tk.Frame(parent, bg=bg)
         self.frame.pack(fill="both", expand=True)
 
-        self.label = tk.Label(
+        # 「かわいくなったよ〜💖」一時表示ラベル（最初は非表示）
+        self.flash_label = tk.Label(
             self.frame,
-            text="",
-            font=("Segoe UI", 11),
-            bg=ThemeManager.get('header_bg'),
-            fg=ThemeManager.get('clock_fg', '#555555'),
-            anchor="se",
-            padx=8,
-            pady=5
+            text="₊✩‧₊かわいくなったよ〜💖₊✩‧₊",
+            font=("Helvetica", 9, "italic"),
+            bg=bg,
+            fg=fg
         )
-        self.label.pack(anchor="se", padx=10, pady=0)
+        self.flash_label.place_forget()
 
-        # ▼ 小さな「テーマ切り替え」ボタン（イースターエッグ風）
-        self.toggle_label = tk.Label(
+        # 時計ボタン（ラベル風）
+        self.clock_btn = tk.Button(
             self.frame,
-            text=self._get_toggle_text(),
-            font=("Helvetica", 9),
-            fg="#8888aa",
-            bg=ThemeManager.get('header_bg'),
-            cursor="hand2"
+            text="",  # 後でセット
+            font=("Segoe UI", 11),
+            bg=bg,
+            fg=fg,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            activebackground=bg,
+            activeforeground=fg,
+            command=self._on_toggle_clicked  # クリック時の動作
         )
-        self.toggle_label.pack(anchor="se", padx=10, pady=(0, 8))
-        self.toggle_label.bind("<Button-1>", self._on_toggle_clicked)
+        self.clock_btn.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
+        
+        self.clock_btn.bind("<Enter>", lambda e: self.clock_btn.config(fg="#AA77AA"))
+        self.clock_btn.bind("<Leave>", lambda e: self.update_theme())
 
         self._update_clock()
 
     def _update_clock(self):
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.label.config(text=f"🕒 {now_str}")
-        self.label.after(1000, self._update_clock)
+        self.clock_btn.config(text=f"🕒 {now_str}")
+        self.clock_btn.after(1000, self._update_clock)
 
-    def _on_toggle_clicked(self, event):
+    def _on_toggle_clicked(self):
         if self.on_theme_toggle:
-            self.on_theme_toggle()  # メイン側の toggle_theme を呼び出す
-            # テキストを更新
-            self.toggle_label.config(
-                text=self._get_toggle_text(),
-                bg=ThemeManager.get('header_bg'),
-                fg=ThemeManager.get('clock_fg', '#555555')
-            )
+            self.on_theme_toggle()
 
-    def _get_toggle_text(self):
-        return "☀ レギュラーモードへ" if ThemeManager.is_dark_mode() else "✨ かわいいモードへ"
+            # 一時的な「かわいくなったよ〜」表示
+            if ThemeManager.is_dark_mode():
+                self._show_flash_message()
+
+        # 色更新（念のため）
+        self.update_theme()
 
     def update_theme(self):
-        new_bg = ThemeManager.get('header_bg')
-        new_fg = ThemeManager.get('clock_fg', "#555555")
-        self.frame.config(bg=new_bg)
-        self.label.config(bg=new_bg, fg=new_fg)
-        self.toggle_label.config(
-            bg=new_bg,
-            fg=ThemeManager.get('clock_fg', "#555555"),
-            text=self._get_toggle_text()
-        )
+        bg = ThemeManager.get("header_bg")
+        fg = ThemeManager.get("clock_fg", "#555")
+
+        self.frame.config(bg=bg)
+        self.clock_btn.config(bg=bg, fg=fg, activebackground=bg, activeforeground=fg)
+        self.flash_label.config(bg=bg, fg=fg)
+
+    def _show_flash_message(self):
+        self.flash_label.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-40)
+        self.flash_label.lift()
+        self.frame.after(4000, self.flash_label.place_forget)

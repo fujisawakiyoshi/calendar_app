@@ -46,7 +46,7 @@ class MainWindow:
         """ウィンドウを画面中央から少し右上に寄せる"""
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
-        ww, wh = 540, 460
+        ww, wh = 540, 430
         x = (sw - ww)//2 + 100
         y = (sh - wh)//2 - 80
         self.root.geometry(f"{ww}x{wh}+{x}+{y}")
@@ -67,18 +67,6 @@ class MainWindow:
 
         # 時計
         self.clock_widget = ClockWidget(self.root, on_theme_toggle=self.toggle_theme)
-
-        # 🌙テーマ切り替えボタンの作成と配置
-        self.toggle_btn = tk.Button(
-            self.root,
-            text="☀ レギュラーモード" if ThemeManager.is_dark_mode() else "✨ かわいいモード",
-            bg=ThemeManager.get("button_bg"),
-            fg=ThemeManager.get("button_fg"),
-            font=("Helvetica", 11),
-            relief="flat",
-            command=self.toggle_theme
-        )
-        self.toggle_btn.pack(pady=(0, 10))  # カレンダーの下に余白付きで配置
 
     def on_prev_month(self):
         """＜ボタンで前月へ"""
@@ -110,20 +98,9 @@ class MainWindow:
     def toggle_theme(self):
         ThemeManager.toggle_theme()
 
-        # テーマ切り替え後の状態でUI更新
-        is_dark = ThemeManager.is_dark_mode()
-
-        self.root.configure(bg=ThemeManager.get("header_bg"))
-        self._refresh_calendar()
-        self.clock_widget.update_theme()
-
-        # ボタンの表示を切り替え後の状態に合わせて更新
-        self.toggle_btn.configure(
-            text="☀ レギュラーモード" if is_dark else "✨ かわいいモード",
-            bg=ThemeManager.get("button_bg"),
-            fg=ThemeManager.get("button_fg")
-        )
-
+        self.root.configure(bg=ThemeManager.get("header_bg"))  # ウィンドウ背景を更新
+        self._refresh_calendar()                               # カレンダー再描画
+        self.clock_widget.update_theme()                       # 時計のテーマ更新
         
     def run(self):
         """メインループ開始"""

@@ -41,7 +41,12 @@ LIGHT_THEME = {
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
     "button_hover": "#F0F0F0",
-    "clock_fg": "#555555"  # 時計の文字色
+    
+    "button_bg_add": "#B7DCF5",     
+    "button_bg_edit": "#FFE7C1",     
+    "button_bg_delete": "#F7C6C7", 
+    
+    "clock_fg": "#555555"           # 時計の文字色
 }
 
 DARK_THEME = {
@@ -54,7 +59,7 @@ DARK_THEME = {
     "text": "#7D4B6C",            # 落ち着いたローズブラウン
 
     # 特殊背景
-    "weekend": "#FFE8ED",         # 土日：ふんわりピンク
+    "weekend": "#FADAE1",         # 土日：ふんわりピンク
     "sunday": "#FFD1DC",          # 日曜：さくら色
     "saturday": "#D5F5F6",        # 土曜：ミントブルー
     "holiday": "#FFD3E0",         # 祝日：淡ピンク
@@ -66,6 +71,10 @@ DARK_THEME = {
     "button_bg": "#FFF0F5",       # ライトラベンダー
     "button_fg": "#7D4B6C",       # ローズブラウン
     "button_hover": "#FFE4EC",     # ホバー：やわらかピンク
+    
+    "button_bg_add": "#FFD6F0",     # かわいいピンク（追加ボタン）
+    "button_bg_edit": "#FFECB3",    # パステルイエロー（編集ボタン）
+    "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
     
     "clock_fg": "#AA77AA"  # 時計の文字色
 }

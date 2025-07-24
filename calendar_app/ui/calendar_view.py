@@ -87,8 +87,8 @@ class CalendarView:
             header,
             text=f"{self.year}年 {self.month}月",
             font=FONTS['header'],
-            bg=COLORS['header_bg'],
-            fg=COLORS['text'],
+            bg=ThemeManager.get("header_bg"),
+            fg=ThemeManager.get('text'),
             padx=12,
             pady=6
         ).grid(row=0, column=2, padx=6, pady=6)
@@ -112,7 +112,7 @@ class CalendarView:
         """日～土の曜日ラベルを表示"""
         days = ['日', '月', '火', '水', '木', '金', '土']
         for idx, wd in enumerate(days):
-            fg = COLORS['text']
+            fg = ThemeManager.get('text')
             if wd in ('日', '土'):
                 fg = '#9D5C64'  
 
