@@ -1,72 +1,81 @@
-# ui/event_edit_dialog.py
-
 import tkinter as tk
 from tkinter import ttk
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
 from services.theme_manager import ThemeManager
 from utils.resource import resource_path
 
+
 class EditDialog:
-    """予定の追加・編集用ダイアログウィンドウ"""
+    """
+    イベントの「追加」または「編集」を行うための入力ダイアログ。
+    タイトル・開始時間・終了時間・内容（メモ）を入力できる。
+    """
 
     def __init__(
         self, parent, title,
         default_title="", default_start_time="",
         default_end_time="", default_content=""
     ):
-        # ダイアログから返す結果（OK 押下時にタプルで設定）
-        self.result = None
+        """
+        ダイアログ初期化。
 
-        # Toplevel を作成 → まず非表示化（UI構築中のちらつき防止）
+        Args:
+            parent: 親ウィンドウ
+            title: ダイアログタイトル（ウィンドウ上部に表示される）
+            default_title: 初期のタイトル文字列（編集時用）
+            default_start_time: 初期の開始時間（"HH:MM"）
+            default_end_time: 初期の終了時間（"HH:MM"）
+            default_content: 初期のメモ内容
+        """
+        self.result = None  # OKボタンで返す結果用（None or タプル）
+
+        # Toplevelウィンドウ（サブウィンドウ）を作成し、まず非表示
         self.window = tk.Toplevel(parent)
         self.window.withdraw()
         self.window.title(title)
-        # アイコンを resource_path 経由で読み込み
         self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
         self.window.configure(bg=COLORS["dialog_bg"])
         self.window.resizable(False, False)
 
-        # ウィンドウのサイズと中央配置
+        # ウィンドウの中央表示設定
         w, h = 300, 270
         sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         x, y = (sw - w) // 2, (sh - h) // 2
         self.window.geometry(f"{w}x{h}+{x}+{y}")
 
-        # 初期値を StringVar にセット
-        self.title_var   = tk.StringVar(value=default_title)
-        self.start_var   = tk.StringVar(value=default_start_time)
-        self.end_var     = tk.StringVar(value=default_end_time)
+        # 初期入力値を保持する StringVar
+        self.title_var = tk.StringVar(value=default_title)
+        self.start_var = tk.StringVar(value=default_start_time)
+        self.end_var = tk.StringVar(value=default_end_time)
         self.content_var = tk.StringVar(value=default_content)
 
-        # UI 構築
+        # UI構築
         self._build_ui()
 
-        # モーダル設定：親の上に表示 & 他操作をブロック
+        # モーダル化（他の操作をブロック）
         self.window.transient(parent)
         self.window.grab_set()
 
-        # 初期フォーカス
+        # フォーカス設定 & 表示
         self.ent_title.focus_set()
-        # UI 完成後に表示
         self.window.deiconify()
 
     def _build_ui(self):
-        """ダイアログ内のフレームと各入力セクションを配置"""
+        """全体のUIレイアウトを構築（各セクションの呼び出し）"""
         pad = 8
         frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
         frame.pack(fill="both", expand=True, padx=pad, pady=pad)
 
-        # 各セクション
         self._create_title_section(frame)
         self._create_time_section(frame)
         self._create_content_section(frame)
         self._create_button_section()
 
-        # Esc キーで閉じる
+        # Escキーでダイアログを閉じる
         self.window.bind("<Escape>", lambda e: self.window.destroy())
 
     def _create_title_section(self, parent):
-        """タイトル入力用のラベル+Combobox"""
+        """イベントタイトル入力（ラベル＋コンボボックス）"""
         tk.Label(
             parent,
             text="タイトル：",
@@ -80,13 +89,13 @@ class EditDialog:
             textvariable=self.title_var,
             values=TITLE_CHOICES,
             font=FONTS["small"],
-            state="normal",   # 自由入力＋候補あり
+            state="normal",  # 入力可かつ選択候補付き
             takefocus=True
         )
         self.ent_title.pack(fill="x", pady=(0, 8))
 
     def _create_time_section(self, parent):
-        """開始・終了時間入力用のラベル＋Combobox（2つ並べる）"""
+        """開始・終了時間の入力欄を2つ縦に配置"""
         for label_text, var in [("開始時間：", self.start_var), ("終了時間：", self.end_var)]:
             tk.Label(
                 parent,
@@ -106,7 +115,7 @@ class EditDialog:
             ).pack(fill="x", pady=(0, 8))
 
     def _create_content_section(self, parent):
-        """メモ用の Entry とプレースホルダー機能"""
+        """メモ入力欄（Entry）とプレースホルダー表示"""
         tk.Label(
             parent,
             text="内容：",
@@ -121,21 +130,20 @@ class EditDialog:
             font=FONTS["small"],
             relief="groove",
             takefocus=True,
-            bg="#FAFAFA",  # 薄い背景
-            fg="#888888"   # 初期文字色グレー
+            bg="#FAFAFA",
+            fg="#888888"  # placeholder 初期色
         )
         self.ent_content.pack(fill="x", pady=(0, 8))
 
-        # プレースホルダー挿入
         self._add_placeholder(self.ent_content, "メモを入力")
 
     def _create_button_section(self, parent=None):
-        """OK / キャンセル ボタン配置"""
+        """OK / キャンセルボタンの配置"""
         pad = 8
         btn_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
         btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
 
-        # OK ボタン（アクセントカラー：today）
+        # OKボタン（accentカラー）
         ok_btn = tk.Button(
             btn_frame,
             text="    OK    ",
@@ -151,7 +159,7 @@ class EditDialog:
         ok_btn.pack(side="left", anchor="w")
         self.add_button_hover(ok_btn, original_bg=COLORS["today"])
 
-        # キャンセル ボタン（目立つ赤系）
+        # キャンセルボタン（ピンク系）
         cancel_btn = tk.Button(
             btn_frame,
             text="キャンセル",
@@ -167,18 +175,25 @@ class EditDialog:
         cancel_btn.pack(side="right", anchor="e")
         self.add_button_hover(cancel_btn, original_bg="#F7C6C7")
 
-    def _add_placeholder(self, widget, placeholder):
-        """Entry に簡易プレースホルダー機能を追加"""
+    def _add_placeholder(self, widget, placeholder: str):
+        """
+        Entryウィジェットにプレースホルダー（薄い文字）を表示する。
+        フォーカスインで消え、未入力なら再表示。
+
+        Args:
+            widget (tk.Entry): 対象のエントリ
+            placeholder (str): 表示するプレースホルダーテキスト
+        """
         def on_focus_in(event):
             if widget.get() == placeholder:
                 widget.delete(0, tk.END)
                 widget.config(fg=ThemeManager.get("text"))
+
         def on_focus_out(event):
             if not widget.get():
                 widget.insert(0, placeholder)
                 widget.config(fg="#888888")
 
-        # 初期状態で placeholder を挿入
         if not widget.get():
             widget.insert(0, placeholder)
 
@@ -186,7 +201,10 @@ class EditDialog:
         widget.bind("<FocusOut>", on_focus_out)
 
     def on_ok(self):
-        """OK 押下で StringVar から値を回収し、result に格納 → ウィンドウを閉じる"""
+        """
+        OKボタンが押されたときに呼ばれる。
+        入力内容を self.result に格納し、ウィンドウを閉じる。
+        """
         self.result = (
             self.title_var.get(),
             self.start_var.get(),
@@ -196,7 +214,14 @@ class EditDialog:
         self.window.destroy()
 
     def add_button_hover(self, button, original_bg, hover_bg=None):
-        """ボタンにホバー時の背景色変化を追加"""
+        """
+        ボタンにマウスホバー時の背景色変化を設定。
+
+        Args:
+            button: 対象のボタン
+            original_bg: 通常時の背景色
+            hover_bg: ホバー時の背景色（指定がなければテーマから取得）
+        """
         if hover_bg is None:
             hover_bg = COLORS["button_hover"]
 

@@ -1,118 +1,100 @@
 # ui/theme.py
 
-# ────────────────────────────────────────────────────────────
-# カラー定義（COLORS）
-# ────────────────────────────────────────────────────────────
+# ──────────────────────────────
+# 色設定（テーマに使用）
+# ──────────────────────────────
+
+# 共通カラー（旧定義／現在未使用の場合あり）
 COLORS = {
-    # ◾ 背景色
     "bg":           "#FFFFFF",  # メイン背景
     "dialog_bg":    "#FFFFFF",  # ダイアログ背景
-    "header_bg":    "#FAFAFA",  # ヘッダー（ナビゲーション部）背景
-
-    # ◾ テキスト色
+    "header_bg":    "#FAFAFA",  # ヘッダー背景
     "text":         "#333333",  # 標準テキスト
-
-    # ◾ 日付セルの特殊背景
-    "weekend":      "#FFC1DA",
-    "sunday":       "#FADCD9",  # 日曜セル
-    "saturday":     "#DCEEF9",  # 土曜セル
-    "holiday":      "#F6CACA",  # 祝日セル（未使用ならaccentと統合可能）
-    "today":        "#B7DCF5",  # 今日セルの強調
-    "highlight":    "#FFF4CC",  # イベントありセル
-    "accent":       "#FFC0CB",  # 祝日セル用アクセント
-
-    # ◾ ボタン共通
-    "button_bg":    "#FFFFFF",  # ボタン標準背景
-    "button_fg":    "#444444",  # ボタンテキスト
-    "button_hover": "#F0F0F0",  # ボタンホバー時背景
+    "weekend":      "#FFC1DA",  # 土日背景
+    "sunday":       "#FADCD9",  # 日曜
+    "saturday":     "#DCEEF9",  # 土曜
+    "holiday":      "#F6CACA",  # 祝日（旧設定）
+    "today":        "#B7DCF5",  # 今日セルの色
+    "highlight":    "#FFF4CC",  # イベント付き日
+    "accent":       "#FFC0CB",  # 強調色（祝日など）
+    "button_bg":    "#FFFFFF",
+    "button_fg":    "#444444",
+    "button_hover": "#F0F0F0",
 }
-# ────────────────────────────────────────────────────────────
-# カラー定義（COLORS）
-# ────────────────────────────────────────────────────────────
+
+# ──────────────────────────────
+# ライトテーマ定義
+# ──────────────────────────────
 LIGHT_THEME = {
-    "bg": "#FFFFFF",
-    "dialog_bg": "#FFFFFF",
-    "header_bg": "#FAFAFA",
-    "text": "#333333",
-    "weekend": "#FFC1DA",
-    "today": "#B7DCF5",
-    "highlight": "#FFF4CC",
-    "accent": "#FFC0CB",
+    "bg": "#FFFFFF",                  # 全体背景
+    "dialog_bg": "#FFFFFF",          # ダイアログ背景
+    "header_bg": "#FAFAFA",          # ヘッダー背景
+    "text": "#333333",               # 文字色
+    "weekend": "#FFC1DA",            # 土日
+    "today": "#B7DCF5",              # 今日
+    "highlight": "#FFF4CC",          # イベントあり
+    "accent": "#FFC0CB",             # 強調セル
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
     "button_hover": "#F0F0F0",
-    
-    "button_bg_add": "#B7DCF5",     
-    "button_bg_edit": "#FFE7C1",     
-    "button_bg_delete": "#F7C6C7", 
-    
-    "clock_fg": "#555555"           # 時計の文字色
+    "button_bg_add": "#B7DCF5",      # 追加ボタン
+    "button_bg_edit": "#FFE7C1",     # 編集ボタン
+    "button_bg_delete": "#F7C6C7",   # 削除ボタン
+    "clock_fg": "#555555"            # 時計テキスト
 }
 
+# ──────────────────────────────
+# ダークテーマ定義（かわいい系配色）
+# ──────────────────────────────
 DARK_THEME = {
-    # 背景・ベース
-    "bg": "#FFF7F9",              # ミルキーピンク系
-    "header_bg": "#FEEEF3",       # ヘッダーは少し濃いピンクベージュ
+    "bg": "#FFF7F9",                # ベース背景（ピンク系）
+    "header_bg": "#FEEEF3",
     "dialog_bg": "#FFF7F9",
-
-    # テキスト
-    "text": "#7D4B6C",            # 落ち着いたローズブラウン
-
-    # 特殊背景
-    "weekend": "#FADAE1",         # 土日：ふんわりピンク
-    "sunday": "#FFD1DC",          # 日曜：さくら色
-    "saturday": "#D5F5F6",        # 土曜：ミントブルー
-    "holiday": "#FFD3E0",         # 祝日：淡ピンク
-    "today": "#FBD0D9",           # 今日：やさしいサクラピンク
-    "highlight": "#FFF4CC",       # イベントあり：レモン色
-    "accent": "#FFC1E3",          # 強調ピンク
-
-    # ボタン
-    "button_bg": "#FFF0F5",       # ライトラベンダー
-    "button_fg": "#7D4B6C",       # ローズブラウン
-    "button_hover": "#FFE4EC",     # ホバー：やわらかピンク
-    
-    "button_bg_add": "#FFD6F0",     # かわいいピンク（追加ボタン）
-    "button_bg_edit": "#FFECB3",    # パステルイエロー（編集ボタン）
-    "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
-    
-    "clock_fg": "#AA77AA"  # 時計の文字色
+    "text": "#7D4B6C",              # ローズブラウン
+    "weekend": "#FADAE1",
+    "sunday": "#FFD1DC",
+    "saturday": "#D5F5F6",
+    "holiday": "#FFD3E0",
+    "today": "#FBD0D9",
+    "highlight": "#FFF4CC",
+    "accent": "#FFC1E3",
+    "button_bg": "#FFF0F5",
+    "button_fg": "#7D4B6C",
+    "button_hover": "#FFE4EC",
+    "button_bg_add": "#FFD6F0",
+    "button_bg_edit": "#FFECB3",
+    "button_bg_delete": "#FFCDD2",
+    "clock_fg": "#AA77AA"
 }
 
-# 初期テーマはライト
+# 現在のテーマ（初期値はライト）
 COLORS = LIGHT_THEME
 
-# ────────────────────────────────────────────────────────────
-# フォント定義（FONTS）
-# ────────────────────────────────────────────────────────────
-# フォント種類とサイズをここで一元管理します。
+# ──────────────────────────────
+# フォント定義（サイズ・太字など）
+# ──────────────────────────────
 FONTS = {
     "base":         ("Helvetica", 12),            # 標準テキスト
-    "base_minus":   ("Helvetica", 11),            # 予定一覧画面の文字
+    "base_minus":   ("Helvetica", 11),            # やや小さめ
     "bold":         ("Helvetica", 12, "bold"),    # 太字
-    "small":        ("Helvetica", 10),            # 補助テキスト・ラベル
-    "header":       ("Helvetica", 14, "bold"),    # カレンダー見出し
-    "dialog_title": ("Helvetica", 13, "bold"),    # ダイアログタイトル
-    "button":       ("Helvetica", 12),            # ボタンテキスト
+    "small":        ("Helvetica", 10),            # ラベルなど補助用
+    "header":       ("Helvetica", 14, "bold"),    # カレンダーの年月表示
+    "dialog_title": ("Helvetica", 13, "bold"),    # ダイアログのタイトル
+    "button":       ("Helvetica", 12),            # ボタン文字
 }
 
-# ────────────────────────────────────────────────────────────
-# 選択肢リスト
-# ────────────────────────────────────────────────────────────
-# コンボボックス等で利用する選択肢を定義
+# ──────────────────────────────
+# イベントタイトルの選択肢
+# ──────────────────────────────
 TITLE_CHOICES = [
-    "会議/打合せ",
-    "来客",
-    "外出",
-    "出張",
-    "休暇",
-    "私用",
-    "その他"
+    "会議/打合せ", "来客", "外出", "出張", "休暇", "私用", "その他"
 ]
 
-# 時刻選択肢：07:00～21:30 まで 30 分刻み
+# ──────────────────────────────
+# 時間選択肢（07:00〜21:30まで30分刻み）
+# ──────────────────────────────
 TIME_CHOICES = [
     f"{h:02d}:{m:02d}"
-    for h in range(7, 22)    # 07時～21時
-    for m in (0, 30)         # on the hour / half past
+    for h in range(7, 22)  # 7時〜21時
+    for m in (0, 30)       # 00分・30分
 ]
