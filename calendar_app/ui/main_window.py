@@ -46,7 +46,7 @@ class MainWindow:
         """ウィンドウを画面中央から少し右上に寄せる"""
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
-        ww, wh = 540, 460
+        ww, wh = 540, 430
         x = (sw - ww)//2 + 100
         y = (sh - wh)//2 - 80
         self.root.geometry(f"{ww}x{wh}+{x}+{y}")
