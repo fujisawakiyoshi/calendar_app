@@ -32,3 +32,8 @@ class CalendarController:
         else:
             self.current_month += 1
         self.load_data()
+        
+    def go_to_today(self):
+        today = datetime.today()
+        self.current_year = today.year
+        self.current_month = today.month
