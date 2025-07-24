@@ -1,6 +1,8 @@
 # ui/event_edit_dialog.py
 
 import tkinter as tk
+import sys
+import os
 from tkinter import ttk
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
 from services.theme_manager import ThemeManager
@@ -202,3 +204,9 @@ class EditDialog:
 
         button.bind("<Enter>", lambda e: button.config(bg=hover_bg))
         button.bind("<Leave>", lambda e: button.config(bg=original_bg))
+
+    def resource_path(relative_path):
+        """PyInstaller 対応のリソース取得関数"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)

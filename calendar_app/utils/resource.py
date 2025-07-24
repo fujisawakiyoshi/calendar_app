@@ -15,6 +15,7 @@ def resource_path(relative_path: str, writable: bool = False) -> str:
         base = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
     full_path = os.path.join(base, relative_path)
+    print(f"[DEBUG] resolved resource path: {full_path}")  # ← 追加して調査
 
     if writable:
         # ユーザーのホームディレクトリに保存（例: C:\Users\あなた\.calendar_app\events.json）
