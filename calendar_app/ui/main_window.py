@@ -25,15 +25,8 @@ class MainWindow:
 
         # 3) アイコンを ICO で設定
         ico_path = resource_path("ui/icons/event_icon.ico")
-        print(f"Generated icon path: {ico_path}")
         if os.path.exists(ico_path):
-            print(f"Icon file exists at: {ico_path}") # これを追加
-            try:
-                self.root.iconbitmap(ico_path)
-            except tk.TclError as e:
-                print(f"Tkinter TclError when setting icon: {e}") # これを追加
-        else:
-            print(f"[ERROR] icon not found: {ico_path}")
+            self.root.iconbitmap(ico_path)
 
         # 4) 背景色・リサイズ制御
         self.root.configure(bg=ThemeManager.get("header_bg"))
