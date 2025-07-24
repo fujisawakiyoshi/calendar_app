@@ -8,6 +8,7 @@ from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
 from ui.theme import COLORS
+from ui.event_dialog import EventDialog
 from services.theme_manager import ThemeManager
 from utils.resource import resource_path
 
@@ -91,12 +92,12 @@ class MainWindow:
         )
 
     def open_event_dialog(self, date_key):
-        """日付クリックでイベントダイアログを開く"""
         try:
+            print(f"[DEBUG] open_event_dialog 呼び出し: {date_key}")
             from ui.event_dialog import EventDialog
             EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
         except Exception as e:
-            print(f"イベントダイアログでエラー発生: {e}")
+            print(f"[ERROR] イベントダイアログでエラー発生: {e}")
 
     def toggle_theme(self):
         ThemeManager.toggle_theme()
