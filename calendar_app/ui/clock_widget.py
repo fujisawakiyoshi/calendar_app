@@ -38,6 +38,18 @@ class ClockWidget:
         self.theme_toggle_label.pack(anchor="se", padx=12, pady=(0, 6))
         self.theme_toggle_label.bind("<Button-1>", self._on_toggle_clicked)
 
+        # モード切り替え後の一瞬だけ表示するラベル（最初は非表示）
+        new_fg = ThemeManager.get('clock_fg', '#555555')
+        self.flash_label = tk.Label(
+            self.frame,
+            text="かわいくなったよ〜💖",
+            font=("Helvetica", 9, "italic"),
+            bg=bg,
+            fg=new_fg
+        )
+        self.flash_label.pack(anchor="se", padx=12, pady=(0, 4))
+        self.flash_label.pack_forget()  # 最初は非表示
+        
         self._update_clock()
 
     def _update_clock(self):
@@ -47,13 +59,17 @@ class ClockWidget:
 
     def _on_toggle_clicked(self, event):
         if self.on_theme_toggle:
-            self.on_theme_toggle()  # メイン側の toggle_theme を呼び出す
-            # テキストと色を更新
+            self.on_theme_toggle()
+            # ラベル更新
             self.theme_toggle_label.config(
                 text=self._get_toggle_text(),
                 bg=ThemeManager.get('header_bg'),
                 fg=ThemeManager.get('clock_fg', '#555555')
             )
+
+            # 一時的な「かわいくなったよ〜」表示
+            if ThemeManager.is_dark_mode():
+                self._show_flash_message()
 
     def _get_toggle_text(self):
         return "☀ レギュラーモードへ" if ThemeManager.is_dark_mode() else "✨ かわいいモードへ"
@@ -69,3 +85,14 @@ class ClockWidget:
             fg=new_fg,
             text="✨ かわいいモードへ" if not ThemeManager.is_dark_mode() else "☀ レギュラーモードへ"
         )
+        self.flash_label.config(bg=new_bg, fg=new_fg)
+        
+    def _show_flash_message(self):
+        self.flash_label.config(
+            text="₊✩‧₊かわいくなったよ〜💖₊✩‧₊",
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('clock_fg', '#555555')
+        )
+        self.flash_label.pack(anchor="se", padx=12, pady=(0, 4))
+        # 4秒後に非表示
+        self.frame.after(4000, self.flash_label.pack_forget)
