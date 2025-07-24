@@ -82,8 +82,8 @@ class CalendarView:
         prev_btn.grid(row=0, column=0, padx=6, pady=6)
         self._add_button_hover(prev_btn, ThemeManager.get('header_bg'))
 
-        # 年月ラベル
-        tk.Label(
+        # 年月ラベル（ダブルクリックで今月へ）
+        self.month_label = tk.Label(
             header,
             text=f"{self.year}年 {self.month}月",
             font=FONTS['header'],
@@ -91,7 +91,11 @@ class CalendarView:
             fg=ThemeManager.get('text'),
             padx=12,
             pady=6
-        ).grid(row=0, column=2, padx=6, pady=6)
+        )
+        self.month_label.grid(row=0, column=2, padx=6, pady=6)
+        
+        # ダブルクリックイベントをバインド
+        self.month_label.bind("<Double-1>", self._go_to_today)
 
         # 次月ボタン
         next_btn = tk.Button(
@@ -200,6 +204,10 @@ class CalendarView:
         """ナビゲーションボタンにホバー効果を追加"""
         button.bind('<Enter>', lambda e: button.config(bg=hover_bg))
         button.bind('<Leave>', lambda e: button.config(bg=orig_bg))
+        
+    def _go_to_today(self, event):
+        """年月ラベルをダブルクリック → 今月に戻る"""
+        self.on_date_click("go_to_today")
 
     def _make_event_summary(self, events_list) -> str:
         """

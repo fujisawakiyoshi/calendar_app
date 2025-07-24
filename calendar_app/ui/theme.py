@@ -38,10 +38,11 @@ LIGHT_THEME = {
     "today": "#B7DCF5",
     "highlight": "#FFF4CC",
     "accent": "#FFC0CB",
+    
+    # ボタン
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
     "button_hover": "#F0F0F0",
-    
     "button_bg_add": "#B7DCF5",     
     "button_bg_edit": "#FFE7C1",     
     "button_bg_delete": "#F7C6C7", 
@@ -68,9 +69,9 @@ DARK_THEME = {
     "accent": "#FFC1E3",          # 強調ピンク
 
     # ボタン
-    "button_bg": "#FFF0F5",       # ライトラベンダー
-    "button_fg": "#7D4B6C",       # ローズブラウン
-    "button_hover": "#FFE4EC",     # ホバー：やわらかピンク
+    "button_bg": "#FFF0F5",         # ライトラベンダー
+    "button_fg": "#7D4B6C",         # ローズブラウン
+    "button_hover": "#FFE4EC",      # ホバー：やわらかピンク
     
     "button_bg_add": "#FFD6F0",     # かわいいピンク（追加ボタン）
     "button_bg_edit": "#FFECB3",    # パステルイエロー（編集ボタン）

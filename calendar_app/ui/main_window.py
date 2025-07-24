@@ -92,6 +92,12 @@ class MainWindow:
         )
 
     def open_event_dialog(self, date_key):
+        """日付クリックでイベントダイアログを開く or 今月に戻る"""
+        if date_key == "go_to_today":
+            self.controller.go_to_today()
+            self._refresh_calendar()
+            return
+        
         try:
             print(f"[DEBUG] open_event_dialog 呼び出し: {date_key}")
             from ui.event_dialog import EventDialog
