@@ -78,3 +78,37 @@ def delete_event(events: dict, date_str: str, index: int) -> None:
         if not events[date_str]:
             del events[date_str]
         save_events(events)
+
+        
+# calendar_app/services/event_manager.py (抜粋 - 追加する可能性のある関数)
+# ...既存の import と関数...
+
+def update_event(events: dict,
+                 date_str: str,
+                 index: int,
+                 title: str,
+                 start_time: str = "",
+                 end_time: str = "",
+                 memo: str = "") -> None:
+    """
+    既存のイベントを更新し、保存します。
+
+    - events: 現在のイベントデータ辞書
+    - date_str: "YYYY-MM-DD" 形式の日付キー
+    - index: その日付のイベントリスト内でのインデックス
+    - title: 新しいイベントタイトル
+    - start_time, end_time: "HH:MM" 形式
+    - memo: 任意のメモ文字列
+    """
+    if date_str in events and 0 <= index < len(events[date_str]):
+        # イベントデータを更新
+        events[date_str][index] = {
+            "title":      title,
+            "start_time": start_time,
+            "end_time":   end_time,
+            "memo":       memo
+        }
+        save_events(events)
+    else:
+        # 存在しないイベントを更新しようとした場合の処理（エラーログなど）
+        print(f"[warning] イベントの更新に失敗しました: 日付 {date_str}, インデックス {index} が見つかりません。", file=sys.stderr)
