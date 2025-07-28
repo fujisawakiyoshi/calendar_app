@@ -65,7 +65,7 @@ def test_calendar_controller_next_month():
     assert controller.current_month == 8
 
 
-# UT-12: get_events_for_date() 指定した日付のイベントリストが正しく取得される
+# UT-11: get_events_for_date() 指定した日付のイベントリストが正しく取得される
 def test_get_events_for_date():
     """
     指定した日付のイベントリストが CalendarController によって正しく取得されることを確認する。
@@ -125,7 +125,7 @@ def test_get_events_for_date():
         mock_load_data.assert_called_once()
         
 
-# UT-13: add_event_to_date() 指定した日付にイベントが追加され、ファイルに保存される
+# UT-12: add_event_to_date() 指定した日付にイベントが追加され、ファイルに保存される
 def test_add_event_to_date():
     """
     add_event_to_date() が新しいイベントを CalendarController の内部データに追加し、
