@@ -52,8 +52,6 @@ class CalendarController:
         """
         return self.events.get(date_str, []) # self.eventsから取得
     
-    # ★★★ ここに add_event_to_date メソッドを追加 ★★★
-    # get_events_for_date と同じインデントレベルになるように修正してください
     def add_event_to_date(self, date_str: str, title: str,
                           start_time: str = "", end_time: str = "", memo: str = "") -> None:
         """

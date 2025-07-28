@@ -10,7 +10,7 @@ import requests
 # from services.holiday_service import get_holidays_for_year, load_holiday_cache, save_holiday_cache
 
 
-# UT-14: get_holidays_for_year() 有効な祝日データが正しく読み込まれることを確認
+# UT-13: get_holidays_for_year() 有効な祝日データが正しく読み込まれることを確認
 def test_get_holidays_valid_data():
     """
     holidays.json ファイルから有効な祝日データが正しく読み込まれることを確認する。

@@ -82,7 +82,7 @@ def test_edit_dialog_data_acquisition_ok(mocker): # 関数名を変更 (UT-17の
     mock_window_destroy.assert_called_once()
 
 
-# UT-16: EditDialog のデータ取得 (キャンセルシナリオ)
+# UT-17: EditDialog のデータ取得 (キャンセルシナリオ)
 def test_edit_dialog_data_acquisition_cancel(mocker):
     """
     EditDialog がキャンセルされたときに result 属性が None になることを確認する。

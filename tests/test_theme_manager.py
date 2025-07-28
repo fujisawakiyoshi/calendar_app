@@ -10,7 +10,7 @@ from ui.theme import LIGHT_THEME, DARK_THEME
 from datetime import datetime
 
 
-# UT-17: ThemeManager の toggle_theme()
+# UT-18: ThemeManager の toggle_theme()
 def test_toggle_theme(mocker):
     """
     ThemeManager.toggle_theme() がライトモードとダークモードを正しく切り替えることを確認する。

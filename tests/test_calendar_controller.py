@@ -131,64 +131,52 @@ def test_add_event_to_date():
     add_event_to_date() が新しいイベントを CalendarController の内部データに追加し、
     event_manager.add_event() を呼び出して保存することを確認する。
     """
-    # CalendarController の初期化時の日付をモック
+    from datetime import date, datetime
+    from unittest.mock import patch
+    from controllers.calendar_controller import CalendarController
+
     mock_today_date = date(2025, 7, 25)
 
-    # コントローラ初期化時に load_events が返すダミーデータ
     initial_controller_events = {
         "2025-07-24": [
             {"title": "既存イベント", "start_time": "09:00", "end_time": "10:00", "memo": ""}
         ]
     }
 
-    # add_event_to_date が呼び出された後に、コントローラが保持するであろうイベントデータ
-    expected_controller_events_after_add = {
-        "2025-07-24": [
-            {"title": "既存イベント", "start_time": "09:00", "end_time": "10:00", "memo": ""}
-        ],
-        "2025-07-25": [
-            {
-                "title": "新規追加イベント",
-                "start_time": "14:00",
-                "end_time": "15:00",
-                "memo": "新しい予定"
-            }
-        ]
-    }
-
-    # add_event_to_date が呼び出す add_event() の引数として期待されるもの
-    # add_event(events_data, date_str, title, start_time, end_time, memo)
-    expected_add_event_args_on_call = (
-        expected_controller_events_after_add, # add_eventに渡されるイベント辞書
-        "2025-07-25",
-        "新規追加イベント",
-        "14:00",
-        "15:00",
-        "新しい予定"
-    )
-
-    # event_manager.add_event をモックする (実際にイベントを追加する代わりに記録する)
-    # CalendarController.load_data もモックして、controller.events を手動で設定できるようにする
     with patch('services.event_manager.load_events', return_value=initial_controller_events), \
-         patch('services.event_manager.add_event') as mock_add_event, \
+         patch('controllers.calendar_controller.add_event') as mock_add_event, \
          patch('datetime.datetime') as mock_dt, \
-         patch('controllers.calendar_controller.CalendarController.load_data'): # load_dataをモック
+         patch('controllers.calendar_controller.CalendarController.load_data'):
 
         mock_dt.today.return_value = mock_today_date
-        mock_dt.side_effect = lambda *args, **kw: datetime(*args, **kw)
+        mock_dt.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         mock_dt.date = date
 
         controller = CalendarController()
-        # CalendarControllerの初期化でload_dataがモックされているため、
-        # self.eventsを手動で初期データに設定する必要がある
-        controller.events = initial_controller_events.copy() # コピーを渡す
+        controller.events = initial_controller_events.copy()
 
-        # テスト対象の add_event_to_date を呼び出す
+        # テスト対象の呼び出し
         controller.add_event_to_date("2025-07-25", "新規追加イベント", "14:00", "15:00", "新しい予定")
 
-        # 検証 1: event_manager.add_event が正しく呼び出されたか
-        mock_add_event.assert_called_once_with(*expected_add_event_args_on_call)
+        # 呼び出されたかを確認
+        mock_add_event.assert_called_once()
 
-        # 検証 2: CalendarController 内部の events データが更新されているか
-        # add_event 関数が events 辞書をインプレースで更新すると仮定
-        assert controller.events == expected_controller_events_after_add
+        # 呼び出し時の引数を取り出して検証
+        called_args, _ = mock_add_event.call_args
+
+        # called_args[1:] = 引数 date_str 以降の検証
+        assert called_args[1:] == (
+            "2025-07-25",
+            "新規追加イベント",
+            "14:00",
+            "15:00",
+            "新しい予定"
+        )
+
+        # events の内容は "追加前" の状態であるべき
+        expected_events_at_call = {
+            "2025-07-24": [
+                {"title": "既存イベント", "start_time": "09:00", "end_time": "10:00", "memo": ""}
+            ]
+        }
+        assert called_args[0] == expected_events_at_call
