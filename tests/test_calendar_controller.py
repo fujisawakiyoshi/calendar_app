@@ -5,7 +5,7 @@ from unittest.mock import patch
 from datetime import date, datetime
 import calendar
 
-from calendar_app.controllers.calendar_controller import CalendarController
+from controllers.calendar_controller import CalendarController
 
 
 # UT-01: CalendarControllerのインスタンスを作成、current_yearとcurrent_monthが現在の年月であるか確認

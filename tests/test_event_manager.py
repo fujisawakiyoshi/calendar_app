@@ -3,10 +3,10 @@
 import pytest
 from unittest.mock import patch, mock_open
 import json
-from calendar_app.services.event_manager import load_events, save_events
+from services.event_manager import load_events, save_events
 
 # Eventクラスのインポートを一時的にコメントアウトまたは削除
-# from calendar_app.services.event_manager import Event # この行を削除、または先頭に # をつける
+# from services.event_manager import Event # この行を削除、または先頭に # をつける
 
 # UT-04: load_events() ファイルが存在しない場合、空の辞書 {} が返される
 def test_load_events_file_not_found():
@@ -33,9 +33,9 @@ def test_load_events_empty_file():
     m = mock_open(read_data="")
     with patch('os.path.exists', return_value=True), \
          patch('builtins.open', m), \
-         patch('calendar_app.services.event_manager.EVENTS_FILE', new=mock_events_file_path):
+         patch('services.event_manager.EVENTS_FILE', new=mock_events_file_path):
         
-        from calendar_app.services.event_manager import load_events 
+        from services.event_manager import load_events 
 
         events = load_events()
         assert events == {}
@@ -57,10 +57,10 @@ def test_load_events_invalid_json():
     m = mock_open(read_data=invalid_json_data)
     with patch('os.path.exists', return_value=True), \
          patch('builtins.open', m), \
-         patch('calendar_app.services.event_manager.EVENTS_FILE', new="mocked/data/events.json"):
+         patch('services.event_manager.EVENTS_FILE', new="mocked/data/events.json"):
 
         # load_eventsを呼び出す前にインポート
-        from calendar_app.services.event_manager import load_events 
+        from services.event_manager import load_events 
 
         events = load_events()
         assert events == {}
@@ -132,9 +132,9 @@ def test_load_events_valid_data():
     m = mock_open(read_data=valid_json_data)
     with patch('os.path.exists', return_value=True), \
          patch('builtins.open', m), \
-         patch('calendar_app.services.event_manager.EVENTS_FILE', new=mock_events_file_path):
+         patch('services.event_manager.EVENTS_FILE', new=mock_events_file_path):
 
-        from calendar_app.services.event_manager import load_events 
+        from services.event_manager import load_events 
 
         events = load_events()
         assert events == expected_events # 読み込まれたデータが期待値と一致するか検証
@@ -189,9 +189,9 @@ def test_add_event():
     }
 
     # save_events をモックして、実際にファイルに書き込まれないようにする
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
+    with patch('services.event_manager.save_events') as mock_save_events:
         # add_event を呼び出すための準備
-        from calendar_app.services.event_manager import add_event
+        from services.event_manager import add_event
 
         # 既存のイベント辞書を渡してイベントを追加
         events_data = initial_events.copy() # オリジナルを保持するためコピー
@@ -256,9 +256,9 @@ def test_update_event():
     }
 
     # save_events をモックして、実際にファイルに書き込まれないようにする
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
+    with patch('services.event_manager.save_events') as mock_save_events:
         # update_event を呼び出すための準備
-        from calendar_app.services.event_manager import update_event # update_eventをインポート
+        from services.event_manager import update_event # update_eventをインポート
 
         events_data = initial_events.copy() # オリジナルを保持するためコピー
 
@@ -358,8 +358,8 @@ def test_delete_event():
             }
         ]
     }
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
-        from calendar_app.services.event_manager import delete_event
+    with patch('services.event_manager.save_events') as mock_save_events:
+        from services.event_manager import delete_event
 
         delete_event(events_data_case1, "2025-07-25", 0) # イベントAを削除
 
@@ -380,8 +380,8 @@ def test_delete_event():
         ]
     }
     expected_events_case2 = {} # 空の辞書になるはず
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
-        from calendar_app.services.event_manager import delete_event
+    with patch('services.event_manager.save_events') as mock_save_events:
+        from services.event_manager import delete_event
 
         delete_event(events_data_case2, "2025-07-25", 0) # イベントDを削除
 
@@ -393,8 +393,8 @@ def test_delete_event():
     # 検証 3: 存在しないインデックスを削除しようとした場合（変更なし、save_eventsも呼ばれない）
     events_data_case3 = initial_events.copy()
     initial_call_count_case3 = 0 # 初期のsave_events呼び出しを0とする（新しいpatchブロックなので）
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
-        from calendar_app.services.event_manager import delete_event
+    with patch('services.event_manager.save_events') as mock_save_events:
+        from services.event_manager import delete_event
 
         delete_event(events_data_case3, "2025-07-25", 99) # 存在しないインデックス
 
@@ -404,8 +404,8 @@ def test_delete_event():
     # 検証 4: 存在しない日付のイベントを削除しようとした場合（変更なし、save_eventsも呼ばれない）
     events_data_case4 = initial_events.copy()
     initial_call_count_case4 = 0 # 初期のsave_events呼び出しを0とする
-    with patch('calendar_app.services.event_manager.save_events') as mock_save_events:
-        from calendar_app.services.event_manager import delete_event
+    with patch('services.event_manager.save_events') as mock_save_events:
+        from services.event_manager import delete_event
 
         delete_event(events_data_case4, "2025-08-01", 0) # 存在しない日付
 
