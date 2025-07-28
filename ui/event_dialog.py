@@ -11,7 +11,6 @@ from services.theme_manager import ThemeManager
 from ui.tooltip import ToolTip
 from utils.resource import resource_path  # アイコン等のリソースパス解決用
 
-print("[DEBUG] event_dialog.py が読み込まれました")
 
 class EventDialog:
     """指定された日付のイベント一覧を表示・追加・編集・削除できるダイアログ"""
@@ -28,7 +27,6 @@ class EventDialog:
         # ───────────────────────────────────────────────────
         # Toplevel ウィンドウを 「非表示」 状態で先に構築（ちらつき防止）
         # ───────────────────────────────────────────────────
-        print(f"[DEBUG] EventDialog opened for {date_key}")
         
         self.window = tk.Toplevel(self.parent)
         self.window.withdraw()

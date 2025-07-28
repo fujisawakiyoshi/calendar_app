@@ -99,7 +99,6 @@ class MainWindow:
             return
         
         try:
-            print(f"[DEBUG] open_event_dialog 呼び出し: {date_key}")
             from ui.event_dialog import EventDialog
             EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
         except Exception as e:
