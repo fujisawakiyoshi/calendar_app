@@ -14,7 +14,7 @@ from ui.tooltip import ToolTip # ToolTip がインスタンス化されるため
 from utils.resource import resource_path # resource_path をモックするため
 
 
-# UT-16: EventDialog のイベントデータ初期表示
+# UT-15: EventDialog のイベントデータ初期表示
 def test_event_dialog_initial_display(mocker):
     """
     EventDialog が既存のイベントデータで正しく初期表示されることを確認する。

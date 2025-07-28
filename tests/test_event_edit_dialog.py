@@ -1,40 +1,55 @@
-# C:\work_202507\calendar_app\tests\test_event_edit_dialog.py
+# C:\work_202507\calendar_app\tests\test_event_edit_dialog.py (抜粋)
 
 import pytest
 import tkinter as tk
-from tkinter import ttk # ttk.Combobox をモックするため
+from tkinter import ttk
 from unittest.mock import MagicMock, patch
 
 # テスト対象のクラスと依存モジュールをインポート
 from ui.event_edit_dialog import EditDialog
-from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES # 定数が必要な場合
-from services.theme_manager import ThemeManager # ThemeManager をモックするため
-from utils.resource import resource_path # resource_path をモックするため
+from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
+from services.theme_manager import ThemeManager
+from utils.resource import resource_path
 
 
-# UT-17: EditDialog のデータ取得
-def test_edit_dialog_data_acquisition(mocker):
+# UT-16: EditDialog のデータ取得 (OKシナリオ)
+def test_edit_dialog_data_acquisition_ok(mocker): # 関数名を変更 (UT-17のOKシナリオ用)
     """
     EditDialog がユーザー入力（タイトル、時間、内容）を正しく取得し、
     result 属性に格納することを確認する。
     """
-    # --- 準備 ---
-    # Tkinter のルートウィンドウや Toplevel をモックし、GUIが表示されないようにする
     mocker.patch('tkinter.Toplevel')
     mocker.patch.object(tk, 'Label')
     mocker.patch.object(tk, 'Frame')
     mocker.patch.object(tk, 'Button')
-    mocker.patch.object(ttk, 'Combobox') # ttk.Combobox をモック
+    mocker.patch.object(ttk, 'Combobox')
+    mocker.patch.object(tk, 'Entry')
+    
+    # ★ここを修正: tk.StringVar をモックする際に、__init__ の引数を受け取れるようにする ★
+    # MagicMock はデフォルトで引数を受け取れるので、side_effect だけ調整します
+    mock_title_var = MagicMock(spec=tk.StringVar) # spec=tk.StringVar は引数チェックを厳密にする
+    mock_start_var = MagicMock(spec=tk.StringVar)
+    mock_end_var = MagicMock(spec=tk.StringVar)
+    mock_content_var = MagicMock(spec=tk.StringVar)
+    
+    # tkinter.StringVar をモックし、呼び出し時にこれらのモックインスタンスを返す
+    # StringVar の __init__ は master 引数を受け取るので、MagicMock.side_effect が
+    # それを正しく処理できるようにする必要があります。
+    # MagicMock(return_value=...).master = ... のように、モックされたインスタンスの属性を直接設定します。
+    # あるいは、_default_root をパッチします。
+    
+    # 最もシンプルな解決策: tkinter._get_default_root を直接モックしてエラーを回避する
+    mocker.patch('tkinter._get_default_root', return_value=MagicMock())
 
-    # EditDialogが依存する ThemeManager, resource_path をモック
+
+    mocker.patch('tkinter.StringVar', side_effect=[
+        mock_title_var, mock_start_var, mock_end_var, mock_content_var
+    ])
+
+
     mocker.patch('services.theme_manager.ThemeManager.get', return_value='mock_color')
     mocker.patch('utils.resource.resource_path', return_value='mocked_icon_path')
 
-    # EditDialog の __init__ が tk.StringVar を使うため、これもモックする
-    # MagicMock は属性へのアクセスも記録できるので、ここでは tk.StringVar を直接モックしない
-
-    # --- テスト実行 ---
-    # EditDialog のインスタンスを生成（親はモックでOK）
     dialog = EditDialog(
         parent=MagicMock(),
         title="テストダイアログ",
@@ -44,44 +59,51 @@ def test_edit_dialog_data_acquisition(mocker):
         default_content="デフォルト内容"
     )
 
-    # ユーザーが入力したかのように値を設定する
-    # EditDialog 内の StringVar に直接値を設定することで、ユーザー入力をシミュレート
-    dialog.title_var.set("新しいタイトル")
-    dialog.start_var.set("11:00")
-    dialog.end_var.set("12:00")
-    dialog.content_var.set("新しい内容")
+    # on_ok がこれらの .get() を呼び出すときに返される値を設定する
+    mock_title_var.get.return_value = "新しいタイトル"
+    mock_start_var.get.return_value = "11:00"
+    mock_end_var.get.return_value = "12:00"
+    mock_content_var.get.return_value = "新しい内容"
 
-    # OKボタンがクリックされたことをシミュレートするために、
-    # EditDialog の ok_clicked メソッド（存在すると仮定）を呼び出すか、
-    # あるいは直接 dialog.result に値をセットするロジックをテストする。
-    # EditDialog の __init__ で build_ui が呼ばれ、その中でボタンが作成されるはず。
-    # EditDialog が OK ボタンを押したときに self.result にタプルを設定するロジックをテスト。
-
-    # EditDialog の build_ui() が呼ばれた後、ok_clicked() が呼ばれることを想定
-    # OKボタンのコマンド関数を直接呼び出すか、
-    # あるいは EditDialog 内で self.result に設定されるロジックを直接実行します。
-
-    # EditDialog の ok_clicked メソッドが result をセットする想定
-    # (EditDialog に ok_clicked メソッドがあることを前提とする)
-    # もし `ok_clicked` メソッドが存在しなければ、`EditDialog` クラスにそれを追加してください。
-    # 例:
-    # def ok_clicked(self):
-    #     self.result = (self.title_var.get(), self.start_var.get(), self.end_var.get(), self.content_var.get())
-    #     self.window.destroy()
-
-    dialog.ok_clicked() # OKボタンがクリックされたことをシミュレート
+    mock_window_destroy = mocker.patch.object(dialog.window, 'destroy')
+    
+    # --- テスト実行 ---
+    dialog.on_ok()
 
     # --- 検証 ---
-    expected_result = ("新しいタイトル", "11:00", "12:00", "新しい内容")
+    expected_result = (
+        "新しいタイトル",
+        "11:00",
+        "12:00",
+        "新しい内容"
+    )
+    
     assert dialog.result == expected_result
+    mock_window_destroy.assert_called_once()
 
-    # キャンセル時のテスト（オプション）
+
+# UT-16: EditDialog のデータ取得 (キャンセルシナリオ)
+def test_edit_dialog_data_acquisition_cancel(mocker):
+    """
+    EditDialog がキャンセルされたときに result 属性が None になることを確認する。
+    """
+    mocker.patch('tkinter.Toplevel')
+    mocker.patch.object(tk, 'Label')
+    mocker.patch.object(tk, 'Frame')
+    mocker.patch.object(tk, 'Button')
+    mocker.patch.object(ttk, 'Combobox')
+    mocker.patch.object(tk, 'Entry')
+    
+    # ★ここも修正: tk._get_default_root をモックする ★
+    mocker.patch('tkinter._get_default_root', return_value=MagicMock())
+    
+    mocker.patch('tkinter.StringVar') # StringVarの内部値はここでは不要
+    mocker.patch('services.theme_manager.ThemeManager.get', return_value='mock_color')
+    mocker.patch('utils.resource.resource_path', return_value='mocked_icon_path')
+
     dialog_cancel = EditDialog(parent=MagicMock(), title="キャンセルテスト")
-    # キャンセルボタンがクリックされたことをシミュレート
-    # (EditDialog に cancel_clicked メソッドがあることを前提とする)
-    # 例:
-    # def cancel_clicked(self):
-    #     self.result = None
-    #     self.window.destroy()
-    dialog_cancel.cancel_clicked() # キャンセルボタンがクリックされたことをシミュレート
+    mock_window_destroy_cancel = mocker.patch.object(dialog_cancel.window, 'destroy')
+    
+    dialog_cancel.on_cancel()
     assert dialog_cancel.result is None
+    mock_window_destroy_cancel.assert_called_once()

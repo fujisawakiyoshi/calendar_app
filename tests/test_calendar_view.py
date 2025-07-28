@@ -71,7 +71,7 @@ def calendar_view_fixture(mocker): # pytest-mock の mocker フィクスチャ�
     )
     return view, mock_on_date_click, mock_on_prev, mock_on_next
 
-
+# UT-14: CalendarView が CalendarController のデータに基づき日付表示を正しく更新する
 def test_calendar_view_update_display(calendar_view_fixture, mocker):
     """
     CalendarView が新しいデータに基づいてカレンダー表示を正しく更新することを確認する。

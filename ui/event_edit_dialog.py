@@ -157,7 +157,7 @@ class EditDialog:
         cancel_btn = tk.Button(
             btn_frame,
             text="キャンセル",
-            command=self.window.destroy,
+            command=self.on_cancel,
             font=FONTS["base_minus"],
             bg="#F7C6C7",
             fg=ThemeManager.get("text"),
@@ -196,6 +196,11 @@ class EditDialog:
             self.content_var.get()
         )
         self.window.destroy()
+        
+    def on_cancel(self):
+        """キャンセル押下で result を None に設定 → ウィンドウを閉じる"""
+        self.result = None
+        self.window.destroy()
 
     def add_button_hover(self, button, original_bg, hover_bg=None):
         """ボタンにホバー時の背景色変化を追加"""
@@ -205,8 +210,3 @@ class EditDialog:
         button.bind("<Enter>", lambda e: button.config(bg=hover_bg))
         button.bind("<Leave>", lambda e: button.config(bg=original_bg))
 
-    def resource_path(relative_path):
-        """PyInstaller 対応のリソース取得関数"""
-        if hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.abspath("."), relative_path)
