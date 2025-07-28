@@ -95,9 +95,9 @@ def test_get_events_for_date():
     ]
     
     # load_events と datetime.today() と CalendarController.load_data をモックする
-    with patch('calendar_app.services.event_manager.load_events', return_value=mock_events), \
+    with patch('services.event_manager.load_events', return_value=mock_events), \
          patch('datetime.datetime') as mock_dt, \
-         patch('calendar_app.controllers.calendar_controller.CalendarController.load_data') as mock_load_data: # ★ここを追加★
+         patch('controllers.calendar_controller.CalendarController.load_data') as mock_load_data: # ★ここを追加★
         
         mock_dt.today.return_value = mock_today_date # datetime.today() をモック
         mock_dt.side_effect = lambda *args, **kw: datetime(*args, **kw)
@@ -169,10 +169,10 @@ def test_add_event_to_date():
 
     # event_manager.add_event をモックする (実際にイベントを追加する代わりに記録する)
     # CalendarController.load_data もモックして、controller.events を手動で設定できるようにする
-    with patch('calendar_app.services.event_manager.load_events', return_value=initial_controller_events), \
-         patch('calendar_app.services.event_manager.add_event') as mock_add_event, \
+    with patch('services.event_manager.load_events', return_value=initial_controller_events), \
+         patch('services.event_manager.add_event') as mock_add_event, \
          patch('datetime.datetime') as mock_dt, \
-         patch('calendar_app.controllers.calendar_controller.CalendarController.load_data'): # load_dataをモック
+         patch('controllers.calendar_controller.CalendarController.load_data'): # load_dataをモック
 
         mock_dt.today.return_value = mock_today_date
         mock_dt.side_effect = lambda *args, **kw: datetime(*args, **kw)
