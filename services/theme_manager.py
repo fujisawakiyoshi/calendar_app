@@ -16,7 +16,7 @@ class ThemeManager:
 
     @classmethod
     def get(cls, key: str, fallback=None):
-        return cls._theme.get(key, fallback)  # ← 修正ポイント！
+        return cls._theme.get(key, fallback) 
 
     @classmethod
     def is_dark_mode(cls):

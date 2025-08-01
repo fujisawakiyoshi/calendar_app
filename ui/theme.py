@@ -19,7 +19,7 @@ COLORS = {
     "holiday":      "#F6CACA",  # 祝日セル（未使用ならaccentと統合可能）
     "today":        "#B7DCF5",  # 今日セルの強調
     "highlight":    "#FFF4CC",  # イベントありセル
-    "accent":       "#FFC0CB",  # 祝日セル用アクセント
+    "accent":       "#EA92A0",  # 祝日セル用アクセント
 
     # ◾ ボタン共通
     "button_bg":    "#FFFFFF",  # ボタン標準背景
@@ -37,7 +37,7 @@ LIGHT_THEME = {
     "weekend": "#FFC1DA",
     "today": "#B7DCF5",
     "highlight": "#FFF4CC",
-    "accent": "#FFC0CB",
+    "accent": "#F1AEB9",
     
     # ボタン
     "button_bg": "#FFFFFF",
