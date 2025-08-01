@@ -3,7 +3,7 @@
 import tkinter as tk
 import sys
 import os
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
 from services.theme_manager import ThemeManager
 from utils.resource import resource_path
@@ -51,6 +51,10 @@ class EditDialog:
         self.ent_title.focus_set()
         # UI 完成後に表示
         self.window.deiconify()
+        
+        # ★ EnterキーでOKボタンが押せるように
+        self.window.bind('<Return>', lambda e: self.on_ok())
+        self.window.protocol("WM_DELETE_WINDOW", self.on_cancel)
 
     def _build_ui(self):
         """ダイアログ内のフレームと各入力セクションを配置"""
@@ -66,12 +70,13 @@ class EditDialog:
 
         # Esc キーで閉じる
         self.window.bind("<Escape>", lambda e: self.window.destroy())
+        
 
     def _create_title_section(self, parent):
         """タイトル入力用のラベル+Combobox"""
         tk.Label(
             parent,
-            text="タイトル：",
+            text="予定のタイトル（必須）：",
             font=FONTS["small"],
             bg=COLORS["dialog_bg"],
             fg=ThemeManager.get("text")
@@ -189,10 +194,30 @@ class EditDialog:
 
     def on_ok(self):
         """OK 押下で StringVar から値を回収し、result に格納 → ウィンドウを閉じる"""
+        title = self.title_var.get().strip()
+        start = self.start_var.get().strip()
+        end   = self.end_var.get().strip()
+        
+        # ★ 1. タイトル必須チェック
+        if not title:
+            messagebox.showwarning("タイトル未入力", "予定タイトルを選択または入力してください。")
+            self.ent_title.focus_set()
+            return
+
+        # 2. 開始・終了時刻が両方入っているときだけ前後チェック
+        if start and end:
+            if start > end:
+                messagebox.showwarning(
+                    "時間設定エラー",
+                    "終了時刻は開始時刻より後に設定してください。"
+                )
+                return
+
+        # 必須なのはタイトルだけ
         self.result = (
-            self.title_var.get(),
-            self.start_var.get(),
-            self.end_var.get(),
+            title,
+            start,   # 空文字可
+            end,     # 空文字可
             self.content_var.get()
         )
         self.window.destroy()

@@ -138,11 +138,16 @@ class CalendarView:
             for col_index, day in enumerate(week):
                 if not day:
                     text, key = '', None
+                    fg_color = ThemeManager.get('text') 
                 else:
                     key = f"{self.year}-{self.month:02d}-{day:02d}"
-                    # 今日を強調
-                    text = f"  {day} °" if self._is_today(day) else str(day)
-                
+                    text = str(day)
+                    # 今日だけ色を変える
+                    if self._is_today(day):
+                        fg_color = "#0879EB" 
+                    else:
+                        fg_color = ThemeManager.get('text')
+                    
                 bg = self._get_day_bg(day, col_index, key)
 
                 lbl = tk.Label(
@@ -150,7 +155,7 @@ class CalendarView:
                     text=text,
                     font=FONTS['base'],
                     bg=bg,
-                    fg=ThemeManager.get('text'),
+                    fg=fg_color,
                     width=6,
                     height=2,
                     bd=1,
