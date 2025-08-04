@@ -50,39 +50,51 @@ class CalendarView:
         self.render()
     
     def _draw_footer(self):
-        """カレンダー最下部・左端に祝日名、右端に時計を表示"""
+        """
+        カレンダーの最下部にフッターを描画する関数。
+        左端にその月の祝日名、右端に時計を表示します。
+        """
+        # 既存のフッターフレームがあれば、破棄して再描画に備える
         if self.footer_frame:
             self.footer_frame.destroy()
 
+        # 新しいフッターフレームを作成し、カレンダー下部に配置
+        # gridのrow=8, column=0はカレンダーのセル（7行分）の次の行を想定
         self.footer_frame = tk.Frame(self.frame, bg=ThemeManager.get("header_bg"))
         self.footer_frame.grid(row=8, column=0, columnspan=7, sticky="we", pady=(8, 0))
 
-        # ---- 左端：祝日名 ----
+        # ---- 左端：祝日名を表示する部分 ----
+        # `self.holidays`から、現在表示している月（self.month）の祝日を抽出
         holidays_this_month = [
             (d, name)
             for d, name in self.holidays.items()
             if int(d[5:7]) == self.month
         ]
+
+        # 祝日があれば「日付 祝日名」の形式で文字列を作成
         if holidays_this_month:
             holiday_strs = [f"{int(d[8:]):d}日 {name}" for d, name in holidays_this_month]
-            text = "｜".join(holiday_strs)
+            text = " / ".join(holiday_strs)
         else:
-            text = ""
+            # 祝日がなければ空の文字列を設定
+            text = "今月は祝日ありません"
 
+        # 祝日名を表示するラベルを作成し、フッターの左側に配置
         self.holiday_label = tk.Label(
             self.footer_frame,
             text=text,
             font=("Helvetica", 10, "italic"),
             bg=ThemeManager.get("header_bg"),
             fg="#888888",
-            anchor="w"
+            anchor="w",
+            justify="left",
+            wraplength=240      
         )
         self.holiday_label.pack(side="left", padx=(5, 0))
 
-        # ---- 右端：時計 ----
-        # 既存のclock_labelを使っている場合は、ここで同じくpack(side="right")すればOK
-
-        # 例：clock_labelは親から渡されている場合
+        # ---- 右端：時計を表示する部分 ----
+        # 既存の時計ラベル（self.clock_label）があれば、
+        # 以前の配置を解除してからフッターの右側に再配置する
         if self.clock_label:
             self.clock_label.pack_forget()
             self.clock_label.pack(side="right", padx=(0, 8))
