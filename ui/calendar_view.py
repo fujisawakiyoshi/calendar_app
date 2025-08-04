@@ -27,6 +27,9 @@ class CalendarView:
         self.on_date_click = on_date_click
         self.on_prev = on_prev
         self.on_next = on_next
+        self.footer_frame = None
+        self.holiday_label = None
+        self.clock_label = None
 
         # カレンダー全体を入れるフレームを作成
         self.frame = tk.Frame(self.parent, bg=ThemeManager.get('bg'))
@@ -45,6 +48,44 @@ class CalendarView:
         self.holidays = holidays
         self.events = events
         self.render()
+    
+    def _draw_footer(self):
+        """カレンダー最下部・左端に祝日名、右端に時計を表示"""
+        if self.footer_frame:
+            self.footer_frame.destroy()
+
+        self.footer_frame = tk.Frame(self.frame, bg=ThemeManager.get("header_bg"))
+        self.footer_frame.grid(row=8, column=0, columnspan=7, sticky="we", pady=(8, 0))
+
+        # ---- 左端：祝日名 ----
+        holidays_this_month = [
+            (d, name)
+            for d, name in self.holidays.items()
+            if int(d[5:7]) == self.month
+        ]
+        if holidays_this_month:
+            holiday_strs = [f"{int(d[8:]):d}日 {name}" for d, name in holidays_this_month]
+            text = "｜".join(holiday_strs)
+        else:
+            text = ""
+
+        self.holiday_label = tk.Label(
+            self.footer_frame,
+            text=text,
+            font=("Helvetica", 10, "italic"),
+            bg=ThemeManager.get("header_bg"),
+            fg="#888888",
+            anchor="w"
+        )
+        self.holiday_label.pack(side="left", padx=(5, 0))
+
+        # ---- 右端：時計 ----
+        # 既存のclock_labelを使っている場合は、ここで同じくpack(side="right")すればOK
+
+        # 例：clock_labelは親から渡されている場合
+        if self.clock_label:
+            self.clock_label.pack_forget()
+            self.clock_label.pack(side="right", padx=(0, 8))
 
     def render(self):
         """ヘッダー／曜日ラベル／日付セルを再構築"""
@@ -52,6 +93,7 @@ class CalendarView:
         self._draw_header()
         self._draw_weekday_labels()
         self._draw_days()
+        self._draw_footer()
 
     def _clear(self):
         """前回描画したウィジェットをすべて破棄"""
