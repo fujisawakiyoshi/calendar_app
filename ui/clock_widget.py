@@ -8,8 +8,8 @@ class ClockWidget:
         self.parent = parent
         self.on_theme_toggle = on_theme_toggle
 
-        bg = ThemeManager.get("header_bg")
-        fg = ThemeManager.get("clock_fg", "#555")
+        bg = ThemeManager.get('header_bg')
+        fg = ThemeManager.get('clock_fg', "#555")
 
         self.frame = tk.Frame(parent, bg=bg)
         self.frame.pack(fill="both", expand=True)
@@ -62,8 +62,8 @@ class ClockWidget:
         self.update_theme()
 
     def update_theme(self):
-        bg = ThemeManager.get("header_bg")
-        fg = ThemeManager.get("clock_fg", "#555")
+        bg = ThemeManager.get('header_bg')
+        fg = ThemeManager.get('clock_fg', "#555")
 
         self.frame.config(bg=bg)
         self.clock_btn.config(bg=bg, fg=fg, activebackground=bg, activeforeground=fg)

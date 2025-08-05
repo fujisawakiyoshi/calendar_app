@@ -26,7 +26,7 @@ class EventDialog(tk.Toplevel):
         self.withdraw()
         self.title(f"予定一覧 {self.date_key}")
         self.iconbitmap(resource_path("ui/icons/event_icon.ico"))
-        self.configure(bg=ThemeManager.get("dialog_bg"))
+        self.configure(bg=ThemeManager.get('dialog_bg'))
         self.resizable(True, False)
 
         # 画面中央に配置
@@ -71,22 +71,22 @@ class EventDialog(tk.Toplevel):
             self,
             text=f"予定一覧（{self.date_key}）",
             font=(FONTS["base"][0], 13, "bold"),  # 少し大きめの太字フォント
-            bg=ThemeManager.get("header_bg"),
-            fg=ThemeManager.get("text"),
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('text'),
             pady=6
         ).pack(fill="x")
 
     def create_listbox_area(self):
         """イベント一覧の Listbox とスクロールバーを配置"""
-        frame = tk.Frame(self, bg=ThemeManager.get("dialog_bg"))
+        frame = tk.Frame(self, bg=ThemeManager.get('dialog_bg'))
         frame.pack(fill="both", expand=True, padx=12, pady=6)
 
         # イベント表示用 Listbox
         self.listbox = tk.Listbox(
             frame,
             font=FONTS["base"],
-            bg=ThemeManager.get("bg"),
-            fg=ThemeManager.get("text"),
+            bg=ThemeManager.get('bg'),
+            fg=ThemeManager.get('text'),
             bd=0, relief="flat",
             selectbackground="#CCE8FF",  # 選択背景色
             selectforeground="#000000",  # 選択文字色
@@ -107,7 +107,7 @@ class EventDialog(tk.Toplevel):
 
     def create_button_area(self):
         """追加・編集・削除ボタンを作成して並べる"""
-        frame = tk.Frame(self, bg=ThemeManager.get("dialog_bg"))
+        frame = tk.Frame(self, bg=ThemeManager.get('dialog_bg'))
         frame.pack(fill="x", padx=14, pady=(0, 14))
 
         # ─── 1. 予定追加ボタン ────────────────────────────────
@@ -121,17 +121,17 @@ class EventDialog(tk.Toplevel):
             compound="right",          # テキスト右にアイコン
             command=self.add_event,
             font=FONTS["base_minus"],
-            bg=ThemeManager.get("button_bg_add"),        # todayカラーで強調
-            fg=ThemeManager.get("text"),
+            bg=ThemeManager.get('button_bg_add'),        # todayカラーで強調
+            fg=ThemeManager.get('text'),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"
         )
         add_btn.pack(side="left")
-        self.add_button_hover(add_btn, original_bg=ThemeManager.get("button_bg_add"))
+        self.add_button_hover(add_btn, original_bg=ThemeManager.get('button_bg_add'))
 
         # ─── 2. 編集・削除ボタンを右側にまとめる ───────────────
-        right_frame = tk.Frame(frame, bg=ThemeManager.get("dialog_bg"))
+        right_frame = tk.Frame(frame, bg=ThemeManager.get('dialog_bg'))
         right_frame.pack(side="right")
 
         # 編集ボタン
@@ -144,9 +144,9 @@ class EventDialog(tk.Toplevel):
             image=self.edit_icon,
             compound="right",
             command=self.edit_event,
-            font=FONTS["base_minus"],
-            bg=ThemeManager.get("button_bg_edit"),    # パステルオレンジ
-            fg=ThemeManager.get("text"),
+            font=FONTS['base_minus'],
+            bg=ThemeManager.get('button_bg_edit'),    # パステルオレンジ
+            fg=ThemeManager.get('text'),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"
@@ -165,9 +165,9 @@ class EventDialog(tk.Toplevel):
             compound="right",
             command=self.delete_event,
             font=FONTS["base_minus"],
-            bg=ThemeManager.get("button_bg_delete"),    # パステルレッド
+            bg=ThemeManager.get('button_bg_delete'),    # パステルレッド
             activebackground="#F4B6B7",
-            fg=ThemeManager.get("text"),
+            fg=ThemeManager.get('text'),
             relief="flat",
             padx=6, pady=2,
             cursor="hand2"

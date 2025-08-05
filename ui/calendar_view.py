@@ -60,7 +60,7 @@ class CalendarView:
 
         # 新しいフッターフレームを作成し、カレンダー下部に配置
         # gridのrow=8, column=0はカレンダーのセル（7行分）の次の行を想定
-        self.footer_frame = tk.Frame(self.frame, bg=ThemeManager.get("header_bg"))
+        self.footer_frame = tk.Frame(self.frame, bg=ThemeManager.get('header_bg'))
         self.footer_frame.grid(row=8, column=0, columnspan=7, sticky="we", pady=(8, 0))
 
         # ---- 左端：祝日名を表示する部分 ----
@@ -84,8 +84,8 @@ class CalendarView:
             self.footer_frame,
             text=text,
             font=("Helvetica", 10, "italic"),
-            bg=ThemeManager.get("header_bg"),
-            fg=ThemeManager.get("footer_fg"),
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('footer_fg'),
             anchor="w",
             justify="left",
             wraplength=240      
@@ -141,7 +141,7 @@ class CalendarView:
             header,
             text=f"{self.year}年 {self.month}月",
             font=FONTS['header'],
-            bg=ThemeManager.get("header_bg"),
+            bg=ThemeManager.get('header_bg'),
             fg=ThemeManager.get('text'),
             padx=12,
             pady=6
@@ -220,10 +220,10 @@ class CalendarView:
                         badge = tk.Label(
                             self.frame,
                             text="㊗",
-                            font=("Meiryo", 11, "bold"),
-                            fg=ThemeManager.get("badge_fg", ThemeManager.get("bg")),
-                            bg=ThemeManager.get("badge_bg", bg),
-                            bd=1
+                            font=("Meiryo", 12, "bold"),
+                            fg=ThemeManager.get('badge_fg', ThemeManager.get('bg')),
+                            bg=ThemeManager.get('badge_bg', bg),
+                            bd=0
                         )
                         # セルの中で右上に配置（relx=1.0で右端、y=+4で少し下げる）
                         badge.place(in_=lbl, relx=1.0, rely=0.0, anchor="ne", x=0, y=0)

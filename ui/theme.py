@@ -5,7 +5,7 @@
 # ────────────────────────────────────────────────────────────
 COLORS = {
     # ◾ 背景色
-    "bg":           "#FFFFFF",  # メイン背景
+    "bg":           "#FAFAFA",  # メイン背景
     "dialog_bg":    "#FFFFFF",  # ダイアログ背景
     "header_bg":    "#FAFAFA",  # ヘッダー（ナビゲーション部）背景
 
@@ -47,7 +47,7 @@ LIGHT_THEME = {
     "button_bg_edit": "#FFE7C1",     
     "button_bg_delete": "#F7C6C7", 
     
-    "clock_fg": "#555555",           # 時計の文字色
+    "clock_fg": "#555555",           
     "footer_fg": "#888888"
 }
 
