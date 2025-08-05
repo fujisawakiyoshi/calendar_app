@@ -12,49 +12,51 @@ from ui.tooltip import ToolTip
 from utils.resource import resource_path  # アイコン等のリソースパス解決用
 
 
-class EventDialog:
+class EventDialog(tk.Toplevel):
     """指定された日付のイベント一覧を表示・追加・編集・削除できるダイアログ"""
 
     def __init__(self, parent, date_key, events, on_update_callback):
-        # ───────────────────────────────────────────────────
+        super().__init__(parent)
+        self.parent = parent
+        self.date_key = date_key
+        self.events = events
+        self.on_update_callback = on_update_callback
+
         # 初期設定
-        # ───────────────────────────────────────────────────
-        self.parent            = parent           # 親ウィンドウ
-        self.date_key          = date_key         # "YYYY-MM-DD" 形式の日付キー
-        self.events            = events           # 全イベント辞書
-        self.on_update_callback = on_update_callback  # カレンダー再描画用コールバック
+        self.withdraw()
+        self.title(f"予定一覧 {self.date_key}")
+        self.iconbitmap(resource_path("ui/icons/event_icon.ico"))
+        self.configure(bg=ThemeManager.get("dialog_bg"))
+        self.resizable(True, False)
 
-        # ───────────────────────────────────────────────────
-        # Toplevel ウィンドウを 「非表示」 状態で先に構築（ちらつき防止）
-        # ───────────────────────────────────────────────────
-        
-        self.window = tk.Toplevel(self.parent)
-        self.window.withdraw()
-        self.window.title(f"予定一覧 {self.date_key}")
-        # アイコンを resource_path 経由でセット
-        self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
-        self.window.configure(bg=ThemeManager.get("dialog_bg"))
-        self.window.resizable(True, False)
+        # 画面中央に配置
+        self._place_relative_to_parent(width=380, height=260)
 
-        # ───────────────────────────────────────────────────
-        # サイズ & 画面中央配置
-        # ───────────────────────────────────────────────────
-        w, h = 380, 260
-        sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
-        x, y = (sw - w)//2, (sh - h)//2
-        self.window.geometry(f"{w}x{h}+{x}+{y}")
-
-        # ───────────────────────────────────────────────────
-        # 各種 UI 部品を構築
-        # ───────────────────────────────────────────────────
+        # UI構築
         self.build_ui()
 
-        # ───────────────────────────────────────────────────
-        # モーダル化（親ウィンドウをブロック）して表示
-        # ───────────────────────────────────────────────────
-        self.window.transient(self.parent)   # 親の上に常に表示
-        self.window.grab_set()               # 他を操作不可に
-        self.window.deiconify()              # 最後に表示
+        # モーダル表示
+        self.grab_set()
+        self.deiconify()
+
+    def _place_relative_to_parent(self, width, height):
+        self.parent.update_idletasks()  # 親ウィンドウ位置の更新を反映
+
+        # 親ウィンドウの左上座標とサイズを取得
+        px = self.parent.winfo_x()
+        py = self.parent.winfo_y()
+        pw = self.parent.winfo_width()
+        ph = self.parent.winfo_height()
+
+        # 左右の余白を少しだけ確保して、左に寄せる
+        # x = px + (pw * 0.1)  # 左端から10%の位置
+        x = px + 10  # 例：左端から10ピクセル離す
+
+        # 画面下部から少しだけ余白を確保して、下に配置
+        # y = py + ph - height - (ph * 0.1) # 下端から10%の位置
+        y = py + ph - height - 10 # 例：下端から10ピクセル離す
+
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
     def build_ui(self):
         """ヘッダー、リスト、ボタン、キーボードショートカットをまとめて生成"""
@@ -66,7 +68,7 @@ class EventDialog:
     def create_header(self):
         """ウィンドウ上部に日付表示用ヘッダーを作成"""
         tk.Label(
-            self.window,
+            self,
             text=f"予定一覧（{self.date_key}）",
             font=(FONTS["base"][0], 13, "bold"),  # 少し大きめの太字フォント
             bg=ThemeManager.get("header_bg"),
@@ -76,7 +78,7 @@ class EventDialog:
 
     def create_listbox_area(self):
         """イベント一覧の Listbox とスクロールバーを配置"""
-        frame = tk.Frame(self.window, bg=ThemeManager.get("dialog_bg"))
+        frame = tk.Frame(self, bg=ThemeManager.get("dialog_bg"))
         frame.pack(fill="both", expand=True, padx=12, pady=6)
 
         # イベント表示用 Listbox
@@ -105,7 +107,7 @@ class EventDialog:
 
     def create_button_area(self):
         """追加・編集・削除ボタンを作成して並べる"""
-        frame = tk.Frame(self.window, bg=ThemeManager.get("dialog_bg"))
+        frame = tk.Frame(self, bg=ThemeManager.get("dialog_bg"))
         frame.pack(fill="x", padx=14, pady=(0, 14))
 
         # ─── 1. 予定追加ボタン ────────────────────────────────
@@ -177,7 +179,7 @@ class EventDialog:
         """Enter→編集、Delete→削除、Esc→閉じる のキーバインド設定"""
         self.listbox.bind("<Return>", lambda e: self.edit_event())
         self.listbox.bind("<Delete>", lambda e: self.delete_event())
-        self.window.bind("<Escape>", lambda e: self.window.destroy())
+        self.bind("<Escape>", lambda e: self.destroy())
 
     def refresh_list(self):
         """現在の events から Listbox を再描画"""
@@ -190,8 +192,8 @@ class EventDialog:
 
     def add_event(self):
         """予定追加ダイアログを開き、新規予定を保存→再描画"""
-        dialog = EditDialog(self.window, "予定の追加")
-        dialog.window.wait_window()  # ダイアログ終了まで待機
+        dialog = EditDialog(self, "予定の追加")
+        dialog.wait_window()  # ダイアログ終了まで待機
         if dialog.result:
             title, st, et, memo = dialog.result
             self.events.setdefault(self.date_key, []).append({
@@ -210,13 +212,13 @@ class EventDialog:
         idx = sel[0]
         ev = self.events[self.date_key][idx]
         dialog = EditDialog(
-            self.window, "予定の編集",
+            self, "予定の編集",
             default_title=ev["title"],
             default_start_time=ev["start_time"],
             default_end_time=ev["end_time"],
             default_content=ev.get("memo", "")
         )
-        dialog.window.wait_window()
+        dialog.wait_window()
         if dialog.result:
             self.events[self.date_key][idx] = {
                 "title": dialog.result[0],

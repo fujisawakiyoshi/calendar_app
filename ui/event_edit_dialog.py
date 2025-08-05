@@ -8,7 +8,7 @@ from ui.theme import COLORS, FONTS, TITLE_CHOICES, TIME_CHOICES
 from services.theme_manager import ThemeManager
 from utils.resource import resource_path
 
-class EditDialog:
+class EditDialog(tk.Toplevel):
     """予定の追加・編集用ダイアログウィンドウ"""
 
     def __init__(
@@ -16,50 +16,59 @@ class EditDialog:
         default_title="", default_start_time="",
         default_end_time="", default_content=""
     ):
+        super().__init__(parent)
         # ダイアログから返す結果（OK 押下時にタプルで設定）
         self.result = None
-
-        # Toplevel を作成 → まず非表示化（UI構築中のちらつき防止）
-        self.window = tk.Toplevel(parent)
-        self.window.withdraw()
-        self.window.title(title)
+        self.parent = parent
+        self.withdraw()
+        self.title(title)
         # アイコンを resource_path 経由で読み込み
-        self.window.iconbitmap(resource_path("ui/icons/event_icon.ico"))
-        self.window.configure(bg=COLORS["dialog_bg"])
-        self.window.resizable(False, False)
-
-        # ウィンドウのサイズと中央配置
-        w, h = 300, 270
-        sw, sh = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
-        x, y = (sw - w) // 2, (sh - h) // 2
-        self.window.geometry(f"{w}x{h}+{x}+{y}")
+        self.iconbitmap(resource_path("ui/icons/event_icon.ico"))
+        self.configure(bg=COLORS["dialog_bg"])
+        self.resizable(False, False)
 
         # 初期値を StringVar にセット
         self.title_var   = tk.StringVar(value=default_title)
         self.start_var   = tk.StringVar(value=default_start_time)
         self.end_var     = tk.StringVar(value=default_end_time)
         self.content_var = tk.StringVar(value=default_content)
-
+        
+        self._place_relative_to_parent(width=300, height=270)
+        
         # UI 構築
         self._build_ui()
 
         # モーダル設定：親の上に表示 & 他操作をブロック
-        self.window.transient(parent)
-        self.window.grab_set()
+        self.transient(parent)
+        self.grab_set()
 
         # 初期フォーカス
         self.ent_title.focus_set()
         # UI 完成後に表示
-        self.window.deiconify()
+        self.deiconify()
         
         # ★ EnterキーでOKボタンが押せるように
-        self.window.bind('<Return>', lambda e: self.on_ok())
-        self.window.protocol("WM_DELETE_WINDOW", self.on_cancel)
+        self.bind('<Return>', lambda e: self.on_ok())
+        self.protocol("WM_DELETE_WINDOW", self.on_cancel)
+
+    def _place_relative_to_parent(self, width, height):
+        self.update_idletasks()
+        self.parent.update_idletasks()
+
+        px = self.parent.winfo_rootx()
+        py = self.parent.winfo_rooty()
+        pw = self.parent.winfo_width()
+        ph = self.parent.winfo_height()
+
+        x = px + (pw - width) // 2
+        y = py + (ph - height) // 3
+
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
     def _build_ui(self):
         """ダイアログ内のフレームと各入力セクションを配置"""
         pad = 8
-        frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        frame = tk.Frame(self, bg=COLORS["dialog_bg"])
         frame.pack(fill="both", expand=True, padx=pad, pady=pad)
 
         # 各セクション
@@ -69,7 +78,7 @@ class EditDialog:
         self._create_button_section()
 
         # Esc キーで閉じる
-        self.window.bind("<Escape>", lambda e: self.window.destroy())
+        self.bind("<Escape>", lambda e: self.destroy())
         
 
     def _create_title_section(self, parent):
@@ -139,7 +148,7 @@ class EditDialog:
     def _create_button_section(self, parent=None):
         """OK / キャンセル ボタン配置"""
         pad = 8
-        btn_frame = tk.Frame(self.window, bg=COLORS["dialog_bg"])
+        btn_frame = tk.Frame(self, bg=COLORS["dialog_bg"])
         btn_frame.pack(fill="x", padx=pad, pady=(0, pad))
 
         # OK ボタン（アクセントカラー：today）
@@ -220,12 +229,12 @@ class EditDialog:
             end,     # 空文字可
             self.content_var.get()
         )
-        self.window.destroy()
+        self.destroy()
         
     def on_cancel(self):
         """キャンセル押下で result を None に設定 → ウィンドウを閉じる"""
         self.result = None
-        self.window.destroy()
+        self.destroy()
 
     def add_button_hover(self, button, original_bg, hover_bg=None):
         """ボタンにホバー時の背景色変化を追加"""
