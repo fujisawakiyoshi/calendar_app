@@ -85,7 +85,7 @@ class CalendarView:
             text=text,
             font=("Helvetica", 10, "italic"),
             bg=ThemeManager.get("header_bg"),
-            fg="#888888",
+            fg=ThemeManager.get("footer_fg"),
             anchor="w",
             justify="left",
             wraplength=240      
@@ -221,8 +221,8 @@ class CalendarView:
                             self.frame,
                             text="㊗",
                             font=("Meiryo", 11, "bold"),
-                            fg=ThemeManager.get("bg"),
-                            bg=bg,  # 初期背景色
+                            fg=ThemeManager.get("badge_fg", ThemeManager.get("bg")),
+                            bg=ThemeManager.get("badge_bg", bg),
                             bd=1
                         )
                         # セルの中で右上に配置（relx=1.0で右端、y=+4で少し下げる）

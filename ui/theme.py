@@ -47,7 +47,8 @@ LIGHT_THEME = {
     "button_bg_edit": "#FFE7C1",     
     "button_bg_delete": "#F7C6C7", 
     
-    "clock_fg": "#555555"           # 時計の文字色
+    "clock_fg": "#555555",           # 時計の文字色
+    "footer_fg": "#888888"
 }
 
 DARK_THEME = {
@@ -77,7 +78,8 @@ DARK_THEME = {
     "button_bg_edit": "#FFECB3",    # パステルイエロー（編集ボタン）
     "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
     
-    "clock_fg": "#AA77AA"  # 時計の文字色
+    "clock_fg": "#AA77AA",  # 時計の文字色
+    "footer_fg": "#C58EC5"
 }
 
 # 初期テーマはライト
