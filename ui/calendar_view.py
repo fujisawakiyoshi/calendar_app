@@ -217,6 +217,21 @@ class CalendarView:
                 )
                 lbl.grid(row=row_index, column=col_index, padx=1, pady=1)
 
+                # ↓この下に追加！祝日セルに㊗マークバッジを右上に表示
+                if key in self.holidays:
+                    badge_bg = bg
+                    
+                    badge = tk.Label(
+                        self.frame,
+                        text="㊗",
+                        font=("Meiryo", 11, "bold"),
+                        fg=ThemeManager.get("bg"),
+                        bg=badge_bg,
+                        bd=0
+                    )
+                    # セルの中で右上に配置（relx=1.0で右端、y=+4で少し下げる）
+                    badge.place(in_=lbl, relx=1.0, rely=0.0, anchor="ne", x=-3, y=3)
+                
                 if day:
                     # クリック時の挙動設定
                     lbl.bind('<Button-1>', lambda e, d=key: self.on_date_click(d))
