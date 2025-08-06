@@ -39,6 +39,8 @@ LIGHT_THEME = {
     "highlight": "#FFF4CC",
     "accent": "#F1AEB9",
     
+    "hover": "#D0EBFF",  # LIGHT_THEME
+    
     # ボタン
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
@@ -69,6 +71,8 @@ DARK_THEME = {
     "highlight": "#FFF4CC",       # イベントあり：レモン色
     "accent": "#FFC1E3",          # 強調ピンク
 
+    "hover": "#D5F5F6",             # DARK_THEME 例
+
     # ボタン
     "button_bg": "#FFF0F5",         # ライトラベンダー
     "button_fg": "#7D4B6C",         # ローズブラウン
@@ -79,7 +83,7 @@ DARK_THEME = {
     "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
     
     "clock_fg": "#AA77AA",  # 時計の文字色
-    "footer_fg": "#C58EC5"
+    "footer_fg": "#CA67B5"
 }
 
 # 初期テーマはライト
@@ -90,12 +94,12 @@ COLORS = LIGHT_THEME
 # ────────────────────────────────────────────────────────────
 # フォント種類とサイズをここで一元管理します。
 FONTS = {
-    "base":         ("Helvetica", 12),            # 標準テキスト
+    "base":         ("Helvetica", 13),            # 標準テキスト
     "base_minus":   ("Helvetica", 11),            # 予定一覧画面の文字
-    "bold":         ("Helvetica", 12, "bold"),    # 太字
-    "small":        ("Helvetica", 10),            # 補助テキスト・ラベル
-    "header":       ("Helvetica", 14, "bold"),    # カレンダー見出し
-    "dialog_title": ("Helvetica", 13, "bold"),    # ダイアログタイトル
+    "bold":         ("Helvetica", 13, "bold"),    # 太字
+    "small":        ("Helvetica", 11),            # 補助テキスト・ラベル
+    "header":       ("Helvetica", 15, "bold"),    # カレンダー見出し
+    "dialog_title": ("Helvetica", 14, "bold"),    # ダイアログタイトル
     "button":       ("Helvetica", 12),            # ボタンテキスト
 }
 

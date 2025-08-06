@@ -74,7 +74,7 @@ class CalendarView:
         # 祝日があれば「日付 祝日名」の形式で文字列を作成
         if holidays_this_month:
             holiday_strs = [f"{int(d[8:]):d}日 {name}" for d, name in holidays_this_month]
-            text = " / ".join(holiday_strs)
+            text = " | ".join(holiday_strs)
         else:
             # 祝日がなければ空の文字列を設定
             text = "今月は祝日ありません"
@@ -83,12 +83,12 @@ class CalendarView:
         self.holiday_label = tk.Label(
             self.footer_frame,
             text=text,
-            font=("Helvetica", 10, "italic"),
+            font=("Helvetica", 11),
             bg=ThemeManager.get('header_bg'),
             fg=ThemeManager.get('footer_fg'),
             anchor="w",
             justify="left",
-            wraplength=240      
+            wraplength=280      
         )
         self.holiday_label.pack(side="left", padx=(5, 0))
 
@@ -197,7 +197,7 @@ class CalendarView:
                         key = f"{self.year}-{self.month:02d}-{day:02d}"
                         text = str(day)
                         # 今日だけ色を変える
-                        fg_color = "#0879EB" if self._is_today(day) else ThemeManager.get('text')
+                        fg_color = "#3F68D8" if self._is_today(day) else ThemeManager.get('text')
                     
                     bg = self._get_day_bg(day, col_index, key)
 
@@ -210,6 +210,8 @@ class CalendarView:
                         width=6,
                         height=2,
                         bd=1,
+                        padx=2,  # 左右の余白を増やす
+                        pady=2,  # 上下の余白を減らす
                         relief='ridge'
                     )
                     lbl.grid(row=row_index, column=col_index, padx=1, pady=1)
@@ -226,7 +228,7 @@ class CalendarView:
                             bd=0
                         )
                         # セルの中で右上に配置（relx=1.0で右端、y=+4で少し下げる）
-                        badge.place(in_=lbl, relx=1.0, rely=0.0, anchor="ne", x=0, y=0)
+                        badge.place(in_=lbl, relx=1.0, rely=0.0, anchor="ne", x=-2, y=2)
                     
                     # --- ホバー効果（祝日バッジがあれば連動） ---
                     self._add_hover_effect(lbl, bg, badge=badge)
@@ -267,7 +269,7 @@ class CalendarView:
 
     def _add_hover_effect(self, widget, orig_bg, badge=None):
         """日付セルと㊗バッジのホバー効果"""
-        hover_bg = '#D0EBFF'  # 好みに応じて変更可
+        hover_bg = ThemeManager.get("hover", "#D0EBFF")
 
         def on_enter(e):
             widget.config(bg=hover_bg)
