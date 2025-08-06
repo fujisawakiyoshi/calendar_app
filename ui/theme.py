@@ -50,7 +50,9 @@ LIGHT_THEME = {
     "button_bg_delete": "#F7C6C7", 
     
     "clock_fg": "#555555",           
-    "footer_fg": "#888888"
+    "footer_fg": "#888888",
+    "holiday_label_fg": "#888888", # 新規追加
+    "weather_bg": "#FAFAFA"
 }
 
 DARK_THEME = {
@@ -83,7 +85,9 @@ DARK_THEME = {
     "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
     
     "clock_fg": "#AA77AA",  # 時計の文字色
-    "footer_fg": "#CA67B5"
+    "footer_fg": "#AA77AA",
+    "holiday_label_fg": "#CA67B5", # 新規追加
+    "weather_bg": "#FEEEF3"
 }
 
 # 初期テーマはライト
@@ -98,6 +102,9 @@ FONTS = {
     "base_minus":   ("Helvetica", 11),            # 予定一覧画面の文字
     "bold":         ("Helvetica", 13, "bold"),    # 太字
     "small":        ("Helvetica", 11),            # 補助テキスト・ラベル
+    "small_holiday": ("Helvetica", 11),          # 祝日名
+    "weather_emoji":   ("Helvetica", 12, "bold"),    # 天気のEmoji
+    "weather_text": ("Helvetica", 9),      # 天気のテキスト
     "header":       ("Helvetica", 15, "bold"),    # カレンダー見出し
     "dialog_title": ("Helvetica", 14, "bold"),    # ダイアログタイトル
     "button":       ("Helvetica", 12),            # ボタンテキスト

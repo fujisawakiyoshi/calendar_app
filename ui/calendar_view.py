@@ -29,7 +29,6 @@ class CalendarView:
         self.on_next = on_next
         self.footer_frame = None
         self.holiday_label = None
-        self.clock_label = None
 
         # カレンダー全体を入れるフレームを作成
         self.frame = tk.Frame(self.parent, bg=ThemeManager.get('bg'))
@@ -83,21 +82,14 @@ class CalendarView:
         self.holiday_label = tk.Label(
             self.footer_frame,
             text=text,
-            font=("Helvetica", 11),
+            font=FONTS['small_holiday'],
             bg=ThemeManager.get('header_bg'),
-            fg=ThemeManager.get('footer_fg'),
+            fg=ThemeManager.get('holiday_label_fg'),
             anchor="w",
             justify="left",
             wraplength=280      
         )
         self.holiday_label.pack(side="left", padx=(5, 0))
-
-        # ---- 右端：時計を表示する部分 ----
-        # 既存の時計ラベル（self.clock_label）があれば、
-        # 以前の配置を解除してからフッターの右側に再配置する
-        if self.clock_label:
-            self.clock_label.pack_forget()
-            self.clock_label.pack(side="right", padx=(0, 8))
 
     def render(self):
         """ヘッダー／曜日ラベル／日付セルを再構築"""

@@ -7,10 +7,12 @@ import os
 from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.clock_widget import ClockWidget
+from ui.weather_widget import WeatherWidget
 from ui.theme import COLORS
 from ui.event_dialog import EventDialog
 from services.theme_manager import ThemeManager
 from utils.resource import resource_path
+from PIL import Image, ImageTk
 
 
 class MainWindow:
@@ -69,8 +71,16 @@ class MainWindow:
             on_next=self.on_next_month
         )
 
-        # 時計
-        self.clock_widget = ClockWidget(self.root, on_theme_toggle=self.toggle_theme)
+        # 時計と天気をまとめるためのフレーム
+        bottom_frame = tk.Frame(self.root, bg=ThemeManager.get('header_bg'))
+        bottom_frame.pack(side="bottom", fill="x", padx=15, pady=(0, 15))
+
+        # 天気ウィジェットを左側に配置
+        self.weather_widget = WeatherWidget(bottom_frame)
+        self.weather_widget.update_weather(self.controller.get_weather_info())
+
+        # 時計ウィジェットを右側に配置
+        self.clock_widget = ClockWidget(bottom_frame, on_theme_toggle=self.toggle_theme)
 
     def on_prev_month(self):
         """＜ボタンで前月へ"""
@@ -90,6 +100,7 @@ class MainWindow:
             self.controller.holidays,
             self.controller.events
         )
+        self.weather_widget.update_weather(self.controller.get_weather_info())#天気ウィジェットも更新
 
     def open_event_dialog(self, date_key):
         """日付クリックでイベントダイアログを開く or 今月に戻る"""
@@ -110,6 +121,7 @@ class MainWindow:
         self.root.configure(bg=ThemeManager.get("header_bg"))  # ウィンドウ背景を更新
         self._refresh_calendar()                               # カレンダー再描画
         self.clock_widget.update_theme()                       # 時計のテーマ更新
+        self.weather_widget.update_theme()
         
     def run(self):
         """メインループ開始"""
