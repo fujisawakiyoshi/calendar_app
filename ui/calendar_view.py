@@ -89,7 +89,7 @@ class CalendarView:
             justify="left",
             wraplength=280      
         )
-        self.holiday_label.pack(side="left", padx=(5, 0))
+        self.holiday_label.pack(side="left", padx=(5, 0)) 
 
     def render(self):
         """ヘッダー／曜日ラベル／日付セルを再構築"""
@@ -298,3 +298,8 @@ class CalendarView:
                 line += f" - {ev['memo']}"
             lines.append(line)
         return '\n'.join(lines)
+    
+    def update_theme(self):
+        """テーマ切り替え時に呼び出され、カレンダー全体を再描画する"""
+        self.frame.config(bg=ThemeManager.get('bg'))
+        self.render()  # テーマに基づき再描画（色もすべて更新される）

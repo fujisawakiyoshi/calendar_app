@@ -6,7 +6,7 @@ import os
 
 from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
-from ui.clock_widget import ClockWidget
+from ui.status_bar_widget import StatusBarWidget
 from ui.weather_widget import WeatherWidget
 from ui.theme import COLORS
 from ui.event_dialog import EventDialog
@@ -19,37 +19,24 @@ class MainWindow:
     """アプリケーションのメインウィンドウを構成するクラス"""
 
     def __init__(self):
-        # 1) Tkinter ルートウィンドウをいったん隠して構築（ちらつき防止）
         self.root = tk.Tk()
         self.root.withdraw()
-
-        # 2) ウィンドウタイトル
         self.root.title("Desktop Calendar")
 
-        # 3) アイコンを ICO で設定
         ico_path = resource_path("ui/icons/event_icon.ico")
         if os.path.exists(ico_path):
             self.root.iconbitmap(ico_path)
 
-        # 4) 背景色・リサイズ制御
         self.root.configure(bg=ThemeManager.get("header_bg"))
         self.root.resizable(True, True)
         self.root.attributes("-topmost", False)
 
-        # 5) 位置・サイズを調整して少し右上に寄せる
         self._configure_window_position()
-
-        # 6) カレンダー制御用コントローラー
         self.controller = CalendarController()
-
-        # 7) カレンダー＆時計ウィジェットを組み立て
         self._setup_ui()
-
-        # 8) 完成後に表示
         self.root.after(0, self.root.deiconify)
 
     def _configure_window_position(self):
-        """ウィンドウを画面中央から少し右上に寄せる"""
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
         ww, wh = 560, 500
@@ -58,7 +45,6 @@ class MainWindow:
         self.root.geometry(f"{ww}x{wh}+{x}+{y}")
 
     def _setup_ui(self):
-        """カレンダーと時計のウィジェットを配置"""
         # カレンダー
         self.calendar_view = CalendarView(
             self.root,
@@ -75,40 +61,36 @@ class MainWindow:
         bottom_frame = tk.Frame(self.root, bg=ThemeManager.get('header_bg'))
         bottom_frame.pack(side="bottom", fill="x", padx=15, pady=(0, 15))
 
-        # 天気ウィジェットを左側に配置
-        self.weather_widget = WeatherWidget(bottom_frame)
-        self.weather_widget.update_weather(self.controller.get_weather_info())
+        # 統合ウィジェット（時計＋天気＋メッセージ）
+        self.status_bar = StatusBarWidget(bottom_frame, on_theme_toggle=self.toggle_theme)
 
-        # 時計ウィジェットを右側に配置
-        self.clock_widget = ClockWidget(bottom_frame, on_theme_toggle=self.toggle_theme)
+        # 天気を初期表示
+        self.status_bar.update_weather(self.controller.get_weather_info())
 
     def on_prev_month(self):
-        """＜ボタンで前月へ"""
         self.controller.prev_month()
         self._refresh_calendar()
 
     def on_next_month(self):
-        """＞ボタンで次月へ"""
         self.controller.next_month()
         self._refresh_calendar()
 
     def _refresh_calendar(self):
-        """カレンダーを最新データで再描画"""
         self.calendar_view.update(
             self.controller.current_year,
             self.controller.current_month,
             self.controller.holidays,
             self.controller.events
         )
-        self.weather_widget.update_weather(self.controller.get_weather_info())#天気ウィジェットも更新
+        # 天気も更新
+        self.status_bar.update_weather(self.controller.get_weather_info())
 
     def open_event_dialog(self, date_key):
-        """日付クリックでイベントダイアログを開く or 今月に戻る"""
         if date_key == "go_to_today":
             self.controller.go_to_today()
             self._refresh_calendar()
             return
-        
+
         try:
             from ui.event_dialog import EventDialog
             EventDialog(self.root, date_key, self.controller.events, self._refresh_calendar)
@@ -117,12 +99,11 @@ class MainWindow:
 
     def toggle_theme(self):
         ThemeManager.toggle_theme()
+        self.root.configure(bg=ThemeManager.get("header_bg"))
+        # カレンダーUIのテーマ更新のみ（データ更新は行わない）
+        self.calendar_view.update_theme()
+        # 時計・天気ウィジェットのテーマ更新
+        self.status_bar.update_theme()
 
-        self.root.configure(bg=ThemeManager.get("header_bg"))  # ウィンドウ背景を更新
-        self._refresh_calendar()                               # カレンダー再描画
-        self.clock_widget.update_theme()                       # 時計のテーマ更新
-        self.weather_widget.update_theme()
-        
     def run(self):
-        """メインループ開始"""
         self.root.mainloop()

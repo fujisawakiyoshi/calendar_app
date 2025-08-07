@@ -14,12 +14,12 @@ class WeatherWidget:
     def __init__(self, parent):
         self.parent = parent
         self.frame = tk.Frame(parent, bg=ThemeManager.get('header_bg'))
-        self.frame.pack(side="left", anchor="w", padx=0, pady=0)
+        self.frame.pack(side="left", anchor="w", padx=(25, 0), pady=0)
         self.parent.config(bg=ThemeManager.get("weather_bg"))
         
         # アイコンを格納するフレーム
         self.icon_frame = tk.Frame(self.frame, bg=ThemeManager.get('header_bg'))
-        self.icon_frame.pack(side="left", padx=(0, 5), anchor="w")
+        self.icon_frame.pack(side="left", padx=(0, 3), anchor="w") #アイコンと文字との間隔
         self.icon_widgets = []
         
         # 天気概況用ラベル
