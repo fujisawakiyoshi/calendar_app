@@ -59,7 +59,7 @@ class MainWindow:
 
         # 時計と天気をまとめるためのフレーム
         bottom_frame = tk.Frame(self.root, bg=ThemeManager.get('header_bg'))
-        bottom_frame.pack(side="bottom", fill="x", padx=15, pady=(0, 15))
+        bottom_frame.pack(side="bottom", fill="x", padx=10, pady=(0, 10))
 
         # 統合ウィジェット（時計＋天気＋メッセージ）
         self.status_bar = StatusBarWidget(bottom_frame, on_theme_toggle=self.toggle_theme)

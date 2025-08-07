@@ -14,7 +14,7 @@ class WeatherWidget:
     def __init__(self, parent):
         self.parent = parent
         self.frame = tk.Frame(parent, bg=ThemeManager.get('header_bg'))
-        self.frame.pack(side="left", anchor="w", padx=(25, 0), pady=0)
+        self.frame.pack(side="left", anchor="w", padx=(0, 0), pady=0)
         self.parent.config(bg=ThemeManager.get("weather_bg"))
         
         # アイコンを格納するフレーム

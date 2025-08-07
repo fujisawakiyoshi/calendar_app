@@ -16,23 +16,22 @@ class StatusBarWidget:
         self.parent = parent
         self.on_theme_toggle = on_theme_toggle
 
-        # 色設定（統一）
         bg = ThemeManager.get("header_bg")
         fg = ThemeManager.get("text")
         clock_fg = ThemeManager.get("clock_fg")
 
         # === メインフレーム ===
         self.frame = tk.Frame(parent, bg=bg)
-        self.frame.pack(fill="x", padx=10, pady=(0, 0))
+        self.frame.pack(fill="x", padx=10, pady=(3, 3))  # ← 左右余白をやや縮めた
 
         # === 左側: 天気表示 ===
         self.left_frame = tk.Frame(self.frame, bg=bg)
-        self.left_frame.pack(side="left", anchor="w")
+        self.left_frame.pack(side="left", anchor="center")  # ← anchor 修正
 
         self.icon_images = {}
         self.icon_widgets = []
         self.icon_frame = tk.Frame(self.left_frame, bg=bg)
-        self.icon_frame.pack(side="left", padx=(0, 3), anchor="w")
+        self.icon_frame.pack(side="left", padx=(0, 3), anchor="center")
 
         self.weather_label = tk.Label(
             self.left_frame,
@@ -44,40 +43,43 @@ class StatusBarWidget:
             justify="left",
             wraplength=200
         )
-        self.weather_label.pack(side="left", anchor="w")
+        self.weather_label.pack(side="left", anchor="center", pady=(2, 0))  # ← 少しだけ詰める
 
         self._load_icons()
 
         # === 右側: 時計 + メッセージ ===
         self.right_frame = tk.Frame(self.frame, bg=bg)
-        self.right_frame.pack(side="right", anchor="e")
+        self.right_frame.pack(side="right", anchor="center")
 
-        # メッセージラベル（時計の上）
         self.flash_label = tk.Label(
             self.right_frame,
             text="",
             font=("Segoe UI Emoji", 10, "italic"),
             bg=bg,
-            fg=clock_fg,  # アクセントカラー（ピンク系）
+            fg=clock_fg,
             anchor="e",
             justify="right",
             wraplength=200
         )
         self.flash_label.pack(side="top", anchor="e", pady=(0, 2))
 
-        # 時計（絵文字付き、テーマ切替ボタン）
         self.clock_btn = tk.Button(
             self.right_frame,
-            text=self._get_time_str(),  # 🕒 をここで付けると2重になるので除去
+            text=self._get_time_str(),
             font=FONTS["small"],
             bg=bg,
             fg=clock_fg,
             cursor="hand2",
-            relief="flat",  # 罫線なし
-            bd=0,           # ボーダーサイズなし
-            command=self._on_toggle_clicked  # ここだけでOK！
+            relief="flat",
+            bd=0,
+            command=self._on_toggle_clicked
         )
-        self.clock_btn.pack(side="top", anchor="e")
+        self.clock_btn.pack(side="top", anchor="e", pady=(0, 1))
+
+        self.clock_btn.bind("<Enter>", lambda e: self.clock_btn.config(fg=ThemeManager.get("clock_fg"), cursor="hand2"))
+        self.clock_btn.bind("<Leave>", lambda e: self.clock_btn.config(fg=ThemeManager.get("clock_fg")))
+
+        self._update_clock()
 
         # ホバー効果（色とカーソル変更）
         def _on_enter(e):
