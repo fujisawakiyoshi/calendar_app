@@ -1,3 +1,4 @@
+# services/theme_manager.py
 from ui.theme import LIGHT_THEME, DARK_THEME
 
 class ThemeManager:

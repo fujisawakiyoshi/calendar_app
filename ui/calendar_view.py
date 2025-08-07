@@ -27,6 +27,8 @@ class CalendarView:
         self.on_date_click = on_date_click
         self.on_prev = on_prev
         self.on_next = on_next
+        self.footer_frame = None
+        self.holiday_label = None
 
         # カレンダー全体を入れるフレームを作成
         self.frame = tk.Frame(self.parent, bg=ThemeManager.get('bg'))
@@ -45,6 +47,49 @@ class CalendarView:
         self.holidays = holidays
         self.events = events
         self.render()
+    
+    def _draw_footer(self):
+        """
+        カレンダーの最下部にフッターを描画する関数。
+        左端にその月の祝日名、右端に時計を表示します。
+        """
+        # 既存のフッターフレームがあれば、破棄して再描画に備える
+        if self.footer_frame:
+            self.footer_frame.destroy()
+
+        # 新しいフッターフレームを作成し、カレンダー下部に配置
+        # gridのrow=8, column=0はカレンダーのセル（7行分）の次の行を想定
+        self.footer_frame = tk.Frame(self.frame, bg=ThemeManager.get('header_bg'))
+        self.footer_frame.grid(row=8, column=0, columnspan=7, sticky="we", pady=(8, 0))
+
+        # ---- 左端：祝日名を表示する部分 ----
+        # `self.holidays`から、現在表示している月（self.month）の祝日を抽出
+        holidays_this_month = [
+            (d, name)
+            for d, name in self.holidays.items()
+            if int(d[5:7]) == self.month
+        ]
+
+        # 祝日があれば「日付 祝日名」の形式で文字列を作成
+        if holidays_this_month:
+            holiday_strs = [f"{int(d[8:]):d}日 {name}" for d, name in holidays_this_month]
+            text = " | ".join(holiday_strs)
+        else:
+            # 祝日がなければ空の文字列を設定
+            text = "今月は祝日ありません"
+
+        # 祝日名を表示するラベルを作成し、フッターの左側に配置
+        self.holiday_label = tk.Label(
+            self.footer_frame,
+            text=text,
+            font=FONTS['small_holiday'],
+            bg=ThemeManager.get('header_bg'),
+            fg=ThemeManager.get('holiday_label_fg'),
+            anchor="w",
+            justify="left",
+            wraplength=280      
+        )
+        self.holiday_label.pack(side="left", padx=(5, 0)) 
 
     def render(self):
         """ヘッダー／曜日ラベル／日付セルを再構築"""
@@ -52,6 +97,7 @@ class CalendarView:
         self._draw_header()
         self._draw_weekday_labels()
         self._draw_days()
+        self._draw_footer()
 
     def _clear(self):
         """前回描画したウィジェットをすべて破棄"""
@@ -87,7 +133,7 @@ class CalendarView:
             header,
             text=f"{self.year}年 {self.month}月",
             font=FONTS['header'],
-            bg=ThemeManager.get("header_bg"),
+            bg=ThemeManager.get('header_bg'),
             fg=ThemeManager.get('text'),
             padx=12,
             pady=6
@@ -135,43 +181,57 @@ class CalendarView:
         matrix = generate_calendar_matrix(self.year, self.month)
 
         for row_index, week in enumerate(matrix, start=2):
-            for col_index, day in enumerate(week):
-                if not day:
-                    text, key = '', None
-                    fg_color = ThemeManager.get('text') 
-                else:
-                    key = f"{self.year}-{self.month:02d}-{day:02d}"
-                    text = str(day)
-                    # 今日だけ色を変える
-                    if self._is_today(day):
-                        fg_color = "#0879EB" 
+                for col_index, day in enumerate(week):
+                    if not day:
+                        text, key = '', None
+                        fg_color = ThemeManager.get('text') 
                     else:
-                        fg_color = ThemeManager.get('text')
+                        key = f"{self.year}-{self.month:02d}-{day:02d}"
+                        text = str(day)
+                        # 今日だけ色を変える
+                        fg_color = ThemeManager.get('today_fg') if self._is_today(day) else ThemeManager.get('text')
                     
-                bg = self._get_day_bg(day, col_index, key)
+                    bg = self._get_day_bg(day, col_index, key)
 
-                lbl = tk.Label(
-                    self.frame,
-                    text=text,
-                    font=FONTS['base'],
-                    bg=bg,
-                    fg=fg_color,
-                    width=6,
-                    height=2,
-                    bd=1,
-                    relief='ridge'
-                )
-                lbl.grid(row=row_index, column=col_index, padx=1, pady=1)
+                    lbl = tk.Label(
+                        self.frame,
+                        text=text,
+                        font=FONTS['base'],
+                        bg=bg,
+                        fg=fg_color,
+                        width=6,
+                        height=2,
+                        bd=1,
+                        padx=2,  # 左右の余白を増やす
+                        pady=2,  # 上下の余白を減らす
+                        relief='ridge'
+                    )
+                    lbl.grid(row=row_index, column=col_index, padx=1, pady=1)
 
-                if day:
-                    # クリック時の挙動設定
-                    lbl.bind('<Button-1>', lambda e, d=key: self.on_date_click(d))
-                    # ホバー時の背景変化
-                    self._add_hover_effect(lbl, bg)
-                    # イベントがある日はツールチップ表示
-                    if key in self.events:
-                        tip_text = self._make_event_summary(self.events[key])
-                        ToolTip(lbl, tip_text)
+                    # ↓この下に追加！祝日セルに㊗マークバッジを右上に表示
+                    badge = None
+                    if key in self.holidays:
+                        badge = tk.Label(
+                            self.frame,
+                            text="㊗",
+                            font=("Meiryo", 12, "bold"),
+                            fg=ThemeManager.get('badge_fg', ThemeManager.get('bg')),
+                            bg=ThemeManager.get('badge_bg', bg),
+                            bd=0
+                        )
+                        # セルの中で右上に配置（relx=1.0で右端、y=+4で少し下げる）
+                        badge.place(in_=lbl, relx=1.0, rely=0.0, anchor="ne", x=-2, y=2)
+                    
+                    # --- ホバー効果（祝日バッジがあれば連動） ---
+                    self._add_hover_effect(lbl, bg, badge=badge)
+                    
+                    if day:
+                        # クリック時の挙動設定
+                        lbl.bind('<Button-1>', lambda e, d=key: self.on_date_click(d))
+                        # イベントがある日はツールチップ表示
+                        if key in self.events:
+                            tip_text = self._make_event_summary(self.events[key])
+                            ToolTip(lbl, tip_text)
 
     def _get_day_bg(self, day, col, key) -> str:
         """
@@ -199,11 +259,22 @@ class CalendarView:
             now.day == day
         )
 
-    def _add_hover_effect(self, widget, orig_bg):
-        """日付セルにマウスホバーで背景色を変える効果を追加"""
-        hover_bg = '#D0EBFF'
-        widget.bind('<Enter>', lambda e: widget.config(bg=hover_bg))
-        widget.bind('<Leave>', lambda e: widget.config(bg=orig_bg))
+    def _add_hover_effect(self, widget, orig_bg, badge=None):
+        """日付セルと㊗バッジのホバー効果"""
+        hover_bg = ThemeManager.get("hover", "#D0EBFF")
+
+        def on_enter(e):
+            widget.config(bg=hover_bg)
+            if badge:
+                badge.config(bg=hover_bg)
+
+        def on_leave(e):
+            widget.config(bg=orig_bg)
+            if badge:
+                badge.config(bg=orig_bg)
+
+        widget.bind('<Enter>', on_enter)
+        widget.bind('<Leave>', on_leave)
 
     def _add_button_hover(self, button, orig_bg, hover_bg='#F0F0F0'):
         """ナビゲーションボタンにホバー効果を追加"""
@@ -227,3 +298,8 @@ class CalendarView:
                 line += f" - {ev['memo']}"
             lines.append(line)
         return '\n'.join(lines)
+    
+    def update_theme(self):
+        """テーマ切り替え時に呼び出され、カレンダー全体を再描画する"""
+        self.frame.config(bg=ThemeManager.get('bg'))
+        self.render()  # テーマに基づき再描画（色もすべて更新される）

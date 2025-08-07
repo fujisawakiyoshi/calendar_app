@@ -5,7 +5,7 @@
 # ────────────────────────────────────────────────────────────
 COLORS = {
     # ◾ 背景色
-    "bg":           "#FFFFFF",  # メイン背景
+    "bg":           "#FAFAFA",  # メイン背景
     "dialog_bg":    "#FFFFFF",  # ダイアログ背景
     "header_bg":    "#FAFAFA",  # ヘッダー（ナビゲーション部）背景
 
@@ -39,6 +39,8 @@ LIGHT_THEME = {
     "highlight": "#FFF4CC",
     "accent": "#F1AEB9",
     
+    "hover": "#D0EBFF",  # LIGHT_THEME
+    
     # ボタン
     "button_bg": "#FFFFFF",
     "button_fg": "#444444",
@@ -47,7 +49,11 @@ LIGHT_THEME = {
     "button_bg_edit": "#FFE7C1",     
     "button_bg_delete": "#F7C6C7", 
     
-    "clock_fg": "#555555"           # 時計の文字色
+    "clock_fg": "#555555",    
+    "footer_fg": "#888888",
+    "holiday_label_fg": "#888888", # 新規追加
+    "clock_hover": "#AA77AA",
+    "today_fg":"#3F68D8"  #今日の文字を強調
 }
 
 DARK_THEME = {
@@ -64,9 +70,11 @@ DARK_THEME = {
     "sunday": "#FFD1DC",          # 日曜：さくら色
     "saturday": "#D5F5F6",        # 土曜：ミントブルー
     "holiday": "#FFD3E0",         # 祝日：淡ピンク
-    "today": "#FBD0D9",           # 今日：やさしいサクラピンク
+    "today": "#D3E9FD",           # 今日：やさしいサクラピンク
     "highlight": "#FFF4CC",       # イベントあり：レモン色
     "accent": "#FFC1E3",          # 強調ピンク
+
+    "hover": "#D5F5F6",             # DARK_THEME 例
 
     # ボタン
     "button_bg": "#FFF0F5",         # ライトラベンダー
@@ -77,7 +85,12 @@ DARK_THEME = {
     "button_bg_edit": "#FFECB3",    # パステルイエロー（編集ボタン）
     "button_bg_delete": "#FFCDD2",  # パステルレッド（削除ボタン）
     
-    "clock_fg": "#AA77AA"  # 時計の文字色
+    "clock_fg": "#AA77AA",  # 時計の文字色
+    "footer_fg": "#AA77AA",
+    "holiday_label_fg": "#CA67B5", # 新規追加
+    "clock_hover": "#AA77AA",
+    "today_fg":"#da3e87"
+
 }
 
 # 初期テーマはライト
@@ -88,12 +101,15 @@ COLORS = LIGHT_THEME
 # ────────────────────────────────────────────────────────────
 # フォント種類とサイズをここで一元管理します。
 FONTS = {
-    "base":         ("Helvetica", 12),            # 標準テキスト
+    "base":         ("Helvetica", 13),            # 標準テキスト
     "base_minus":   ("Helvetica", 11),            # 予定一覧画面の文字
-    "bold":         ("Helvetica", 12, "bold"),    # 太字
-    "small":        ("Helvetica", 10),            # 補助テキスト・ラベル
-    "header":       ("Helvetica", 14, "bold"),    # カレンダー見出し
-    "dialog_title": ("Helvetica", 13, "bold"),    # ダイアログタイトル
+    "bold":         ("Helvetica", 13, "bold"),    # 太字
+    "small":        ("Helvetica", 11),            # 補助テキスト・ラベル
+    "small_holiday": ("Helvetica", 10),          # 祝日名
+    "weather_emoji":   ("Helvetica", 12, "bold"),    # 天気のEmoji
+    "weather_text": ("Helvetica", 9),      # 天気のテキスト
+    "header":       ("Helvetica", 15, "bold"),    # カレンダー見出し
+    "dialog_title": ("Helvetica", 14, "bold"),    # ダイアログタイトル
     "button":       ("Helvetica", 12),            # ボタンテキスト
 }
 

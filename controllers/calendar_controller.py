@@ -3,6 +3,7 @@ import calendar # calendarモジュールをインポート済み
 from services.holiday_service import get_holidays_for_year # インポート済み
 from services.event_manager import load_events # インポート済み
 from services.event_manager import add_event # add_event関数をインポート
+from services.weather_service import get_weather_for_today
 
 
 class CalendarController:
@@ -13,12 +14,14 @@ class CalendarController:
         self.current_month = today.month
         self.holidays = {} # 初期化
         self.events = {}   # 初期化
+        self.weather_info = None
         self.load_data()
 
     def load_data(self):
         """祝日とイベントデータをロードして属性にセット"""
         self.holidays = get_holidays_for_year(self.current_year)
         self.events = load_events()
+        self.weather_info = get_weather_for_today()
 
     def prev_month(self):
         """前月に移動してデータを再ロード"""
@@ -44,7 +47,12 @@ class CalendarController:
         self.current_month = today.month
         self.load_data() # 日付変更後にデータを再ロード
 
-    # ★★★ ここに get_events_for_date メソッドを追加 ★★★
+    def get_weather_info(self) -> dict | None:
+        """
+        コントローラが保持する最新の天気情報を取得します。
+        """
+        return self.weather_info
+
     def get_events_for_date(self, date_str: str) -> list[dict]:
         """
         指定された日付のイベントリストを取得します。
@@ -58,5 +66,3 @@ class CalendarController:
         指定された日付に新しいイベントを追加し、保存します。
         """
         add_event(self.events, date_str, title, start_time, end_time, memo)
-        # add_event が self.events をインプレースで更新するので、
-        # ここで self.events を再ロードする必要はありません。
