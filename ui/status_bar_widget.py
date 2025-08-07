@@ -22,34 +22,36 @@ class StatusBarWidget:
 
         # === メインフレーム ===
         self.frame = tk.Frame(parent, bg=bg)
-        self.frame.pack(fill="x", padx=10, pady=(3, 3))  # ← 左右余白をやや縮めた
+        self.frame.pack(fill="x", padx=0, pady=(0)) # ヴィジェットの枠
 
         # === 左側: 天気表示 ===
+        # 全体を少し右にずらすため、左側に10pxの余白を追加
         self.left_frame = tk.Frame(self.frame, bg=bg)
-        self.left_frame.pack(side="left", anchor="center")  # ← anchor 修正
+        self.left_frame.pack(side="left", anchor="w", padx=(30, 0))
 
         self.icon_images = {}
         self.icon_widgets = []
         self.icon_frame = tk.Frame(self.left_frame, bg=bg)
-        self.icon_frame.pack(side="left", padx=(0, 3), anchor="center")
+        # アイコンとテキストの間を少し空けるため、右側に5pxの余白を追加
+        self.icon_frame.pack(side="left", padx=(0, 5), anchor="center")
 
         self.weather_label = tk.Label(
             self.left_frame,
             text="",
             font=FONTS["weather_text"],
             bg=bg,
-            fg=fg,
+            fg=clock_fg,
             anchor="w",
             justify="left",
-            wraplength=200
+            wraplength=160
         )
-        self.weather_label.pack(side="left", anchor="center", pady=(2, 0))  # ← 少しだけ詰める
+        self.weather_label.pack(side="left", anchor="center", pady=(2, 0)) 
 
         self._load_icons()
 
         # === 右側: 時計 + メッセージ ===
         self.right_frame = tk.Frame(self.frame, bg=bg)
-        self.right_frame.pack(side="right", anchor="center")
+        self.right_frame.pack(side="right", anchor="e", padx=(0, 20))
 
         self.flash_label = tk.Label(
             self.right_frame,
@@ -61,7 +63,8 @@ class StatusBarWidget:
             justify="right",
             wraplength=200
         )
-        self.flash_label.pack(side="top", anchor="e", pady=(0, 2))
+        # 時計との間隔を少し空けるため、下に4pxの余白を追加
+        self.flash_label.pack(side="top", anchor="e", pady=(0, 4))
 
         self.clock_btn = tk.Button(
             self.right_frame,
@@ -76,14 +79,13 @@ class StatusBarWidget:
         )
         self.clock_btn.pack(side="top", anchor="e", pady=(0, 1))
 
-        self.clock_btn.bind("<Enter>", lambda e: self.clock_btn.config(fg=ThemeManager.get("clock_fg"), cursor="hand2"))
-        self.clock_btn.bind("<Leave>", lambda e: self.clock_btn.config(fg=ThemeManager.get("clock_fg")))
-
         self._update_clock()
 
         # ホバー効果（色とカーソル変更）
         def _on_enter(e):
-            self.clock_btn.config(fg=ThemeManager.get("clock_fg"), cursor="hand2")
+            hover_color = ThemeManager.get("clock_hover")
+            self.clock_btn.config(fg=hover_color, cursor="hand2")
+
         def _on_leave(e):
             self.clock_btn.config(fg=ThemeManager.get("clock_fg"))
 
@@ -132,7 +134,7 @@ class StatusBarWidget:
             icon_files = weather_info.get("icon", [])
             for icon_file in icon_files:
                 img = self.icon_images.get(icon_file, self.icon_images.get("default"))
-                lbl = tk.Label(self.icon_frame, image=img, bg=ThemeManager.get("footer_bg"))
+                lbl = tk.Label(self.icon_frame, image=img, bg=ThemeManager.get('header_bg'))
                 lbl.pack(side="left", padx=2)
                 self.icon_widgets.append(lbl)
 
@@ -155,7 +157,7 @@ class StatusBarWidget:
         ]:
             widget.config(bg=bg)
 
-        self.weather_label.config(fg=fg)
+        self.weather_label.config(fg=clock_fg)
         self.flash_label.config(fg=clock_fg)
         self.clock_btn.config(
             fg=clock_fg, 

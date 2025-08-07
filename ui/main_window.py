@@ -7,7 +7,6 @@ import os
 from controllers.calendar_controller import CalendarController
 from ui.calendar_view import CalendarView
 from ui.status_bar_widget import StatusBarWidget
-from ui.weather_widget import WeatherWidget
 from ui.theme import COLORS
 from ui.event_dialog import EventDialog
 from services.theme_manager import ThemeManager

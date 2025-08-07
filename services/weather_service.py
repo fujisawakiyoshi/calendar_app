@@ -14,7 +14,7 @@ def get_weather_for_today() -> dict | None:
     :return: 天気情報（辞書）。取得失敗時は None を返す
     """
     try:
-        print(f"URLにアクセス中: {JSON_URL}")
+        # print(f"URLにアクセス中: {JSON_URL}")
         res = requests.get(JSON_URL)
         res.raise_for_status() # HTTPエラーチェック
         

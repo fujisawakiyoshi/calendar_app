@@ -189,7 +189,7 @@ class CalendarView:
                         key = f"{self.year}-{self.month:02d}-{day:02d}"
                         text = str(day)
                         # 今日だけ色を変える
-                        fg_color = "#3F68D8" if self._is_today(day) else ThemeManager.get('text')
+                        fg_color = ThemeManager.get('today_fg') if self._is_today(day) else ThemeManager.get('text')
                     
                     bg = self._get_day_bg(day, col_index, key)
 
